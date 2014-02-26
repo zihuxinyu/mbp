@@ -124,6 +124,7 @@ def showsnlist(page=1):
     :param page:
     :return:
     """
+
     pagination = Snlist.query.filter(Snlist.develop_depart_id == session["chnl_id"]).order_by(
         Snlist.serial_number.desc()).paginate(page, POSTS_PER_PAGE,
                                               True)
