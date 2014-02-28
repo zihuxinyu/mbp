@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-from config import POSTS_PER_PAGE
+from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
 from mbp import lm, app
@@ -143,3 +143,11 @@ def showsnlist(page=1):
     return render_template('list.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn,
                            specfile=specfile)
+
+
+@app.route('/sendmail')
+def sendtest():
+    from email import send_email
+
+    send_email('ss', 'aixinit@126.com', ['aixinit@126.com'], 'textboy', 'htmlbody')
+    return "ok"
