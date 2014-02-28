@@ -5,6 +5,10 @@ from decos import asyncfun
 
 @asyncfun
 def send_async_email(msg):
+    """
+
+    :type msg: object
+    """
     mail.send(msg)
 
 
