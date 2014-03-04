@@ -9,7 +9,7 @@ import requests
 import random
 import time
 from random import choice
-import xmlrpclib
+
 import linecache
 from Library import LogHelper
 import urllib2
@@ -35,6 +35,7 @@ class HTTPProxyTransport(Urllib2Transport):
         opener = urllib2.build_opener(urllib2.ProxyHandler(proxies))
         Urllib2Transport.__init__(self, opener, use_datetime)
 
+
 def getproxies():
     count = len(open('ip.txt', 'rU').readlines())  #获取行数
     hellonum = random.randrange(1, count, 1)  #生成随机行数
@@ -43,53 +44,60 @@ def getproxies():
 
 
 class DoerThread(threading.Thread):
-    def __init__(self, threadName, user_id, invite_code):
+    def __init__(self, threadName, user_id, invite_code, proxies, transport):
         threading.Thread.__init__(self, name=threadName)
         self.user_id = user_id
         self.invite_code = invite_code
+        self.proxies = proxies
+        self.transport = transport
+        self.threadName= threadName
 
     def run(self):
         try:
-            do(self.user_id, self.invite_code)
-        except Exception:
+            LogHelper.Debug(self.threadName)
+            do(self.user_id, self.invite_code, self.proxies, self.transport)
+        except Exception,e:
+            LogHelper.Debug(self.threadName+e.message+"error")
             pass
-def do(user_id, invite_code):
-    global proxies
-    proxies= getproxies()
+
+
+def do(user_id, invite_code, proxies, transport):
+
     headers = {
-    "Host": "note.wiz.cn",
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0",
-    "Accept": "*/*",
-    "Accept-Language": "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3",
-    "Accept-Encoding": "gzip, deflate",
-    "DNT": "1",
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    "X-Requested-With": "XMLHttpRequest",
-    "Referer": "http://note.wiz.cn/register",
-    "Cookie": "iCode=" + invite_code + "; wizuser=",
-    "Connection": "keep-alive",
-    "Pragma": "no-cache",
-    "Cache-Control": "no-cache",
-    "X-Forwarded-For": '{0}.{1}.{2}.{3}'.format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255),
-                                                random.randint(0, 255))
+        "Host": "note.wiz.cn",
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0",
+        "Accept": "*/*",
+        "Accept-Language": "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3",
+        "Accept-Encoding": "gzip, deflate",
+        "DNT": "1",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+        "Referer": "http://note.wiz.cn/register",
+        "Cookie": "iCode=" + invite_code + "; wizuser=",
+        "Connection": "keep-alive",
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache",
+        "X-Forwarded-For": '{0}.{1}.{2}.{3}'.format(random.randint(0, 255), random.randint(0, 255),
+                                                    random.randint(0, 255),
+                                                    random.randint(0, 255))
     }
 
     url = 'http://note.wiz.cn/api/register'
     values = {
-    "invite_code": invite_code,
-    "password": "123456",
-    "user_id": user_id
+        "invite_code": invite_code,
+        "password": "123456",
+        "user_id": user_id
     }
     r = requests.post(url, data=values, headers=headers, proxies=proxies)
-    #print(r.text)
+    LogHelper.Debug(r.content.decode('utf8'))
     cookie_str = r.json()['cookie_str']
-    time.sleep(3)
+
 
     pcloginurl = "http://as.wiz.cn/wizas/xmlrpc"
-    global transport
-    transport= HTTPProxyTransport(proxies)
+
+
     server = xmlrpclib.ServerProxy(pcloginurl, transport=transport, encoding=None, verbose=False, allow_none=False,
-                                       use_datetime=False)
+                                   use_datetime=False)
     result = server.accounts.clientLogin({'api_version': '3',
                                           'client_type': 'WIN',
                                           'client_version': '4.1.17.1',
@@ -119,11 +127,17 @@ if __name__ == "__main__":
     #invite_code='e42ad138' #zihu
     #invite_code='e947165d' #weibaohui@yeah.net
 
-    invite_code = '33d03f14'  #xieyk1
-    #invite_code='4b9f6b25' #zhaocl
+    #invite_code = '33d03f14'  #xieyk1
+    invite_code = '4b9f6b25'  #zhaocl
     #invite_code='49462f9f'
     i = 800
-    os.remove(os.getcwd() + "/ok.txt")
+
+    try:
+        os.remove(os.getcwd() + "/ok.txt")
+    except:
+        pass
+
+
     for x in range(int(i)):
         #LogHelper.Debug(x)
         realmail = (open('1.txt').readlines()[random.randint(0, 1048549)]).strip("\r\n")
@@ -134,8 +148,8 @@ if __name__ == "__main__":
                  'bnu.edu.cn', 'ccidnet.com', 'chinaren.com', 'xsyu.edu.cn', '163.com', 'qq.com', '126.com', '163.com',
                  'qq.com', '126.com']
         id = '{0}{1}@{2}'.format(realmail, random.randint(0, 9999), choice(email))
-        #do(id, invite_code)
-        t = DoerThread('T' + str(x), id, invite_code)
+        proxies=getproxies()
+        transport=HTTPProxyTransport(proxies)
+        t = DoerThread('T' + str(x), id, invite_code=invite_code,proxies=proxies,transport=transport)
         t.start()
-    result=len(open('ok.txt', 'rU').readlines())
-    print(result+"ok")
+        time.sleep(1)

@@ -83,11 +83,11 @@ def getPageList(url, file):
     f = requests.get(url + file, headers=headers)
     html = f.content
     html = html.decode('gbk', 'ignore')
-
+    print(html)
     page_rule = re.compile(r"<li><a href='(.+?)'[^\>]*>.+?</a></li>")
     for m in page_rule.finditer(html):
         if '_' in m.group(1):
-            #print(m.group(1))
+            print(m.group(1))
             getProxy(url, m.group(1))
 
 
@@ -118,5 +118,5 @@ def getProxy(url, file):
 
 
 if __name__ == '__main__':
-    os.remove(os.getcwd() + "/ip.txt")
-    getPageList('http://www.youdaili.cn/Daili/guonei/', '1745.html')
+    #os.remove(os.getcwd() + "/ip.txt")
+    getPageList('http://www.youdaili.cn/Daili/guonei/', '1750.html')
