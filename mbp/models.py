@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 from mbp import db
+from sqlalchemy import Integer
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -16,6 +17,24 @@ class Snlist(db.Model):
     open_date = db.Column('open_date')
     user_state_codeset = db.Column('user_state_codeset')
     state_name = db.Column('state_name')
+
+
+class wiz_user(db.Model):
+    __tablename__ = 'wiz_user'
+    #    SELECT `invite_code`, `proxy`, `reguser`, `regpsw` FROM `wiz_user` WHERE 1
+    id = db.Column(Integer, unique=True, primary_key=True,autoincrement=True)
+    invite_code = db.Column('invite_code')
+    proxy = db.Column('proxy')
+    reguser = db.Column('reguser')
+    regcode= db.Column('regcode')
+    regpsw = db.Column('regpsw')
+    def __init__(self, invite_code, proxy, reguser, regcode, regpsw):
+        self.invite_code=invite_code;
+        self.proxy=proxy
+        self.reguser=reguser
+        self.regpsw=regpsw
+        self.regcode= regcode
+
 
 
 class Staff(db.Model):

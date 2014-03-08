@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+import random
 from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
@@ -151,3 +152,23 @@ def sendtest():
 
     send_email('ss', 'aixinit@126.com', ['aixinit@126.com'], 'textboy', 'htmlbody')
     return "ok"
+
+
+@app.route('/wizapp/<user_code>/')
+@app.route('/wizapp/<user_code>/')
+def wizapp(user_code=None):
+    from models import wiz_user
+
+    user_code = user_code.encode('utf8')
+
+    list = wiz_user.query.filter(wiz_user.invite_code == user_code).count()
+    return  str(list)+'--'+str(list  *620/1000  )+'月'
+
+
+@app.route('/wizstart/', methods=['GET', 'POST'])
+def wizstart():
+    from  wiz import startmain
+
+    if request.args.get('u') and request.args.get('n'):
+        startmain(request.args.get('u'), request.args.get('n'))
+    return redirect(url_for('wizapp', user_code=request.args.get('u')))
