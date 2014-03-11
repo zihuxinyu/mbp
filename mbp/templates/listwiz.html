@@ -1,10 +1,11 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
-{% from "_paginathion.html" import pagination_html %}
-{% from "_listview.html" import listview %}
+
 {% block content %}
-<!----显示表格---->
-{{ listview(pagination,fields,fields_cn,specfile) }}
-<!-- 调用分页模板 -->
-{{ pagination_html(pagination, request.endpoint, request.query_string) }}
+       <a href=" {{url_for('wizstart')}}">返回</a>
+<li>共计{{allcount}}LIST</li>
+<li>共计{{allcount *620/1000 }}M</li>
+<li>共计{{allcount *620/1000/12 }}Y</li>
+
+
 {% endblock %}

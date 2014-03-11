@@ -162,13 +162,21 @@ def wizapp(user_code=None):
     user_code = user_code.encode('utf8')
 
     list = wiz_user.query.filter(wiz_user.invite_code == user_code).count()
-    return  str(list)+'--'+str(list  *620/1000  )+'月'
+    return render_template('listwiz.html',allcount=list)
 
 
 @app.route('/wizstart/', methods=['GET', 'POST'])
 def wizstart():
     from  wiz import startmain
+    from forms import WizStartForm
+    form = WizStartForm()
+    if form.validate_on_submit():
+        usercode=form.usercode.data
+        counts=form.counts.data
+        startmain(usercode,counts)
+        return redirect(url_for('wizapp', user_code=usercode))
+    return render_template('wizstart.html',
+                           title='start',
+                           form=form)
 
-    if request.args.get('u') and request.args.get('n'):
-        startmain(request.args.get('u'), request.args.get('n'))
-    return redirect(url_for('wizapp', user_code=request.args.get('u')))
+
