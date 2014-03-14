@@ -66,6 +66,21 @@ class Staff(db.Model):
         return "<Staff '{:s}'>".format(self.staff_id)
 
 
+class WechatUser(db.Model):
+    #SELECT  `source`, `usercode`, `username`, `code` FROM `wechat_user` WHERE 1
+    __tablename__ = "wechat_user"
+    source = db.Column('source', primary_key=True, unique=True)
+    usercode = db.Column('usercode')
+    username = db.Column('username')
+    code = db.Column('code')
+
+    def __init__(self, source=None, usercode=None, username=None, code=None):
+        self.source = source
+        self.usercode = usercode
+        self.username = username
+        self.code = code
+
+
 class WechatReceive(db.Model):
     # SELECT
     # `guid`, `id`, `target`, `source`, `time`, `raw`, `type`, `content`, `img`, `title`, `description`, `url`,

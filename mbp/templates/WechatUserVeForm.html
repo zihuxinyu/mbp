@@ -1,0 +1,39 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+
+{% from "_formhelper.html" import render_field %}
+
+{% block content %}
+<div class="well well-large">
+
+
+    <form class="form-horizontal form-signin" role="form" action="" method="post">
+        <h2 class="form-signin-heading center">绑定账户</h2>
+
+        {{ render_field(form.source) }}
+        {{ render_field(form.usercode) }}
+        {{ render_field(form.code) }}
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}
+<div class="container">
+
+    <form class="form-signin" method="POST" action="">
+        {{ form.hidden_tag() }}
+        <h2 class="form-signin-heading">号码状态查询</h2>
+        <input type="text" class="input-block-level" placeholder="Email address" name="email">
+        <input type="password" class="input-block-level" placeholder="Password" name="password">
+
+        <button class="btn btn-large btn-primary" type="submit">登 录</button>
+    </form>
+
+</div> <!-- /container -->

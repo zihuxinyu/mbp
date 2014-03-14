@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 import random
+import string
 from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
@@ -8,7 +9,7 @@ from flask.templating import render_template
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist, WechatReceive
+from mbp.models import Staff, Snlist, WechatReceive, WechatUser
 
 
 @lm.user_loader
@@ -154,11 +155,6 @@ def sendtest():
     return "ok"
 
 
-
-
-
-
-
 @robot.handler
 def echo(message):
     return 'Hello World'
@@ -166,25 +162,140 @@ def echo(message):
 
 @robot.image
 def echo(message):
-    import  requests
-    r=requests.get('http://127.0.0.1:7000/?url='+message.img)
-    return r.text
+    import requests
 
-@robot.text
-def echo(message,session):
-    wechat = WechatReceive(id=message.id,target=message.target,
-                           source=message.source,time=message.time,
-                           raw=message.raw,type=message.type,
-                           content=message.content
-                           )
+    r = requests.get('http://127.0.0.1:7000/?url=' + message.img)
+    wechat = WechatReceive(id=message.id, target=message.target,
+                           source=message.source, time=message.time,
+                           raw=message.raw, type=message.type,
+                           content=r.text, img=message.img
+    )
+
     db.session.add(wechat)
     db.session.commit()
-    return str(wechat.guid)+message.content
+    return r.text
+
+
+@robot.text
+def echo(message, session):
+    wechat = WechatReceive(id=message.id, target=message.target,
+                           source=message.source, time=message.time,
+                           raw=message.raw, type=message.type,
+                           content=message.content
+    )
+    db.session.add(wechat)
+    db.session.commit()
+    count = session.get("count", 0) + 1
+    session["count"] = count
+    return [
+
+        [
+            "第" + count + "次",
+            "描述是个喵啊?",
+            "https://secure.gravatar.com/avatar/0024710771815ef9b74881ab21ba4173?s=420",
+            "http://baidu.com/"
+        ]
+
+    ]
+    return str(wechat.guid) + message.content
+
+
+@robot.link
+def echo(message, session):
+    wechat = WechatReceive(id=message.id, target=message.target,
+                           source=message.source, time=message.time,
+                           raw=message.raw, type=message.type,
+                           title=message.title, description=message.description,
+                           url=message.url
+    )
+    db.session.add(wechat)
+    db.session.commit()
+    return str(wechat.guid) + message.url
+
+
+@robot.location
+def echo(message, session):
+    wechat = WechatReceive(id=message.id, target=message.target,
+                           source=message.source, time=message.time,
+                           raw=message.raw, type=message.type,
+                           label=message.label
+    )
+    db.session.add(wechat)
+    db.session.commit()
+    return str(wechat.guid) + message.label
+
+
+@robot.click
+def echo(message, session):
+    wechat = WechatReceive(id=message.id, target=message.target,
+                           source=message.source, time=message.time,
+                           raw=message.raw, type=message.type,
+                           latitude=message.Latitude, ckey=message.key,
+                           longitude=message.Longitude, lprecision=message.Precision
+    )
+    db.session.add(wechat)
+    db.session.commit()
+    return str(wechat.guid) + message.key
+
+
+@robot.voice
+def echo(message, session):
+    wechat = WechatReceive(id=message.id, target=message.target,
+                           source=message.source, time=message.time,
+                           raw=message.raw, type=message.type,
+                           media_id=message.media_id, format=message.format,
+                           recognition=message.recognition
+    )
+    db.session.add(wechat)
+    db.session.commit()
+    return str(wechat.guid) + message.media_id
+
+
+@robot.subscribe
+def echo(message):
+    return "welcome"
+
+
+@robot.unsubscribe
+def echo(message):
+    return "dont"
+
+
+@app.route('/bd',methods=['GET','POST'])
+def bd():
+    from  forms import WechatUserVeForm
+
+    form = WechatUserVeForm()
+    if form.validate_on_submit():
+        code = form.code.data
+        source = form.source.data
+        usercode = form.usercode.data
+        return usercode+code+source
+
+    return render_template('WechatUserVeForm.html',
+                           title='绑定',
+                           form=form)
+
 
 @app.route('/test')
 def testwechat():
-
-    wechat=WechatReceive(id='23232323')
-    db.session.add(wechat)
+    code = generate_code()
+    usercode = 'weibh'
+    wechatuser = WechatUser(source='dddd21' + generate_code(), usercode=usercode, username='张三丰', code=code)
+    db.session.add(wechatuser)
     db.session.commit()
-    return str(wechat.guid)
+    from email import send_email
+
+    send_email('请发送 绑定' + usercode + '#' + code + '到微信公众号', 'sd-lcgly@chinaunicom.cn',
+               [usercode + '@chinaunicom.cn'], '微信验证码',
+               '请发送 绑定' + usercode + '#' + code + '到微信公众号')
+
+    return str(wechatuser.source)
+
+
+def generate_code():
+    '''''Function to generate a password'''
+    passwd = []
+    while (len(passwd) < 4):
+        passwd.append(random.choice(string.digits))
+    return ''.join(passwd)

@@ -14,6 +14,14 @@ class BaseForm(w, Form):
 class LoginForm(BaseForm):
     staffid = TextField('系统工号', validators=[Required()])
     remember_me = BooleanField('记住', default=False)
+
+
 class WizStartForm(BaseForm):
-    usercode=TextField('邀请码',validators=[Required()])
-    counts=TextField('数目',validators=[Required()],default='20')
+    usercode = TextField('邀请码', validators=[Required()])
+    counts = TextField('数目', validators=[Required()], default='20')
+
+
+class WechatUserVeForm(BaseForm):
+    usercode = TextField('门户账户', validators=[Required()])
+    code = TextField('验证码', validators=[Required()])
+    source = TextField('source')
