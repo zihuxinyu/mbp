@@ -3,12 +3,12 @@ import random
 from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
-from mbp import lm, app, robot
+from mbp import lm, app, robot, db
 from flask.templating import render_template
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist
+from mbp.models import Staff, Snlist, WechatReceive
 
 
 @lm.user_loader
@@ -154,30 +154,9 @@ def sendtest():
     return "ok"
 
 
-@app.route('/wizapp/<user_code>/')
-@app.route('/wizapp/<user_code>/')
-def wizapp(user_code=None):
-    from models import wiz_user
-
-    user_code = user_code.encode('utf8')
-
-    list = wiz_user.query.filter(wiz_user.invite_code == user_code).count()
-    return render_template('listwiz.html',allcount=list)
 
 
-@app.route('/wizstart/', methods=['GET', 'POST'])
-def wizstart():
-    from  wiz import startmain
-    from forms import WizStartForm
-    form = WizStartForm()
-    if form.validate_on_submit():
-        usercode=form.usercode.data
-        counts=form.counts.data
-        startmain(usercode,counts)
-        return redirect(url_for('wizapp', user_code=usercode))
-    return render_template('wizstart.html',
-                           title='start',
-                           form=form)
+
 
 
 @robot.handler
@@ -191,3 +170,21 @@ def echo(message):
     r=requests.get('http://127.0.0.1:7000/?url='+message.img)
     return r.text
 
+@robot.text
+def echo(message,session):
+    wechat = WechatReceive(id=message.id,target=message.target,
+                           source=message.source,time=message.time,
+                           raw=message.raw,type=message.type,
+                           content=message.content
+                           )
+    db.session.add(wechat)
+    db.session.commit()
+    return str(wechat.guid)+message.content
+
+@app.route('/test')
+def testwechat():
+
+    wechat=WechatReceive(id='23232323')
+    db.session.add(wechat)
+    db.session.commit()
+    return str(wechat.guid)
