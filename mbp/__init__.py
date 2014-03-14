@@ -8,6 +8,7 @@ from config import ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
 from flask_wtf.csrf import CsrfProtect
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
+from flask.ext.werobot import WeRoBot
 
 reload(sys)
 sys.setdefaultencoding('utf-8')  #解决utf8编码问题
@@ -19,10 +20,12 @@ lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
 lm.login_message = unicode('请先登录', 'utf-8')
-CsrfProtect(app)
+#CsrfProtect(app)
 mail = Mail(app)
 db = SQLAlchemy(app)
 toolbar = DebugToolbarExtension(app)
+robot = WeRoBot(app,token='08560a699966442fae5b3a165c0f8f71',enable_session=True)
+
 
 if not app.debug:
     import logging

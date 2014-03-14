@@ -3,7 +3,7 @@ import random
 from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
-from mbp import lm, app
+from mbp import lm, app, robot
 from flask.templating import render_template
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
@@ -179,4 +179,15 @@ def wizstart():
                            title='start',
                            form=form)
 
+
+@robot.handler
+def echo(message):
+    return 'Hello World'
+
+
+@robot.image
+def echo(message):
+    import  requests
+    r=requests.get('http://127.0.0.1:7000/?url='+message.img)
+    return r.text
 

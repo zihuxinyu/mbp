@@ -18,7 +18,8 @@ MAIL_USE_SSL = False
 MAIL_USERNAME = 'aixinit'
 MAIL_PASSWORD = '9Loveme?'
 
-
+WEROBOT_TOKEN = '08560a699966442fae5b3a165c0f8f71'
+WEROBOT_ROLE = '/wechat'
 
 # administrator list
 ADMINS = ['aixinit@126.com']
