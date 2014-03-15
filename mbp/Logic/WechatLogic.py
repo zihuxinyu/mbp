@@ -1,8 +1,55 @@
 # -*- coding: utf8 -*-
 import random
 import string
+from mbp import db
 from sqlalchemy import and_
-from mbp.models import WechatUser
+from mbp.models import WechatUser, WechatReceive
+
+
+def SaveMessage(message,imgcontent=None):
+    if message.type=="text":
+        #收到文本
+        wechat = WechatReceive(id=message.id, target=message.target,
+                               source=message.source, time=message.time,
+                               raw=message.raw, type=message.type,
+                               content=message.content
+        )
+    elif message.type=="image":
+        #图像
+        wechat = WechatReceive(id=message.id, target=message.target,
+                               source=message.source, time=message.time,
+                               raw=message.raw, type=message.type,
+                               content=imgcontent, img=message.img
+        )
+    elif message.type=="location":
+        #地图位置
+        wechat = WechatReceive(id=message.id, target=message.target,
+                               source=message.source, time=message.time,
+                               raw=message.raw, type=message.type,
+                               label=message.label
+        )
+
+    elif message.type == "link":
+        #链接
+        wechat = WechatReceive(id=message.id, target=message.target,
+                               source=message.source, time=message.time,
+                               raw=message.raw, type=message.type,
+                               title=message.title, description=message.description,
+                               url=message.url
+        )
+    elif message.type == "voice":
+        #声音
+        wechat = WechatReceive(id=message.id, target=message.target,
+                               source=message.source, time=message.time,
+                               raw=message.raw, type=message.type,
+                               media_id=message.media_id, format=message.format,
+                               recognition=message.recognition
+        )
+
+    db.session.add(wechat)
+    db.session.commit()
+    return wechat.guid
+
 
 def generate_code():
     """

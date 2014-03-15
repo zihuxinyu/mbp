@@ -3,15 +3,16 @@ import random
 import string
 from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
-from flask.globals import g, request, session,session as gsession
+from flask.globals import g, request, session, session as gsession
 from mbp import lm, app, robot, db
 from flask.templating import render_template
 from sqlalchemy import and_
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist, WechatReceive, WechatUser,BarcodeList
-from Logic import WechatLogic
+from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList
+from Logic import WechatLogic, BarcodeLogic
+
 
 @lm.user_loader
 def load_user(id):
@@ -158,7 +159,7 @@ def sendtest():
 
 @robot.handler
 def echo(message):
-    return 'Hello World'+message.type
+    return 'Hello World' + message.type
 
 
 @robot.image
@@ -166,60 +167,45 @@ def echo(message):
     import requests
 
     r = requests.get('http://127.0.0.1:7000/?url=' + message.img)
-    wechat = WechatReceive(id=message.id, target=message.target,
-                           source=message.source, time=message.time,
-                           raw=message.raw, type=message.type,
-                           content=r.text, img=message.img
-    )
-
-    db.session.add(wechat)
-    db.session.commit()
+    WechatLogic.SaveMessage(message=message,
+                            imgcontent=r.text)
+    bar = BarcodeLogic.GetUnicomBarcode(r.text)
+    if bar:
+        BarcodeLogic.SaveBarcode(barcodelist=bar, message=message,
+                                 type='image')
+        return BarcodeLogic.ShowBarDetail(barcodelist=bar,
+                                          message=message)
     return r.text
 
 
 @robot.text
 def echo(message, session):
-
-    wechat = WechatReceive(id=message.id, target=message.target,
-                           source=message.source, time=message.time,
-                           raw=message.raw, type=message.type,
-                           content=message.content
-    )
-    db.session.add(wechat)
-    db.session.commit()
-
-    w=WechatLogic.CheckUser(message.source)
+    WechatLogic.SaveMessage(message)
+    w = WechatLogic.CheckUser(message.source)
     if not w:
         return WechatLogic.SendBDPage(message)
+
+    #先对输入的文字进行二维码提取.
+    bar = BarcodeLogic.GetUnicomBarcode(message.content)
+    if bar:
+        BarcodeLogic.SaveBarcode(barcodelist=bar, message=message,
+                                 type='input')
+        return BarcodeLogic.ShowBarDetail(barcodelist=bar,
+                                          message=message)
+
     return message.content
-
-
-
 
 
 @robot.link
 def echo(message, session):
-    wechat = WechatReceive(id=message.id, target=message.target,
-                           source=message.source, time=message.time,
-                           raw=message.raw, type=message.type,
-                           title=message.title, description=message.description,
-                           url=message.url
-    )
-    db.session.add(wechat)
-    db.session.commit()
-    return str(wechat.guid) + message.url
+    WechatLogic.SaveMessage(message)
+    return  message.url
 
 
 @robot.location
 def echo(message, session):
-    wechat = WechatReceive(id=message.id, target=message.target,
-                           source=message.source, time=message.time,
-                           raw=message.raw, type=message.type,
-                           label=message.label
-    )
-    db.session.add(wechat)
-    db.session.commit()
-    return str(wechat.guid) + message.label
+    WechatLogic.SaveMessage(message)
+    return  message.label
 
 
 @robot.click
@@ -237,16 +223,9 @@ def echo(message, session):
 
 @robot.voice
 def echo(message, session):
-    wechat = WechatReceive(id=message.id, target=message.target,
-                           source=message.source, time=message.time,
-                           raw=message.raw, type=message.type,
-                           media_id=message.media_id, format=message.format,
-                           recognition=message.recognition
-    )
-    db.session.add(wechat)
-    db.session.commit()
-    return str(wechat.guid) + message.media_id
-
+    WechatLogic.SaveMessage(message)
+    #return  message.media_id
+    return  '我听见了.'
 
 @robot.subscribe
 def echo(message):
@@ -274,7 +253,7 @@ def bd(source=None):
 
     form = WechatUserSendcode()
     if form.validate_on_submit():
-        usercode = form.usercode.data.replace('@chinaunicom.cn','')
+        usercode = form.usercode.data.replace('@chinaunicom.cn', '')
         sendcode(source=source, usercode=usercode)
 
         return redirect(url_for('bdchk', usercode=usercode, source=source))
@@ -299,24 +278,22 @@ def bdchk(source=None, usercode=None):
     if form.validate_on_submit():
         code = form.code.data
         if source and request:
-            x= WechatUser.query.filter(and_(WechatUser.source == source,
-                                            WechatUser.usercode == usercode,
-                                            WechatUser.code == code))
+            x = WechatUser.query.filter(and_(WechatUser.source == source,
+                                             WechatUser.usercode == usercode,
+                                             WechatUser.code == code))
 
             w = x.first()
             if w:
                 x.update({
-                    WechatUser.checked:1
+                    WechatUser.checked: 1
                 })
 
                 db.session.commit()
                 return '绑定成功!请返回微信聊天窗口吧'
-    return render_template('WechatChkCode.html', form=form,title='请输入验证码')
+    return render_template('WechatChkCode.html', form=form, title='请输入验证码')
 
 
 def sendcode(source=None, usercode=None):
-
-
     code = WechatLogic.generate_code()
     wechatuser = WechatUser(source=source, usercode=usercode, code=code)
     db.session.add(wechatuser)
@@ -327,10 +304,19 @@ def sendcode(source=None, usercode=None):
                [usercode + '@chinaunicom.cn'], '微信验证码',
                '微信绑定验证码是:' + code)
 
+@app.route('/showzc/<zcbh>',methods=['GET','POST'])
+def showzc(zcbh=None):
+    """
+    显示资产编号的详细信息
+    :param zcbh:
+    :return:
+    """
+    return zcbh
+
 
 @app.route('/test/<source>')
 def test(source):
-    ww=BarcodeList(source=source,type='input',barcode='sfsdfdsafd')
+    ww = BarcodeList(source=source, type='input', barcode='sfsdfdsafd')
     db.session.add(ww)
     db.session.commit()
-    return  str(ww.guid)
+    return str(ww.guid)

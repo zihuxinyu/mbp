@@ -89,11 +89,12 @@ class BarcodeList(db.Model):
     barcode = db.Column('barcode')
     source = db.Column('source')
     type = db.Column('type')
-
-    def __int__(self, barcode=None, source=None, type=None):
+    msgid=db.Column('msgid')
+    def __int__(self, barcode=None, source=None, type=None,msgid=None):
         self.barcode = barcode
         self.source = source
         self.type = type
+        self.msgid=msgid
 
 
 class WechatReceive(db.Model):
