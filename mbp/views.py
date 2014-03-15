@@ -264,12 +264,15 @@ def echo(message):
 
 @app.route('/bd/<source>', methods=['GET', 'POST'])
 def bd(source=None):
-
     """
     绑定微信与门户账户
     :param source:
     :return:
     """
+    if source:
+        w = WechatUser.query.filter(and_(WechatUser.source == source, WechatUser.checked == 1)).first()
+        if w:
+            return '您已经绑定了' + w.usercode
     from  forms import WechatUserSendcode
 
     form = WechatUserSendcode()
@@ -277,7 +280,7 @@ def bd(source=None):
         usercode = form.usercode.data
         sendcode(source=source, usercode=usercode)
 
-        return redirect(url_for('bdchk',usercode=usercode,source=source))
+        return redirect(url_for('bdchk', usercode=usercode, source=source))
     return render_template('WechatUserSendcode.html',
                            title='绑定',
                            form=form, source=source)
@@ -292,38 +295,36 @@ def bdchk(source=None, usercode=None):
     :return:
     """
     from forms import WechatChkCode
-    source= request.args.get('source')
-    usercode= request.args.get('usercode')
+
+    source = request.args.get('source')
+    usercode = request.args.get('usercode')
     form = WechatChkCode()
     if form.validate_on_submit():
         code = form.code.data
         if source and request:
-            w = WechatUser.query.filter(and_(WechatUser.source==source,
-                                             WechatUser.usercode== usercode,
-                                             WechatUser.code==code)).first()
+            w = WechatUser.query.filter(and_(WechatUser.source == source,
+                                             WechatUser.usercode == usercode,
+                                             WechatUser.code == code)).first()
             if w:
-                w.checked=1
+                w.checked = 1
                 db.session.commit()
                 return '绑定成功!请返回微信聊天窗口吧'
-    return render_template('WechatChkCode.html',form=form)
+    return render_template('WechatChkCode.html', form=form)
+
 
 def sendcode(source=None, usercode=None):
-    code = generate_code()
+    from Logic import WechatLogic
+
+    code = WechatLogic.generate_code()
     wechatuser = WechatUser(source=source, usercode=usercode, code=code)
     db.session.add(wechatuser)
     db.session.commit()
     from email import send_email
 
-    send_email('微信绑定验证码是:'+ code, 'sd-lcgly@chinaunicom.cn',
+    send_email('微信绑定验证码是:' + code, 'sd-lcgly@chinaunicom.cn',
                [usercode + '@chinaunicom.cn'], '微信验证码',
                '微信绑定验证码是:' + code)
 
 
 
 
-def generate_code():
-    '''''Function to generate a password'''
-    passwd = []
-    while (len(passwd) < 4):
-        passwd.append(random.choice(string.digits))
-    return ''.join(passwd)
