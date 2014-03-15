@@ -75,13 +75,25 @@ class WechatUser(db.Model):
     code = db.Column('code')
     checked = db.Column('checked')
 
-
-    def __init__(self, source=None, usercode=None, username=None, code=None,checked=0):
+    def __init__(self, source=None, usercode=None, username=None, code=None, checked=0):
         self.source = source
         self.usercode = usercode
         self.username = username
         self.code = code
-        self.checked=checked
+        self.checked = checked
+
+
+class BarcodeList(db.Model):
+    __tablename__ = "barcodelist"
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    barcode = db.Column('barcode')
+    source = db.Column('source')
+    type = db.Column('type')
+
+    def __int__(self, barcode=None, source=None, type=None):
+        self.barcode = barcode
+        self.source = source
+        self.type = type
 
 
 class WechatReceive(db.Model):

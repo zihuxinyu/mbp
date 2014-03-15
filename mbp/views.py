@@ -3,15 +3,15 @@ import random
 import string
 from config import POSTS_PER_PAGE, ADMINS
 from flask_login import current_user, login_required, logout_user, login_user
-from flask.globals import g, request, session
+from flask.globals import g, request, session,session as gsession
 from mbp import lm, app, robot, db
 from flask.templating import render_template
 from sqlalchemy import and_
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist, WechatReceive, WechatUser
-
+from mbp.models import Staff, Snlist, WechatReceive, WechatUser,BarcodeList
+from Logic import WechatLogic
 
 @lm.user_loader
 def load_user(id):
@@ -158,7 +158,7 @@ def sendtest():
 
 @robot.handler
 def echo(message):
-    return 'Hello World'
+    return 'Hello World'+message.type
 
 
 @robot.image
@@ -179,6 +179,7 @@ def echo(message):
 
 @robot.text
 def echo(message, session):
+
     wechat = WechatReceive(id=message.id, target=message.target,
                            source=message.source, time=message.time,
                            raw=message.raw, type=message.type,
@@ -186,19 +187,14 @@ def echo(message, session):
     )
     db.session.add(wechat)
     db.session.commit()
-    count = session.get("count", 0) + 1
-    session["count"] = count
-    return [
 
-        [
-            "第" + count + "次",
-            "描述是个喵啊?",
-            "https://secure.gravatar.com/avatar/0024710771815ef9b74881ab21ba4173?s=420",
-            "http://baidu.com/"
-        ]
+    w=WechatLogic.CheckUser(message.source)
+    if not w:
+        return WechatLogic.SendBDPage(message)
+    return message.content
 
-    ]
-    return str(wechat.guid) + message.content
+
+
 
 
 @robot.link
@@ -269,6 +265,7 @@ def bd(source=None):
     :param source:
     :return:
     """
+
     if source:
         w = WechatUser.query.filter(and_(WechatUser.source == source, WechatUser.checked == 1)).first()
         if w:
@@ -277,7 +274,7 @@ def bd(source=None):
 
     form = WechatUserSendcode()
     if form.validate_on_submit():
-        usercode = form.usercode.data
+        usercode = form.usercode.data.replace('@chinaunicom.cn','')
         sendcode(source=source, usercode=usercode)
 
         return redirect(url_for('bdchk', usercode=usercode, source=source))
@@ -302,18 +299,23 @@ def bdchk(source=None, usercode=None):
     if form.validate_on_submit():
         code = form.code.data
         if source and request:
-            w = WechatUser.query.filter(and_(WechatUser.source == source,
-                                             WechatUser.usercode == usercode,
-                                             WechatUser.code == code)).first()
+            x= WechatUser.query.filter(and_(WechatUser.source == source,
+                                            WechatUser.usercode == usercode,
+                                            WechatUser.code == code))
+
+            w = x.first()
             if w:
-                w.checked = 1
+                x.update({
+                    WechatUser.checked:1
+                })
+
                 db.session.commit()
                 return '绑定成功!请返回微信聊天窗口吧'
-    return render_template('WechatChkCode.html', form=form)
+    return render_template('WechatChkCode.html', form=form,title='请输入验证码')
 
 
 def sendcode(source=None, usercode=None):
-    from Logic import WechatLogic
+
 
     code = WechatLogic.generate_code()
     wechatuser = WechatUser(source=source, usercode=usercode, code=code)
@@ -326,5 +328,9 @@ def sendcode(source=None, usercode=None):
                '微信绑定验证码是:' + code)
 
 
-
-
+@app.route('/test/<source>')
+def test(source):
+    ww=BarcodeList(source=source,type='input',barcode='sfsdfdsafd')
+    db.session.add(ww)
+    db.session.commit()
+    return  str(ww.guid)

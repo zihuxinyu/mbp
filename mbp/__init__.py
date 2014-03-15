@@ -23,7 +23,7 @@ lm.login_message = unicode('请先登录', 'utf-8')
 #CsrfProtect(app)
 mail = Mail(app)
 db = SQLAlchemy(app)
-toolbar = DebugToolbarExtension(app)
+
 robot = WeRoBot(app,token='08560a699966442fae5b3a165c0f8f71',enable_session=True)
 
 
@@ -41,6 +41,9 @@ if not app.debug:
 if not app.debug:
     import logging
     from logging.handlers import RotatingFileHandler
+
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+    logging.getLogger('WeRoBot').setLevel(logging.INFO)
 
     file_handler = RotatingFileHandler('tmp/log.log', 'a', 1 * 1024 * 1024, 10)
     file_handler.setLevel(logging.INFO)
