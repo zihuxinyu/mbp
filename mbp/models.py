@@ -73,12 +73,15 @@ class WechatUser(db.Model):
     usercode = db.Column('usercode')
     username = db.Column('username')
     code = db.Column('code')
+    checked = db.Column('checked')
 
-    def __init__(self, source=None, usercode=None, username=None, code=None):
+
+    def __init__(self, source=None, usercode=None, username=None, code=None,checked=0):
         self.source = source
         self.usercode = usercode
         self.username = username
         self.code = code
+        self.checked=checked
 
 
 class WechatReceive(db.Model):

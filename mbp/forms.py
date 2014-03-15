@@ -21,7 +21,7 @@ class WizStartForm(BaseForm):
     counts = TextField('数目', validators=[Required()], default='20')
 
 
-class WechatUserVeForm(BaseForm):
+class WechatUserSendcode(BaseForm):
     usercode = TextField('门户账户', validators=[Required()])
-    code = TextField('验证码', validators=[Required()])
-    source = TextField('source')
+class WechatChkCode(BaseForm):
+    code=TextField('请输入验证码',validators=[Required()])
