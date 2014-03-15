@@ -7,7 +7,7 @@ SECRET_KEY = 'you-will-never-guess'
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 #Mysql
-SQLALCHEMY_DATABASE_URI = 'mysql://root:root@127.0.0.1/DLS??charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql://root:root@127.0.0.1/DLS?charset=utf8'
 SQLALCHEMY_ECHO = True
 
 # email server
