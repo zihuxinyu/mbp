@@ -26,4 +26,4 @@ ADMINS = ['aixinit@126.com']
 
 # pagination
 POSTS_PER_PAGE = 10
-MAX_SEARCH_RESULTS = 50
+MAX_SEARCH_RESULTS = 20
