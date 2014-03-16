@@ -311,6 +311,7 @@ def showzc(zcbh=None):
     :param zcbh:
     :return:
     """
+    
     return zcbh
 
 
@@ -323,7 +324,6 @@ def test(source):
 
 
 @app.route('/cs/<tablename>')
-
 def cs(tablename):
     """
     输入表名,生成MODEL
@@ -334,6 +334,5 @@ def cs(tablename):
     cur= db.engine.execute(sql)
     entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1],EXTRA=row[2]) for row in cur.fetchall()]
     for x in entries:
-
         print(x)
-    return  render_template('cs.html',list=entries,tablename=tablename)
+    return render_template('cs.html',list=entries,tablename=tablename)

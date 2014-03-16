@@ -82,7 +82,6 @@ class WechatUser(db.Model):
         self.code = code
         self.checked = checked
 
-
 class BarcodeList(db.Model):
     __tablename__ = "barcodelist"
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
