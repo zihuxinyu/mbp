@@ -320,3 +320,20 @@ def test(source):
     db.session.add(ww)
     db.session.commit()
     return str(ww.guid)
+
+
+@app.route('/cs/<tablename>')
+
+def cs(tablename):
+    """
+    输入表名,生成MODEL
+    :param tablename:
+    :return:
+    """
+    sql="SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='DLS' AND table_name='"+ tablename+"'"
+    cur= db.engine.execute(sql)
+    entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1],EXTRA=row[2]) for row in cur.fetchall()]
+    for x in entries:
+
+        print(x)
+    return  render_template('cs.html',list=entries,tablename=tablename)
