@@ -153,7 +153,7 @@ def showsnlist(page=1):
 def sendtest():
     from email import send_email
 
-    send_email('ss', 'aixinit@126.com', ['aixinit@126.com'], 'textboy', 'htmlbody')
+    send_email('ss', 'sd-lcgly@chinaunicom.cn', ['sd-lcgly@chinaunicom.cn'], 'textboy', 'htmlbody')
     return "ok"
 
 
@@ -311,8 +311,10 @@ def showzc(zcbh=None):
     :param zcbh:
     :return:
     """
-    
-    return zcbh
+    from mbp.models import zczb
+    zz=zczb.query.filter(zczb.zcbqh==zcbh).first()
+
+    return render_template('showzcbq.html',entry=zz)
 
 
 @app.route('/test/<source>')

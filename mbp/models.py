@@ -37,6 +37,7 @@ class wiz_user(db.Model):
         self.regcode = regcode
 
 
+
 class Staff(db.Model):
     __tablename__ = 'DLS_STAFF_CHNL'
     #SELECT `staff_id`, `chnl_id`, `chnl_name` FROM `DLS_STAFF_CHNL` WHERE 1
@@ -156,3 +157,225 @@ class WechatReceive(db.Model):
         self.recognition = recognition
 
 
+class zczb(db.Model):
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    zdmc = db.Column('zdmc')
+    sf = db.Column('sf')
+    ds = db.Column('ds')
+    zcly = db.Column('zcly')
+    zcbqh = db.Column('zcbqh')
+    yzcbqh = db.Column('yzcbqh')
+    sblx = db.Column('sblx')
+    sbjb = db.Column('sbjb')
+    yzcmc = db.Column('yzcmc')
+    swmc = db.Column('swmc')
+    swzt = db.Column('swzt')
+    swfl = db.Column('swfl')
+    gsbh = db.Column('gsbh')
+    zczbbh = db.Column('zczbbh')
+    gkglzyx = db.Column('gkglzyx')
+    zygkglbm = db.Column('zygkglbm')
+    zczyglzrrygbh = db.Column('zczyglzrrygbh')
+    zgzyglzrrxm = db.Column('zgzyglzrrxm')
+    qcbzyx = db.Column('qcbzyx')
+    dlswbz = db.Column('dlswbz')
+    fzcbqh = db.Column('fzcbqh')
+    yyly = db.Column('yyly')
+    zcml = db.Column('zcml')
+    zchszy = db.Column('zchszy')
+    zcgjzms = db.Column('zcgjzms')
+    zcgjz = db.Column('zcgjz')
+    xtzylx = db.Column('xtzylx')
+    gysmc = db.Column('gysmc')
+    sccsmc = db.Column('sccsmc')
+    yggxh = db.Column('yggxh')
+    ggxh = db.Column('ggxh')
+    xlh = db.Column('xlh')
+    zcsl = db.Column('zcsl')
+    zcsldw = db.Column('zcsldw')
+    fzsl = db.Column('fzsl')
+    fujldw = db.Column('fujldw')
+    gmrq = db.Column('gmrq')
+    qyrq = db.Column('qyrq')
+    syys = db.Column('syys')
+    zbksrq = db.Column('zbksrq')
+    zbjzrq = db.Column('zbjzrq')
+    xmbh = db.Column('xmbh')
+    xmmc = db.Column('xmmc')
+    xmfl = db.Column('xmfl')
+    sfkr = db.Column('sfkr')
+    zrbmbm = db.Column('zrbmbm')
+    zrbmmc = db.Column('zrbmmc')
+    zrrygbh = db.Column('zrrygbh')
+    zrrxm = db.Column('zrrxm')
+    bgryxdz = db.Column('bgryxdz')
+    faddbm = db.Column('faddbm')
+    faddms = db.Column('faddms')
+    bzdz = db.Column('bzdz')
+    zcyz = db.Column('zcyz')
+    zcjz = db.Column('zcjz')
+    whfs = db.Column('whfs')
+    whbm = db.Column('whbm')
+    whzrrygbh = db.Column('whzrrygbh')
+    whzrrygxm = db.Column('whzrrygxm')
+    whryxdz = db.Column('whryxdz')
+    sfxcgwb = db.Column('sfxcgwb')
+    zcgs = db.Column('zcgs')
+    zypzms = db.Column('zypzms')
+    xyxt = db.Column('xyxt')
+    sxsj = db.Column('sxsj')
+    xxsj = db.Column('xxsj')
+    edgl = db.Column('edgl')
+    dydwgxtzdzjmc = db.Column('dydwgxtzdzjmc')
+    sbszjfsx = db.Column('sbszjfsx')
+    jjhlh = db.Column('jjhlh')
+    qsu = db.Column('qsu')
+    gd = db.Column('gd')
+    oslxjbb = db.Column('oslxjbb')
+    bdxx = db.Column('bdxx')
+    wxmacdz = db.Column('wxmacdz')
+    yxmacdz = db.Column('yxmacdz')
+    sbhostname = db.Column('sbhostname')
+    sboid = db.Column('sboid')
+    sbdescription = db.Column('sbdescription')
+    ipxx = db.Column('ipxx')
+    slwlsb = db.Column('slwlsb')
+    sbcj = db.Column('sbcj')
+    jjlx = db.Column('jjlx')
+    zjlx = db.Column('zjlx')
+    zjsl = db.Column('zjsl')
+    jjdsmlx = db.Column('jjdsmlx')
+    swms = db.Column('swms')
+    zdyt = db.Column('zdyt')
+    zzbz = db.Column('zzbz')
+    kzlybz = db.Column('kzlybz')
+    xdbz = db.Column('xdbz')
+    ygcbhjmc = db.Column('ygcbhjmc')
+    ysr = db.Column('ysr')
+    fsssjfj = db.Column('fsssjfj')
+    bz = db.Column('bz')
+    bfbz = db.Column('bfbz')
+    bz1 = db.Column('bz1')
+    bz2 = db.Column('bz2')
+    bz3 = db.Column('bz3')
+    bz4 = db.Column('bz4')
+    bz5 = db.Column('bz5')
+    sbsmzj = db.Column('sbsmzj')
+    sjlyfl = db.Column('sjlyfl')
+
+    def __int__(self, zdmc=None, sf=None, ds=None, zcly=None, zcbqh=None, yzcbqh=None, sblx=None, sbjb=None, yzcmc=None,
+                swmc=None, swzt=None, swfl=None, gsbh=None, zczbbh=None, gkglzyx=None, zygkglbm=None,
+                zczyglzrrygbh=None, zgzyglzrrxm=None, qcbzyx=None, dlswbz=None, fzcbqh=None, yyly=None, zcml=None,
+                zchszy=None, zcgjzms=None, zcgjz=None, xtzylx=None, gysmc=None, sccsmc=None, yggxh=None, ggxh=None,
+                xlh=None, zcsl=None, zcsldw=None, fzsl=None, fujldw=None, gmrq=None, qyrq=None, syys=None, zbksrq=None,
+                zbjzrq=None, xmbh=None, xmmc=None, xmfl=None, sfkr=None, zrbmbm=None, zrbmmc=None, zrrygbh=None,
+                zrrxm=None, bgryxdz=None, faddbm=None, faddms=None, bzdz=None, zcyz=None, zcjz=None, whfs=None,
+                whbm=None, whzrrygbh=None, whzrrygxm=None, whryxdz=None, sfxcgwb=None, zcgs=None, zypzms=None,
+                xyxt=None, sxsj=None, xxsj=None, edgl=None, dydwgxtzdzjmc=None, sbszjfsx=None, jjhlh=None, qsu=None,
+                gd=None, oslxjbb=None, bdxx=None, wxmacdz=None, yxmacdz=None, sbhostname=None, sboid=None,
+                sbdescription=None, ipxx=None, slwlsb=None, sbcj=None, jjlx=None, zjlx=None, zjsl=None, jjdsmlx=None,
+                swms=None, zdyt=None, zzbz=None, kzlybz=None, xdbz=None, ygcbhjmc=None, ysr=None, fsssjfj=None, bz=None,
+                bfbz=None, bz1=None, bz2=None, bz3=None, bz4=None, bz5=None, sbsmzj=None, sjlyfl=None):
+        self.zdmc = zdmc
+        self.sf = sf
+        self.ds = ds
+        self.zcly = zcly
+        self.zcbqh = zcbqh
+        self.yzcbqh = yzcbqh
+        self.sblx = sblx
+        self.sbjb = sbjb
+        self.yzcmc = yzcmc
+        self.swmc = swmc
+        self.swzt = swzt
+        self.swfl = swfl
+        self.gsbh = gsbh
+        self.zczbbh = zczbbh
+        self.gkglzyx = gkglzyx
+        self.zygkglbm = zygkglbm
+        self.zczyglzrrygbh = zczyglzrrygbh
+        self.zgzyglzrrxm = zgzyglzrrxm
+        self.qcbzyx = qcbzyx
+        self.dlswbz = dlswbz
+        self.fzcbqh = fzcbqh
+        self.yyly = yyly
+        self.zcml = zcml
+        self.zchszy = zchszy
+        self.zcgjzms = zcgjzms
+        self.zcgjz = zcgjz
+        self.xtzylx = xtzylx
+        self.gysmc = gysmc
+        self.sccsmc = sccsmc
+        self.yggxh = yggxh
+        self.ggxh = ggxh
+        self.xlh = xlh
+        self.zcsl = zcsl
+        self.zcsldw = zcsldw
+        self.fzsl = fzsl
+        self.fujldw = fujldw
+        self.gmrq = gmrq
+        self.qyrq = qyrq
+        self.syys = syys
+        self.zbksrq = zbksrq
+        self.zbjzrq = zbjzrq
+        self.xmbh = xmbh
+        self.xmmc = xmmc
+        self.xmfl = xmfl
+        self.sfkr = sfkr
+        self.zrbmbm = zrbmbm
+        self.zrbmmc = zrbmmc
+        self.zrrygbh = zrrygbh
+        self.zrrxm = zrrxm
+        self.bgryxdz = bgryxdz
+        self.faddbm = faddbm
+        self.faddms = faddms
+        self.bzdz = bzdz
+        self.zcyz = zcyz
+        self.zcjz = zcjz
+        self.whfs = whfs
+        self.whbm = whbm
+        self.whzrrygbh = whzrrygbh
+        self.whzrrygxm = whzrrygxm
+        self.whryxdz = whryxdz
+        self.sfxcgwb = sfxcgwb
+        self.zcgs = zcgs
+        self.zypzms = zypzms
+        self.xyxt = xyxt
+        self.sxsj = sxsj
+        self.xxsj = xxsj
+        self.edgl = edgl
+        self.dydwgxtzdzjmc = dydwgxtzdzjmc
+        self.sbszjfsx = sbszjfsx
+        self.jjhlh = jjhlh
+        self.qsu = qsu
+        self.gd = gd
+        self.oslxjbb = oslxjbb
+        self.bdxx = bdxx
+        self.wxmacdz = wxmacdz
+        self.yxmacdz = yxmacdz
+        self.sbhostname = sbhostname
+        self.sboid = sboid
+        self.sbdescription = sbdescription
+        self.ipxx = ipxx
+        self.slwlsb = slwlsb
+        self.sbcj = sbcj
+        self.jjlx = jjlx
+        self.zjlx = zjlx
+        self.zjsl = zjsl
+        self.jjdsmlx = jjdsmlx
+        self.swms = swms
+        self.zdyt = zdyt
+        self.zzbz = zzbz
+        self.kzlybz = kzlybz
+        self.xdbz = xdbz
+        self.ygcbhjmc = ygcbhjmc
+        self.ysr = ysr
+        self.fsssjfj = fsssjfj
+        self.bz = bz
+        self.bfbz = bfbz
+        self.bz1 = bz1
+        self.bz2 = bz2
+        self.bz3 = bz3
+        self.bz4 = bz4
+        self.bz5 = bz5
+        self.sbsmzj = sbsmzj
+        self.sjlyfl = sjlyfl

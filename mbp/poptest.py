@@ -133,5 +133,6 @@ if __name__ == "__main__":
     print 'begin to get email...'
     #getMail('pop.gmail.com', 'xxxxxxxx@gmail.com', 'xxxxxxxx', mypath, 993, 1)
     #126邮箱登陆没用ssl
-    getMail('imap.126.com', 'aixinit@126.com', '9Loveme?', mypath, 143, 0)
+    #getMail('imap.126.com', 'aixinit@126.com', '9Loveme?', mypath, 143, 0)
+    getMail('sd.pop.chinaunicom.cn', 'sd-lcgly@chinaunicom.cn', 'wbh123!!', mypath, 110, 0)
     print 'the end of get email.'
