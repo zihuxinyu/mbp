@@ -152,8 +152,7 @@ def showsnlist(page=1):
 @app.route('/sendmail')
 def sendtest():
     from email import send_email
-
-    send_email('ss', 'sd-lcgly@chinaunicom.cn', ['sd-lcgly@chinaunicom.cn'], 'textboy', 'htmlbody')
+    send_email('MSGSEND#15605468613#哈哈哈', 'sd-lcgly@chinaunicom.cn', ['sd-lcgly@chinaunicom.cn'],None,None)
     return "ok"
 
 

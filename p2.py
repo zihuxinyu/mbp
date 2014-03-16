@@ -31,6 +31,7 @@ if num > 0:
             pass
         pop.dele(i+1)
         #print emsg.is_multipart()
-        #print body
+        #print emsg
+
 pop.quit()
 print "over"
