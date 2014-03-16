@@ -1,0 +1,30 @@
+
+<hr>
+class {{tablename}}(db.Model):<br>
+<code>
+
+    {% for x in list %}
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    {%if x.EXTRA=='auto_increment'%}
+    {{x.COLUMN_NAME}}=db.Column(Integer, unique=True, primary_key=True, autoincrement=True)<br>
+    {%elif x.EXTRA=='on update CURRENT_TIMESTAMP'%}
+    {%else%}
+    {{x.COLUMN_NAME}}=db.Column('{{x.COLUMN_NAME}}')<br>
+    {%endif%}
+    {%endfor%}
+
+
+    def __int__(self,
+    {%for x in list if x.EXTRA not in ['auto_increment','on update CURRENT_TIMESTAMP'] %}
+        {{x.COLUMN_NAME}}=None
+        {%if not loop.last%},{%endif%}
+    {%endfor%}
+
+    ):<br>
+    {% for x in list %}
+    {%if x.EXTRA!='auto_increment' and x.EXTRA!='on update CURRENT_TIMESTAMP'%}
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    self.{{x.COLUMN_NAME}}={{x.COLUMN_NAME}}<br>
+    {%endif%}
+    {%endfor%}
+</code>
