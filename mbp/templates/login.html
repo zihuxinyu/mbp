@@ -1,38 +1,18 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
-
-
 {% from "_formhelper.html" import render_field %}
-
 {% block content %}
 <div class="well well-large">
-
-
-    <form class="form-horizontal form-signin" role="form" action="" method="post" name="login">
-        <h2 class="form-signin-heading center">号码状态查询</h2>
+    <form class="form-inline form-signin" role="form" action="{{url_for(action,**request.args)}}" method="post">
         {{ form.hidden_tag() }}
-        {{ render_field(form.staffid) }}
-        {{ render_field(form.remember_me) }}
-
+        <h2 class="form-signin-heading">登录系统</h2>
         <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-                <button type="submit" class="btn btn-primary">Sign in</button>
-            </div>
+            <label class="sr-only" for="usercode">请输入门户账户</label>
+            <input type="text" class="form-control" id="usercode" name="usercode" placeholder="请输入门户账户">
         </div>
+        <button type="submit" class="btn btn-success">获取验证码</button>
     </form>
+    <div class="alert alert-success">请输入门户账户, 验证码会发送到您的手机
+    </div>
 </div>
-
-
 {% endblock %}
-<div class="container">
-
-    <form class="form-signin" method="POST" action="">
-        {{ form.hidden_tag() }}
-        <h2 class="form-signin-heading">号码状态查询</h2>
-        <input type="text" class="input-block-level" placeholder="Email address" name="email">
-        <input type="password" class="input-block-level" placeholder="Password" name="password">
-
-        <button class="btn btn-large btn-primary" type="submit">登 录</button>
-    </form>
-
-</div> <!-- /container -->

@@ -7,6 +7,43 @@ ROLE_USER = 0
 ROLE_ADMIN = 1
 
 
+class portal_user(db.Model):
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    user_code = db.Column('user_code')
+    user_name = db.Column('user_name')
+    user_mobile = db.Column('user_mobile')
+    dpt_name = db.Column('dpt_name')
+    topdpt = db.Column('topdpt')
+    manager = db.Column('manager')
+    msg = db.Column('msg')
+    msgexpdate = db.Column('msgexpdate')
+
+
+    def __int__(self, user_code=None, user_name=None, user_mobile=None, dpt_name=None, topdpt=None, manager=None, msg=None,
+                msgexpdate=None):
+        self.user_code = user_code
+        self.user_name = user_name
+        self.user_mobile = user_mobile
+        self.dpt_name = dpt_name
+        self.topdpt = topdpt
+        self.manager = manager
+        self.msg = msg
+        self.msgexpdate = msgexpdate
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.user_code)
+
+
+
 class Snlist(db.Model):
     __tablename__ = 'DLS_SNLIST'
     #SELECT `user_id`, `serial_number`, `develop_depart_id`, `open_date`, `user_state_codeset`, `state_name` FROM

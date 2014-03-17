@@ -10,13 +10,13 @@ from sqlalchemy import and_
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList
+from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList,portal_user
 from Logic import WechatLogic, BarcodeLogic
 
 
 @lm.user_loader
 def load_user(id):
-    return Staff.query.get(id)
+    return portal_user.query.get(id)
 
 
 @app.before_request
@@ -43,14 +43,45 @@ def login():
     #        return redirect( url_for( 'index' ) )
     form = LoginForm()
     if form.validate_on_submit():
-        session['remember_me'] = form.remember_me.data
-        return after_login(form.staffid.data)
-    return render_template('login.html',
-                           title='Sign In',
-                           form=form)
+        # session['remember_me'] = form.remember_me.data
+        #return after_login(form.staffid.data)
+        sendlogincode(usercode=form.usercode.data)
+        flash('验证码发送成功!')
+        return redirect(url_for('loginchk', usercode=form.usercode.data))
+    return render_template('login.html',action='login',
+                               title='登录',
+                               form=form)
 
 
-def after_login(staffid=None):
+@app.route('/loginchk', methods=['GET', 'POST'])
+def loginchk(source=None, usercode=None):
+    """
+    验证绑定码是否匹配
+    :param source:
+    :param usercode:
+    :return:
+    """
+    from forms import WechatChkCode
+
+    usercode = request.args.get('usercode')
+    form = WechatChkCode()
+    if form.validate_on_submit():
+        code = form.code.data
+        if usercode and code:
+            x=portal_user.query.filter(and_(portal_user.user_code==usercode,
+                                            portal_user.msg==code))
+
+            w = x.first()
+            if w:
+                after_login(usercode)
+
+            else:
+                flash('验证失败,请重试')
+                return redirect(url_for('login'))
+    return render_template('checkcode.html', action='loginchk', opname='登录系统', form=form, title='请输入验证码')
+
+
+def after_login(user_code=None):
     #    if resp.email is None or resp.email == "":
     #        flash( '登录失败' )
     #        return redirect( url_for( 'login' ) )
@@ -67,18 +98,18 @@ def after_login(staffid=None):
     #        # make the user follow him/herself
     #        db.session.add( user.follow( user ) )
     #        db.session.commit()
-    staff = Staff.query.get(staffid)
+    staff =portal_user.query.filter(portal_user.user_code== user_code).first()
     if not staff:
         flash('登录失败，查无此ID')
         return redirect(url_for('login'))
     flash('登录成功')
-    session["chnl_id"] = staff.chnl_id
-    remember_me = False
-    if 'remember_me' in session:
-        remember_me = session['remember_me']
-        session.pop('remember_me', None)
-    login_user(staff, remember=remember_me)
-    return redirect(request.args.get('next') or url_for('showsnlist'))
+    # session["user_code"] = staff.user_code
+    # remember_me = False
+    # if 'remember_me' in session:
+    #     remember_me = session['remember_me']
+    #     session.pop('remember_me', None)
+    login_user(staff, remember=True)
+    return 'ok'
 
 
 @app.route('/logout')
@@ -254,7 +285,7 @@ def bd(source=None):
     if form.validate_on_submit():
         usercode = form.usercode.data.replace('@chinaunicom.cn', '')
         sendcode(source=source, usercode=usercode)
-
+        flash('验证码发送成功!')
         return redirect(url_for('bdchk', usercode=usercode, source=source))
     return render_template('WechatUserSendcode.html',
                            title='绑定',
@@ -288,14 +319,28 @@ def bdchk(source=None, usercode=None):
                 })
 
                 db.session.commit()
-                return '绑定成功!请返回微信聊天窗口吧'
-    return render_template('WechatChkCode.html', form=form, title='请输入验证码')
+                return render_template('msg.html',msg='绑定成功!请返回微信聊天窗口吧')
+    return render_template('checkcode.html',action='bdchk',opname='绑定账户', form=form, title='请输入验证码')
 
 
 def sendcode(source=None, usercode=None):
     code = WechatLogic.generate_code()
     wechatuser = WechatUser(source=source, usercode=usercode, code=code)
     db.session.add(wechatuser)
+    db.session.commit()
+    from email import send_email
+
+    send_email('微信绑定验证码是:' + code, 'sd-lcgly@chinaunicom.cn',
+               [usercode + '@chinaunicom.cn'], '微信验证码',
+               '微信绑定验证码是:' + code)
+
+
+def sendlogincode(usercode=None):
+    code = WechatLogic.generate_code()
+    xx=portal_user.query.filter(portal_user.user_code==usercode)
+    xx.update({
+       portal_user.msg:code
+    })
     db.session.commit()
     from email import send_email
 

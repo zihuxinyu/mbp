@@ -12,8 +12,7 @@ class BaseForm(w, Form):
 
 
 class LoginForm(BaseForm):
-    staffid = TextField('系统工号', validators=[Required()])
-    remember_me = BooleanField('记住', default=False)
+    usercode = TextField('请输入门户账户', validators=[Required()])
 
 
 class WizStartForm(BaseForm):
