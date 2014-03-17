@@ -2,423 +2,442 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-
+{%if child%}
+<div class="btn-group">
+    <button type="button" class="btn btn-danger">子资产 <span class="badge">{{child|length}}</span></button>
+    <button type="button" class="btn btn-danger dropdown-toggle " data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        {%for x in child%}
+        <li><a href="/showzc/{{x.zcbqh}}">
+            <span class="label label-primary">{{x.zcbqh}}</span>
+            <span class="label label-success">{{x.swmc}}</span>
+            <span class="label label-info">{{x.ggxh}}</span>
+        </a></li>
+        {%endfor%}
+    </ul>
+</div>
+{%endif%}
 <div class="table-responsive">
-    <table class="table table-condensed table-hover table-bordered table-striped">
-        <tr>
-            <td width="20px">字段名称</td>
-            <td>{{entry.zdmc}}</td>
-        </tr>
-        <tr>
-            <td>省分</td>
-            <td>{{entry.sf}}</td>
-        </tr>
-        <tr>
-            <td>地市</td>
-            <td>{{entry.ds}}</td>
-        </tr>
-        <tr>
-            <td>资产来源</td>
-            <td>{{entry.zcly}}</td>
-        </tr>
-        <tr>
-            <td>资产标签号</td>
-            <td>{{entry.zcbqh}}</td>
-        </tr>
-        <tr>
-            <td>原资产标签号</td>
-            <td>{{entry.yzcbqh}}</td>
-        </tr>
-        <tr>
-            <td>设备类型</td>
-            <td>{{entry.sblx}}</td>
-        </tr>
-        <tr>
-            <td>设备级别</td>
-            <td>{{entry.sbjb}}</td>
-        </tr>
-        <tr>
-            <td>原资产名称</td>
-            <td>{{entry.yzcmc}}</td>
-        </tr>
-        <tr>
-            <td>实物名称</td>
-            <td>{{entry.swmc}}</td>
-        </tr>
-        <tr>
-            <td>实物状态</td>
-            <td>{{entry.swzt}}</td>
-        </tr>
-        <tr>
-            <td>实物分类</td>
-            <td>{{entry.swfl}}</td>
-        </tr>
-        <tr>
-            <td>公司编号</td>
-            <td>{{entry.gsbh}}</td>
-        </tr>
-        <tr>
-            <td>资产账簿编号</td>
-            <td>{{entry.zczbbh}}</td>
-        </tr>
-        <tr>
-            <td>归口管理专业线</td>
-            <td>{{entry.gkglzyx}}</td>
-        </tr>
-        <tr>
-            <td>专业归口管理部门</td>
-            <td>{{entry.zygkglbm}}</td>
-        </tr>
-        <tr>
-            <td>资产专业管理<br>责任人员工编号</td>
-            <td>{{entry.zczyglzrrygbh}}</td>
-        </tr>
-        <tr>
-            <td>资产专业管理<br>责任人姓名</td>
-            <td>{{entry.zgzyglzrrxm}}</td>
-        </tr>
-        <tr>
-            <td>全成本专业线</td>
-            <td>{{entry.qcbzyx}}</td>
-        </tr>
-        <tr>
-            <td>独立实物标识</td>
-            <td>{{entry.dlswbz}}</td>
-        </tr>
-        <tr>
-            <td>父资产标签号</td>
-            <td>{{entry.fzcbqh}}</td>
-        </tr>
-        <tr>
-            <td>应用领域</td>
-            <td>{{entry.yyly}}</td>
-        </tr>
-        <tr>
-            <td>资产目录</td>
-            <td>{{entry.zcml}}</td>
-        </tr>
-        <tr>
-            <td>资产核算专业</td>
-            <td>{{entry.zchszy}}</td>
-        </tr>
-        <tr>
-            <td>资产关键字描述</td>
-            <td>{{entry.zcgjzms}}</td>
-        </tr>
-        <tr>
-            <td>资产关键字</td>
-            <td>{{entry.zcgjz}}</td>
-        </tr>
-        <tr>
-            <td>系统专业类型</td>
-            <td>{{entry.xtzylx}}</td>
-        </tr>
-        <tr>
-            <td>供应商名称</td>
-            <td>{{entry.gysmc}}</td>
-        </tr>
-        <tr>
-            <td>生产厂商名称</td>
-            <td>{{entry.sccsmc}}</td>
-        </tr>
-        <tr>
-            <td>原规格型号</td>
-            <td>{{entry.yggxh}}</td>
-        </tr>
-        <tr>
-            <td>规格型号</td>
-            <td>{{entry.ggxh}}</td>
-        </tr>
-        <tr>
-            <td>序列号</td>
-            <td>{{entry.xlh}}</td>
-        </tr>
-        <tr>
-            <td>资产数量</td>
-            <td>{{entry.zcsl}}</td>
-        </tr>
-        <tr>
-            <td>资产计量单位</td>
-            <td>{{entry.zcsldw}}</td>
-        </tr>
-        <tr>
-            <td>辅助数量</td>
-            <td>{{entry.fzsl}}</td>
-        </tr>
-        <tr>
-            <td>辅助计量单位</td>
-            <td>{{entry.fujldw}}</td>
-        </tr>
-        <tr>
-            <td>购买日期</td>
-            <td>{{entry.gmrq}}</td>
-        </tr>
-        <tr>
-            <td>启用日期</td>
-            <td>{{entry.qyrq}}</td>
-        </tr>
-        <tr>
-            <td>使用月数</td>
-            <td>{{entry.syys}}</td>
-        </tr>
-        <tr>
-            <td>质保开始日期</td>
-            <td>{{entry.zbksrq}}</td>
-        </tr>
-        <tr>
-            <td>质保截止日期</td>
-            <td>{{entry.zbjzrq}}</td>
-        </tr>
-        <tr>
-            <td>项目编号</td>
-            <td>{{entry.xmbh}}</td>
-        </tr>
-        <tr>
-            <td>项目名称</td>
-            <td>{{entry.xmmc}}</td>
-        </tr>
-        <tr>
-            <td>项目分类</td>
-            <td>{{entry.xmfl}}</td>
-        </tr>
-        <tr>
-            <td>是否扩容</td>
-            <td>{{entry.sfkr}}</td>
-        </tr>
-        <tr>
-            <td>责任部门编码</td>
-            <td>{{entry.zrbmbm}}</td>
-        </tr>
-        <tr>
-            <td>责任部门名称</td>
-            <td>{{entry.zrbmmc}}</td>
-        </tr>
-        <tr>
-            <td>责任人员工编号</td>
-            <td>{{entry.zrrygbh}}</td>
-        </tr>
-        <tr>
-            <td>责任人姓名</td>
-            <td>{{entry.zrrxm}}</td>
-        </tr>
-        <tr>
-            <td>保管人邮箱地址</td>
-            <td>{{entry.bgryxdz}}</td>
-        </tr>
-        <tr>
-            <td>FA地点编码</td>
-            <td>{{entry.faddbm}}</td>
-        </tr>
-        <tr>
-            <td>FA地点描述</td>
-            <td>{{entry.faddms}}</td>
-        </tr>
-        <tr>
-            <td>标准地址</td>
-            <td>{{entry.bzdz}}</td>
-        </tr>
-        <tr>
-            <td>资产原值</td>
-            <td>{{entry.zcyz}}</td>
-        </tr>
-        <tr>
-            <td>资产净额</td>
-            <td>{{entry.zcjz}}</td>
-        </tr>
-        <tr>
-            <td>维护方式</td>
-            <td>{{entry.whfs}}</td>
-        </tr>
-        <tr>
-            <td>维护部门</td>
-            <td>{{entry.whbm}}</td>
-        </tr>
-        <tr>
-            <td>维护责任人<br>员工编号</td>
-            <td>{{entry.whzrrygbh}}</td>
-        </tr>
-        <tr>
-            <td>维护责任人<br>员工姓名</td>
-            <td>{{entry.whzrrygxm}}</td>
-        </tr>
-        <tr>
-            <td>维护人邮箱地址</td>
-            <td>{{entry.whryxdz}}</td>
-        </tr>
-        <tr>
-            <td>是否需采购维保</td>
-            <td>{{entry.sfxcgwb}}</td>
-        </tr>
-        <tr>
-            <td>资产归属</td>
-            <td>{{entry.zcgs}}</td>
-        </tr>
-        <tr>
-            <td>主要配置描述</td>
-            <td>{{entry.zypzms}}</td>
-        </tr>
-        <tr>
-            <td>现有系统/应用名称</td>
-            <td>{{entry.xyxt}}</td>
-        </tr>
-        <tr>
-            <td>上线时间</td>
-            <td>{{entry.sxsj}}</td>
-        </tr>
-        <tr>
-            <td>下线时间</td>
-            <td>{{entry.xxsj}}</td>
-        </tr>
-        <tr>
-            <td>额定功率</td>
-            <td>{{entry.edgl}}</td>
-        </tr>
-        <tr>
-            <td>对应的网管系统<br>中的主机名称</td>
-            <td>{{entry.dydwgxtzdzjmc}}</td>
-        </tr>
-        <tr>
-            <td>设备所在机房属性</td>
-            <td>{{entry.sbszjfsx}}</td>
-        </tr>
-        <tr>
-            <td>机架行列号</td>
-            <td>{{entry.jjhlh}}</td>
-        </tr>
-        <tr>
-            <td>起始U</td>
-            <td>{{entry.qsu}}</td>
-        </tr>
-        <tr>
-            <td>高度</td>
-            <td>{{entry.gd}}</td>
-        </tr>
-        <tr>
-            <td>OS类型及版本</td>
-            <td>{{entry.oslxjbb}}</td>
-        </tr>
-        <tr>
-            <td>补丁信息</td>
-            <td>{{entry.bdxx}}</td>
-        </tr>
-        <tr>
-            <td>无线mac地址</td>
-            <td>{{entry.wxmacdz}}</td>
-        </tr>
-        <tr>
-            <td>有线mac地址</td>
-            <td>{{entry.yxmacdz}}</td>
-        </tr>
-        <tr>
-            <td>设备hostname</td>
-            <td>{{entry.sbhostname}}</td>
-        </tr>
-        <tr>
-            <td>设备OID</td>
-            <td>{{entry.sboid}}</td>
-        </tr>
-        <tr>
-            <td>设备Description</td>
-            <td>{{entry.sbdescription}}</td>
-        </tr>
-        <tr>
-            <td>IP信息</td>
-            <td>{{entry.ipxx}}</td>
-        </tr>
-        <tr>
-            <td>上联网络设备</td>
-            <td>{{entry.slwlsb}}</td>
-        </tr>
-        <tr>
-            <td>设备层级</td>
-            <td>{{entry.sbcj}}</td>
-        </tr>
-        <tr>
-            <td>机架类型</td>
-            <td>{{entry.jjlx}}</td>
-        </tr>
-        <tr>
-            <td>子架类型</td>
-            <td>{{entry.zjlx}}</td>
-        </tr>
-        <tr>
-            <td>子架数量</td>
-            <td>{{entry.zjsl}}</td>
-        </tr>
-        <tr>
-            <td>机架单双面类型</td>
-            <td>{{entry.jjdsmlx}}</td>
-        </tr>
-        <tr>
-            <td>实物描述</td>
-            <td>{{entry.swms}}</td>
-        </tr>
-        <tr>
-            <td>终端用途</td>
-            <td>{{entry.zdyt}}</td>
-        </tr>
-        <tr>
-            <td>增资标识</td>
-            <td>{{entry.zzbz}}</td>
-        </tr>
-        <tr>
-            <td>可再利用标识</td>
-            <td>{{entry.kzlybz}}</td>
-        </tr>
-        <tr>
-            <td>下电标识</td>
-            <td>{{entry.xdbz}}</td>
-        </tr>
-        <tr>
-            <td>原工程编号及名称</td>
-            <td>{{entry.ygcbhjmc}}</td>
-        </tr>
-        <tr>
-            <td>验收人</td>
-            <td>{{entry.ysr}}</td>
-        </tr>
-        <tr>
-            <td>附属设施及附件</td>
-            <td>{{entry.fsssjfj}}</td>
-        </tr>
-        <tr>
-            <td>备注</td>
-            <td>{{entry.bz}}</td>
-        </tr>
-        <tr>
-            <td>报废标识</td>
-            <td>{{entry.bfbz}}</td>
-        </tr>
-        <tr>
-            <td>备注1</td>
-            <td>{{entry.bz1}}</td>
-        </tr>
-        <tr>
-            <td>备注2</td>
-            <td>{{entry.bz2}}</td>
-        </tr>
-        <tr>
-            <td>备注3</td>
-            <td>{{entry.bz3}}</td>
-        </tr>
-        <tr>
-            <td>备注4</td>
-            <td>{{entry.bz4}}</td>
-        </tr>
-        <tr>
-            <td>备注5</td>
-            <td>{{entry.bz5}}</td>
-        </tr>
-        <tr>
-            <td>设备生命周期</td>
-            <td>{{entry.sbsmzj}}</td>
-        </tr>
-        <tr>
-            <td>数据来源分类</td>
-            <td>{{entry.sjlyfl}}</td>
-        </tr>
-    </table>
+
+
+<table class="table table-condensed table-hover table-bordered table-striped">
+
+<tr>
+    <td width="20px">字段名称</td>
+    <td>{{entry.zdmc}}</td>
+</tr>
+<tr>
+    <td>省分</td>
+    <td>{{entry.sf}}</td>
+</tr>
+<tr>
+    <td>地市</td>
+    <td>{{entry.ds}}</td>
+</tr>
+<tr>
+    <td>资产来源</td>
+    <td>{{entry.zcly}}</td>
+</tr>
+<tr>
+    <td>资产标签号</td>
+    <td>{{entry.zcbqh}}</td>
+</tr>
+<tr>
+    <td>原资产标签号</td>
+    <td>{{entry.yzcbqh}}</td>
+</tr>
+<tr>
+    <td>设备类型</td>
+    <td>{{entry.sblx}}</td>
+</tr>
+<tr>
+    <td>设备级别</td>
+    <td>{{entry.sbjb}}</td>
+</tr>
+<tr>
+    <td>原资产名称</td>
+    <td>{{entry.yzcmc}}</td>
+</tr>
+<tr>
+    <td>实物名称</td>
+    <td>{{entry.swmc}}</td>
+</tr>
+<tr>
+    <td>实物状态</td>
+    <td>{{entry.swzt}}</td>
+</tr>
+<tr>
+    <td>实物分类</td>
+    <td>{{entry.swfl}}</td>
+</tr>
+<tr>
+    <td>公司编号</td>
+    <td>{{entry.gsbh}}</td>
+</tr>
+<tr>
+    <td>资产账簿编号</td>
+    <td>{{entry.zczbbh}}</td>
+</tr>
+<tr>
+    <td>归口管理专业线</td>
+    <td>{{entry.gkglzyx}}</td>
+</tr>
+<tr>
+    <td>专业归口管理部门</td>
+    <td>{{entry.zygkglbm}}</td>
+</tr>
+<tr>
+    <td>资产专业管理<br>责任人员工编号</td>
+    <td>{{entry.zczyglzrrygbh}}</td>
+</tr>
+<tr>
+    <td>资产专业管理<br>责任人姓名</td>
+    <td>{{entry.zgzyglzrrxm}}</td>
+</tr>
+<tr>
+    <td>全成本专业线</td>
+    <td>{{entry.qcbzyx}}</td>
+</tr>
+<tr>
+    <td>独立实物标识</td>
+    <td>{{entry.dlswbz}}</td>
+</tr>
+<tr>
+    <td>父资产标签号</td>
+    <td>{{entry.fzcbqh}}</td>
+</tr>
+<tr>
+    <td>应用领域</td>
+    <td>{{entry.yyly}}</td>
+</tr>
+<tr>
+    <td>资产目录</td>
+    <td>{{entry.zcml}}</td>
+</tr>
+<tr>
+    <td>资产核算专业</td>
+    <td>{{entry.zchszy}}</td>
+</tr>
+<tr>
+    <td>资产关键字描述</td>
+    <td>{{entry.zcgjzms}}</td>
+</tr>
+<tr>
+    <td>资产关键字</td>
+    <td>{{entry.zcgjz}}</td>
+</tr>
+<tr>
+    <td>系统专业类型</td>
+    <td>{{entry.xtzylx}}</td>
+</tr>
+<tr>
+    <td>供应商名称</td>
+    <td>{{entry.gysmc}}</td>
+</tr>
+<tr>
+    <td>生产厂商名称</td>
+    <td>{{entry.sccsmc}}</td>
+</tr>
+<tr>
+    <td>原规格型号</td>
+    <td>{{entry.yggxh}}</td>
+</tr>
+<tr>
+    <td>规格型号</td>
+    <td>{{entry.ggxh}}</td>
+</tr>
+<tr>
+    <td>序列号</td>
+    <td>{{entry.xlh}}</td>
+</tr>
+<tr>
+    <td>资产数量</td>
+    <td>{{entry.zcsl}}</td>
+</tr>
+<tr>
+    <td>资产计量单位</td>
+    <td>{{entry.zcsldw}}</td>
+</tr>
+<tr>
+    <td>辅助数量</td>
+    <td>{{entry.fzsl}}</td>
+</tr>
+<tr>
+    <td>辅助计量单位</td>
+    <td>{{entry.fujldw}}</td>
+</tr>
+<tr>
+    <td>购买日期</td>
+    <td>{{entry.gmrq}}</td>
+</tr>
+<tr>
+    <td>启用日期</td>
+    <td>{{entry.qyrq}}</td>
+</tr>
+<tr>
+    <td>使用月数</td>
+    <td>{{entry.syys}}</td>
+</tr>
+<tr>
+    <td>质保开始日期</td>
+    <td>{{entry.zbksrq}}</td>
+</tr>
+<tr>
+    <td>质保截止日期</td>
+    <td>{{entry.zbjzrq}}</td>
+</tr>
+<tr>
+    <td>项目编号</td>
+    <td>{{entry.xmbh}}</td>
+</tr>
+<tr>
+    <td>项目名称</td>
+    <td>{{entry.xmmc}}</td>
+</tr>
+<tr>
+    <td>项目分类</td>
+    <td>{{entry.xmfl}}</td>
+</tr>
+<tr>
+    <td>是否扩容</td>
+    <td>{{entry.sfkr}}</td>
+</tr>
+<tr>
+    <td>责任部门编码</td>
+    <td>{{entry.zrbmbm}}</td>
+</tr>
+<tr>
+    <td>责任部门名称</td>
+    <td>{{entry.zrbmmc}}</td>
+</tr>
+<tr>
+    <td>责任人员工编号</td>
+    <td>{{entry.zrrygbh}}</td>
+</tr>
+<tr>
+    <td>责任人姓名</td>
+    <td>{{entry.zrrxm}}</td>
+</tr>
+<tr>
+    <td>保管人邮箱地址</td>
+    <td>{{entry.bgryxdz}}</td>
+</tr>
+<tr>
+    <td>FA地点编码</td>
+    <td>{{entry.faddbm}}</td>
+</tr>
+<tr>
+    <td>FA地点描述</td>
+    <td>{{entry.faddms}}</td>
+</tr>
+<tr>
+    <td>标准地址</td>
+    <td>{{entry.bzdz}}</td>
+</tr>
+<tr>
+    <td>资产原值</td>
+    <td>{{entry.zcyz}}</td>
+</tr>
+<tr>
+    <td>资产净额</td>
+    <td>{{entry.zcjz}}</td>
+</tr>
+<tr>
+    <td>维护方式</td>
+    <td>{{entry.whfs}}</td>
+</tr>
+<tr>
+    <td>维护部门</td>
+    <td>{{entry.whbm}}</td>
+</tr>
+<tr>
+    <td>维护责任人<br>员工编号</td>
+    <td>{{entry.whzrrygbh}}</td>
+</tr>
+<tr>
+    <td>维护责任人<br>员工姓名</td>
+    <td>{{entry.whzrrygxm}}</td>
+</tr>
+<tr>
+    <td>维护人邮箱地址</td>
+    <td>{{entry.whryxdz}}</td>
+</tr>
+<tr>
+    <td>是否需采购维保</td>
+    <td>{{entry.sfxcgwb}}</td>
+</tr>
+<tr>
+    <td>资产归属</td>
+    <td>{{entry.zcgs}}</td>
+</tr>
+<tr>
+    <td>主要配置描述</td>
+    <td>{{entry.zypzms}}</td>
+</tr>
+<tr>
+    <td>现有系统/应用名称</td>
+    <td>{{entry.xyxt}}</td>
+</tr>
+<tr>
+    <td>上线时间</td>
+    <td>{{entry.sxsj}}</td>
+</tr>
+<tr>
+    <td>下线时间</td>
+    <td>{{entry.xxsj}}</td>
+</tr>
+<tr>
+    <td>额定功率</td>
+    <td>{{entry.edgl}}</td>
+</tr>
+<tr>
+    <td>对应的网管系统<br>中的主机名称</td>
+    <td>{{entry.dydwgxtzdzjmc}}</td>
+</tr>
+<tr>
+    <td>设备所在机房属性</td>
+    <td>{{entry.sbszjfsx}}</td>
+</tr>
+<tr>
+    <td>机架行列号</td>
+    <td>{{entry.jjhlh}}</td>
+</tr>
+<tr>
+    <td>起始U</td>
+    <td>{{entry.qsu}}</td>
+</tr>
+<tr>
+    <td>高度</td>
+    <td>{{entry.gd}}</td>
+</tr>
+<tr>
+    <td>OS类型及版本</td>
+    <td>{{entry.oslxjbb}}</td>
+</tr>
+<tr>
+    <td>补丁信息</td>
+    <td>{{entry.bdxx}}</td>
+</tr>
+<tr>
+    <td>无线mac地址</td>
+    <td>{{entry.wxmacdz}}</td>
+</tr>
+<tr>
+    <td>有线mac地址</td>
+    <td>{{entry.yxmacdz}}</td>
+</tr>
+<tr>
+    <td>设备hostname</td>
+    <td>{{entry.sbhostname}}</td>
+</tr>
+<tr>
+    <td>设备OID</td>
+    <td>{{entry.sboid}}</td>
+</tr>
+<tr>
+    <td>设备Description</td>
+    <td>{{entry.sbdescription}}</td>
+</tr>
+<tr>
+    <td>IP信息</td>
+    <td>{{entry.ipxx}}</td>
+</tr>
+<tr>
+    <td>上联网络设备</td>
+    <td>{{entry.slwlsb}}</td>
+</tr>
+<tr>
+    <td>设备层级</td>
+    <td>{{entry.sbcj}}</td>
+</tr>
+<tr>
+    <td>机架类型</td>
+    <td>{{entry.jjlx}}</td>
+</tr>
+<tr>
+    <td>子架类型</td>
+    <td>{{entry.zjlx}}</td>
+</tr>
+<tr>
+    <td>子架数量</td>
+    <td>{{entry.zjsl}}</td>
+</tr>
+<tr>
+    <td>机架单双面类型</td>
+    <td>{{entry.jjdsmlx}}</td>
+</tr>
+<tr>
+    <td>实物描述</td>
+    <td>{{entry.swms}}</td>
+</tr>
+<tr>
+    <td>终端用途</td>
+    <td>{{entry.zdyt}}</td>
+</tr>
+<tr>
+    <td>增资标识</td>
+    <td>{{entry.zzbz}}</td>
+</tr>
+<tr>
+    <td>可再利用标识</td>
+    <td>{{entry.kzlybz}}</td>
+</tr>
+<tr>
+    <td>下电标识</td>
+    <td>{{entry.xdbz}}</td>
+</tr>
+<tr>
+    <td>原工程编号及名称</td>
+    <td>{{entry.ygcbhjmc}}</td>
+</tr>
+<tr>
+    <td>验收人</td>
+    <td>{{entry.ysr}}</td>
+</tr>
+<tr>
+    <td>附属设施及附件</td>
+    <td>{{entry.fsssjfj}}</td>
+</tr>
+<tr>
+    <td>备注</td>
+    <td>{{entry.bz}}</td>
+</tr>
+<tr>
+    <td>报废标识</td>
+    <td>{{entry.bfbz}}</td>
+</tr>
+<tr>
+    <td>备注1</td>
+    <td>{{entry.bz1}}</td>
+</tr>
+<tr>
+    <td>备注2</td>
+    <td>{{entry.bz2}}</td>
+</tr>
+<tr>
+    <td>备注3</td>
+    <td>{{entry.bz3}}</td>
+</tr>
+<tr>
+    <td>备注4</td>
+    <td>{{entry.bz4}}</td>
+</tr>
+<tr>
+    <td>备注5</td>
+    <td>{{entry.bz5}}</td>
+</tr>
+<tr>
+    <td>设备生命周期</td>
+    <td>{{entry.sbsmzj}}</td>
+</tr>
+<tr>
+    <td>数据来源分类</td>
+    <td>{{entry.sjlyfl}}</td>
+</tr>
+</table>
 </div>
 
 {% endblock %}

@@ -158,7 +158,7 @@ def sendtest():
 
 @robot.handler
 def echo(message):
-    return 'Hello World' + message.type
+    return '抱歉,未能成功识别此{0},请重试'.format(  message.type)
 
 
 @robot.image
@@ -312,8 +312,9 @@ def showzc(zcbh=None):
     """
     from mbp.models import zczb
     zz=zczb.query.filter(zczb.zcbqh==zcbh).first()
+    child=BarcodeLogic.getChild(zcbh)
 
-    return render_template('showzcbq.html',entry=zz)
+    return render_template('showzcbq.html',entry=zz,child=child)
 
 
 @app.route('/test/<source>')
