@@ -37,8 +37,8 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
 
-                <li><a href="{{ url_for('list') }}">用户列表</a></li>
-                <li><a href="{{ url_for('showsnlist') }}">号码状态明细</a></li>
+                <li><a href="{{ url_for('barcodelist') }}">二维码日志</a></li>
+
                 {% if g.user.is_authenticated() %}
                 <li><a href="{{ url_for('logout') }}">注销登陆</a></li>
                 {% endif %}

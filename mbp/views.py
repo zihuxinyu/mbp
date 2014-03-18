@@ -49,7 +49,7 @@ def login():
         flash('验证码发送成功!')
         return redirect(url_for('loginchk', usercode=form.usercode.data))
     return render_template('login.html',action='login',
-                               title='登录',
+                               title='登录', opname='登录系统',
                                form=form)
 
 
@@ -108,12 +108,30 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/barcodelist/<int:page>', methods=['GET', 'POST'])
+@app.route('/barcodelist')
+@login_required
+def barcodelist(page=1):
+    """
+    资产列表
+    :param page:
+    :return:
+    """
+    pagination = BarcodeList.query.paginate(page, POSTS_PER_PAGE, True)
+    fields = ['barcode', 'type']
+    fields_cn = ['二维码', '输入类型',]
+    specfile = {'sdsc-yhjzl1': '<span class="label label-danger">停机</span>',
+                '1': 'dddddddd'}
+    return render_template('list.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn)
+
+
 @app.route('/list/<int:page>', methods=['GET', 'POST'])
 @app.route('/list')
 @login_required
 def list(page=1):
     """
-玩儿玩儿
+    展示代理商列表
     :param page:
     :return:
     """
@@ -263,7 +281,7 @@ def bd(source=None):
     if source:
         w = WechatUser.query.filter(and_(WechatUser.source == source, WechatUser.checked == 1)).first()
         if w:
-            return '您已经绑定了' + w.usercode
+            return render_template('msg.html' ,msg='您已经绑定了' + w.usercode)
     from  forms import WechatUserSendcode
 
     form = WechatUserSendcode()
@@ -313,26 +331,20 @@ def sendcode(source=None, usercode=None):
     wechatuser = WechatUser(source=source, usercode=usercode, code=code)
     db.session.add(wechatuser)
     db.session.commit()
-    from email import send_email
+    from email import sendsmscode
 
-    send_email('微信绑定验证码是:' + code, 'sd-lcgly@chinaunicom.cn',
-               [usercode + '@chinaunicom.cn'], '微信验证码',
-               '微信绑定验证码是:' + code)
+    sendsmscode(user_code=usercode,code=code)
 
 
 def sendlogincode(usercode=None):
     code = WechatLogic.generate_code()
-    xx=portal_user.query.filter(portal_user.user_code==usercode)
+    xx = portal_user.query.filter(portal_user.user_code == usercode)
     xx.update({
-       portal_user.msg:code
+        portal_user.msg: code
     })
     db.session.commit()
-    from email import send_email
-
-    sendstr= 'MSG#{0}#{1}'.format(xx.first().user_mobile, code)
-    send_email(sendstr, 'sd-lcgly@chinaunicom.cn',
-               ['sd-lcgly@chinaunicom.cn'],sendstr ,
-               sendstr)
+    from email import sendsmscode
+    sendsmscode(user_code=usercode,code=code)
 
 @app.route('/showzc/<zcbh>',methods=['GET','POST'])
 def showzc(zcbh=None):

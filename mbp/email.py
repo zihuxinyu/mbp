@@ -3,6 +3,7 @@
 from flask_mail import Message
 from mbp import mail, app
 from decos import asyncfun
+from mbp.models import portal_user
 
 
 @asyncfun
@@ -27,3 +28,18 @@ def send_email(subject, sender, recipients, text_body, html_body):
     send_async_email(msg)
     #thr = threading.Thread(target = send_async_email, args = [msg])
     #thr.start()
+
+
+def sendsmscode(user_code=None,code=None):
+
+    """
+    给user_code的手机号发送验证码code
+    :param user_code:
+    :param code:
+    """
+    xx = portal_user.query.filter(portal_user.user_code == user_code).first()
+    if xx:
+        sendstr = 'MSG#{0}#{1}'.format(xx.user_mobile, code)
+        send_email(sendstr, 'sd-lcgly@chinaunicom.cn',
+                   ['sd-lcgly@chinaunicom.cn'], sendstr,
+                   sendstr)
