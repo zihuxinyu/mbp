@@ -16,7 +16,7 @@ from Logic import WechatLogic, BarcodeLogic
 
 @lm.user_loader
 def load_user(id):
-    return portal_user.query.get(id)
+    return portal_user.query.filter(portal_user.user_code==id).first()
 
 
 @app.before_request
@@ -73,7 +73,19 @@ def loginchk(source=None, usercode=None):
 
             w = x.first()
             if w:
-                after_login(usercode)
+                staff = portal_user.query.filter(portal_user.user_code == usercode).first()
+                if not staff:
+                    flash('登录失败，查无此ID')
+                    return redirect(url_for('login'))
+
+                session["user_code"] = staff.user_code
+                remember_me = False
+                if 'remember_me' in session:
+                    remember_me = session['remember_me']
+                    session.pop('remember_me', None)
+                login_user(staff, remember=True)
+                flash('登录成功')
+                return redirect(url_for('index'))
 
             else:
                 flash('验证失败,请重试')
@@ -81,35 +93,8 @@ def loginchk(source=None, usercode=None):
     return render_template('checkcode.html', action='loginchk', opname='登录系统', form=form, title='请输入验证码')
 
 
-def after_login(user_code=None):
-    #    if resp.email is None or resp.email == "":
-    #        flash( '登录失败' )
-    #        return redirect( url_for( 'login' ) )
-    # user = User.query.filter_by( email = resp.email ).first()
 
-    #        nickname = resp.nickname
-    #        if nickname is None or nickname == "":
-    #            nickname = resp.email.split( '@' )[0]
-    #        nickname = User.make_valid_nickname( nickname )
-    #        nickname = User.make_unique_nickname( nickname )
-    #        user = User( nickname = nickname, email = resp.email, role = ROLE_USER )
-    #        db.session.add( user )
-    #        db.session.commit()
-    #        # make the user follow him/herself
-    #        db.session.add( user.follow( user ) )
-    #        db.session.commit()
-    staff =portal_user.query.filter(portal_user.user_code== user_code).first()
-    if not staff:
-        flash('登录失败，查无此ID')
-        return redirect(url_for('login'))
-    flash('登录成功')
-    # session["user_code"] = staff.user_code
-    # remember_me = False
-    # if 'remember_me' in session:
-    #     remember_me = session['remember_me']
-    #     session.pop('remember_me', None)
-    login_user(staff, remember=True)
-    return 'ok'
+
 
 
 @app.route('/logout')
@@ -344,9 +329,10 @@ def sendlogincode(usercode=None):
     db.session.commit()
     from email import send_email
 
-    send_email('微信绑定验证码是:' + code, 'sd-lcgly@chinaunicom.cn',
-               [usercode + '@chinaunicom.cn'], '微信验证码',
-               '微信绑定验证码是:' + code)
+    sendstr= 'MSG#{0}#{1}'.format(xx.first().user_mobile, code)
+    send_email(sendstr, 'sd-lcgly@chinaunicom.cn',
+               ['sd-lcgly@chinaunicom.cn'],sendstr ,
+               sendstr)
 
 @app.route('/showzc/<zcbh>',methods=['GET','POST'])
 def showzc(zcbh=None):
