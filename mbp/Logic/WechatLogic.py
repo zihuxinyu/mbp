@@ -5,6 +5,17 @@ from mbp import db
 from sqlalchemy import and_
 from mbp.models import WechatUser, WechatReceive
 
+def getUserBySource(source):
+    """
+    根据微信source获取绑定的门户工号
+    :param source:
+    :return:
+    """
+    ww= WechatUser.query.filter(WechatUser.source==source).first()
+    if ww:
+        return ww.usercode
+    else:
+        return None
 
 def SaveMessage(message,imgcontent=None):
     if message.type=="text":

@@ -36,8 +36,9 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-
-                <li><a href="{{ url_for('barcodelist') }}">二维码日志</a></li>
+                <li><a href="{{ url_for('unchecked') }}">待查资产</a></li>
+                <li><a href="{{ url_for('checked') }}">已查资产</a></li>
+                <li><a href="{{ url_for('barcodelist') }}">清查日志</a></li>
 
                 {% if g.user.is_authenticated() %}
                 <li><a href="{{ url_for('logout') }}">注销登陆</a></li>

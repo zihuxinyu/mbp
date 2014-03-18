@@ -2,10 +2,10 @@
 import sys
 
 from flask import Flask, render_template
-from flask.ext.debugtoolbar import DebugToolbarExtension
+
 from flask_login import LoginManager
 from config import ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
-from flask_wtf.csrf import CsrfProtect
+
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.werobot import WeRoBot
@@ -24,8 +24,7 @@ lm.login_message = unicode('请先登录', 'utf-8')
 mail = Mail(app)
 db = SQLAlchemy(app)
 
-robot = WeRoBot(app,token='08560a699966442fae5b3a165c0f8f71',enable_session=True)
-
+robot = WeRoBot(app, token='08560a699966442fae5b3a165c0f8f71', enable_session=True)
 
 if not app.debug:
     import logging

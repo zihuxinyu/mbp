@@ -10,13 +10,13 @@ from sqlalchemy import and_, desc
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList,portal_user
+from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
 from Logic import WechatLogic, BarcodeLogic
 
 
 @lm.user_loader
 def load_user(id):
-    return portal_user.query.filter(portal_user.user_code==id).first()
+    return portal_user.query.filter(portal_user.user_code == id).first()
 
 
 @app.before_request
@@ -34,7 +34,14 @@ def internal_error(error):
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html')
+    from Logic.MissionLogic import *
+    #获取MissionId
+    mid = request.args.get('mid')
+    mid = '1' if not mid else mid
+    remaining = getUnCompletedbyMissionId(mid)
+    ended = getCompletedbyMissionId(mid)
+    allcount = remaining + ended
+    return render_template('index.html',remaining=remaining,ended=ended,allcount=allcount)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -48,9 +55,9 @@ def login():
         sendlogincode(usercode=form.usercode.data)
         flash('验证码发送成功!')
         return redirect(url_for('loginchk', usercode=form.usercode.data))
-    return render_template('login.html',action='login',
-                               title='登录', opname='登录系统',
-                               form=form)
+    return render_template('login.html', action='login',
+                           title='登录', opname='登录系统',
+                           form=form)
 
 
 @app.route('/loginchk', methods=['GET', 'POST'])
@@ -68,8 +75,8 @@ def loginchk(source=None, usercode=None):
     if form.validate_on_submit():
         code = form.code.data
         if usercode and code:
-            x=portal_user.query.filter(and_(portal_user.user_code==usercode,
-                                            portal_user.msg==code))
+            x = portal_user.query.filter(and_(portal_user.user_code == usercode,
+                                              portal_user.msg == code))
 
             w = x.first()
             if w:
@@ -93,10 +100,6 @@ def loginchk(source=None, usercode=None):
     return render_template('checkcode.html', action='loginchk', opname='登录系统', form=form, title='请输入验证码')
 
 
-
-
-
-
 @app.route('/logout')
 def logout():
     logout_user()
@@ -106,6 +109,25 @@ def logout():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+
+
+
+@app.route('/mission_barcode/<int:page>', methods=['GET', 'POST'])
+@app.route('/mission_barcode')
+@login_required
+def missionbarcode(page=1):
+    from models import mission_barcode
+
+    pagination = mission_barcode.query.outerjoin(BarcodeList, mission_barcode.barcode == BarcodeList.barcode).paginate(
+        page, POSTS_PER_PAGE, True)
+    fields = ['missionid', 'barcode']
+    fields_cn = ['任务ID', '资产标签']
+    specfile = {'input': '手工输入',
+                'image': '拍照上传'}
+    return render_template('list.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn)
 
 
 @app.route('/barcodelist/<int:page>', methods=['GET', 'POST'])
@@ -118,12 +140,12 @@ def barcodelist(page=1):
     :return:
     """
     pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).paginate(page, POSTS_PER_PAGE, True)
-    fields = ['barcode', 'type']
-    fields_cn = ['二维码', '输入类型',]
+    fields = ['barcode','user_code','topdpt', 'type','opdate']
+    fields_cn = ['二维码', '账户','部门','类型','时间' ]
     specfile = {'input': '手工输入',
                 'image': '拍照上传'}
     return render_template('list.html', pagination=pagination,
-                           fields=fields, fields_cn=fields_cn,specfile=specfile)
+                           fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
 @app.route('/list/<int:page>', methods=['GET', 'POST'])
@@ -186,13 +208,14 @@ def showsnlist(page=1):
 @app.route('/sendmail')
 def sendtest():
     from email import send_email
-    send_email('MSGSEND#15605468613#哈哈哈', 'sd-lcgly@chinaunicom.cn', ['sd-lcgly@chinaunicom.cn'],None,None)
+
+    send_email('MSGSEND#15605468613#哈哈哈', 'sd-lcgly@chinaunicom.cn', ['sd-lcgly@chinaunicom.cn'], None, None)
     return "ok"
 
 
 @robot.handler
 def echo(message):
-    return '抱歉,未能成功识别此{0},请重试'.format(  message.type)
+    return '抱歉,未能成功识别此{0},请重试'.format(message.type)
 
 
 @robot.image
@@ -232,13 +255,13 @@ def echo(message, session):
 @robot.link
 def echo(message, session):
     WechatLogic.SaveMessage(message)
-    return  message.url
+    return message.url
 
 
 @robot.location
 def echo(message, session):
     WechatLogic.SaveMessage(message)
-    return  message.label
+    return message.label
 
 
 @robot.click
@@ -258,7 +281,8 @@ def echo(message, session):
 def echo(message, session):
     WechatLogic.SaveMessage(message)
     #return  message.media_id
-    return  '我听见了.'
+    return '我听见了.'
+
 
 @robot.subscribe
 def echo(message):
@@ -281,7 +305,7 @@ def bd(source=None):
     if source:
         w = WechatUser.query.filter(and_(WechatUser.source == source, WechatUser.checked == 1)).first()
         if w:
-            return render_template('msg.html' ,msg='您已经绑定了' + w.usercode)
+            return render_template('msg.html', msg='您已经绑定了' + w.usercode)
     from  forms import WechatUserSendcode
 
     form = WechatUserSendcode()
@@ -322,8 +346,8 @@ def bdchk(source=None, usercode=None):
                 })
 
                 db.session.commit()
-                return render_template('msg.html',msg='绑定成功!请返回微信聊天窗口吧')
-    return render_template('checkcode.html',action='bdchk',opname='绑定账户', form=form, title='请输入验证码')
+                return render_template('msg.html', msg='绑定成功!请返回微信聊天窗口吧')
+    return render_template('checkcode.html', action='bdchk', opname='绑定账户', form=form, title='请输入验证码')
 
 
 def sendcode(source=None, usercode=None):
@@ -333,7 +357,7 @@ def sendcode(source=None, usercode=None):
     db.session.commit()
     from email import sendsmscode
 
-    sendsmscode(user_code=usercode,code=code)
+    sendsmscode(user_code=usercode, code=code)
 
 
 def sendlogincode(usercode=None):
@@ -344,9 +368,11 @@ def sendlogincode(usercode=None):
     })
     db.session.commit()
     from email import sendsmscode
-    sendsmscode(user_code=usercode,code=code)
 
-@app.route('/showzc/<zcbh>',methods=['GET','POST'])
+    sendsmscode(user_code=usercode, code=code)
+
+
+@app.route('/showzc/<zcbh>', methods=['GET', 'POST'])
 def showzc(zcbh=None):
     """
     显示资产编号的详细信息
@@ -354,18 +380,68 @@ def showzc(zcbh=None):
     :return:
     """
     from mbp.models import zczb
-    zz=zczb.query.filter(zczb.zcbqh==zcbh).first()
-    child=BarcodeLogic.getChild(zcbh)
 
-    return render_template('showzcbq.html',entry=zz,child=child)
+    zz = zczb.query.filter(zczb.zcbqh == zcbh).first()
+    child = BarcodeLogic.getChild(zcbh)
+
+    return render_template('showzcbq.html', entry=zz, child=child)
 
 
-@app.route('/test/<source>')
-def test(source):
-    ww = BarcodeList(source=source, type='input', barcode='sfsdfdsafd')
-    db.session.add(ww)
-    db.session.commit()
-    return str(ww.guid)
+
+
+@app.route('/unchecked/<int:page>', methods=['GET', 'POST'])
+@app.route('/unchecked/', methods=['GET', 'POST'])
+@login_required
+def unchecked(page=1):
+
+    """
+    没有核查的资产列表
+    :param page:
+    :return:
+    """
+    #获取MissionId
+    mid = request.args.get('mid')
+    mid = '1' if not mid else mid
+
+    from Logic import MissionLogic
+
+    zz = zczb.query.filter(zczb.zcbqh.in_(
+        MissionLogic.getUnCompleteZCBQHbyMissionId(mid)
+    ))
+    pagination = zz.paginate(page, POSTS_PER_PAGE, True)
+    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc']
+    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称']
+    specfile = {'input': '手工输入',
+                'image': '拍照上传'}
+    return render_template('list.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn, specfile=specfile)
+
+
+@app.route('/checked/<int:page>', methods=['GET', 'POST'])
+@app.route('/checked/', methods=['GET', 'POST'])
+@login_required
+def checked(page=1):
+    """
+    已经核查的资产列表
+    :param page:
+    :return:
+    """
+    #获取MissionId
+    mid = request.args.get('mid')
+    mid = '1' if not mid else mid
+
+    from Logic import MissionLogic
+
+    zz = zczb.query.filter(zczb.zcbqh.in_(
+        MissionLogic.getCompleteZCBQHbyMissionId(mid)
+    ))
+    pagination = zz.paginate(page, POSTS_PER_PAGE, True)
+    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc']
+    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称']
+    specfile = {'input': '手工输入',
+                'image': '拍照上传'}
+    return render_template('list.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
 @app.route('/cs/<tablename>')
@@ -375,9 +451,16 @@ def cs(tablename):
     :param tablename:
     :return:
     """
-    sql="SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='DLS' AND table_name='"+ tablename+"'"
-    cur= db.engine.execute(sql)
-    entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1],EXTRA=row[2]) for row in cur.fetchall()]
+    sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='DLS' AND " \
+          "table_name='" + tablename + "'"
+    cur = db.engine.execute(sql)
+    entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1], EXTRA=row[2]) for row in cur.fetchall()]
     for x in entries:
         print(x)
-    return render_template('cs.html',list=entries,tablename=tablename)
+    return render_template('cs.html', list=entries, tablename=tablename)
+
+@app.route('/test')
+def test():
+    from Logic.MissionLogic import getWrokingMissions
+    mm=getWrokingMissions()
+    return mm[0].missionname

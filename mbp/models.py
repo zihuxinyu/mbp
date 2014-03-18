@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+import time
 
 from mbp import db
 from sqlalchemy import Integer
@@ -122,19 +123,24 @@ class WechatUser(db.Model):
 
 
 class BarcodeList(db.Model):
-    __tablename__ = "barcodelist"
+    __tablename__ = 'barcodelist'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
     barcode = db.Column('barcode')
     source = db.Column('source')
+    user_code = db.Column('user_code')
     msgid = db.Column('msgid')
     opdate = db.Column('opdate')
     type = db.Column('type')
+    topdpt = db.Column('topdpt')
 
-    def __int__(self, barcode=None, source=None, type=None, msgid=None):
+    def __int__(self, barcode=None, source=None, user_code=None, msgid=None, type=None,opdate=None, topdpt=None):
         self.barcode = barcode
         self.source = source
-        self.type = type
+        self.user_code = user_code
         self.msgid = msgid
+        self.type = type
+        self.opdate=opdate
+        self.topdpt = topdpt
 
 
 class WechatReceive(db.Model):
@@ -418,3 +424,30 @@ class zczb(db.Model):
         self.bz5 = bz5
         self.sbsmzj = sbsmzj
         self.sjlyfl = sjlyfl
+
+
+class mission_barcode(db.Model):
+    __tablename__ = 'mission_barcode'
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    missionid = db.Column('missionid')
+    barcode = db.Column('barcode')
+    msgid = db.Column('msgid')
+
+    def __int__(self, missionid=None, barcode=None, msgid=None):
+        self.missionid = missionid
+        self.barcode = barcode
+        self.msgid = msgid
+
+
+class mission(db.Model):
+    __tablename__ = 'mission'
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    missionname = db.Column('missionname')
+    startdate = db.Column('startdate')
+    enddate = db.Column('enddate')
+
+
+    def __int__(self, missionname=None, startdate=None, enddate=None):
+        self.missionname = missionname
+        self.startdate = startdate
+        self.enddate = enddate

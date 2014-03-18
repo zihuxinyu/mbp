@@ -2,7 +2,8 @@
 <hr>
 class {{tablename}}(db.Model):<br>
 <code>
-    __tablename__=={{tablename}}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    __tablename__='{{tablename}}'<br>
     {% for x in list %}
     &nbsp;&nbsp;&nbsp;&nbsp;
     {%if x.EXTRA=='auto_increment'%}
@@ -13,7 +14,7 @@ class {{tablename}}(db.Model):<br>
     {%endif%}
     {%endfor%}
 
-
+    &nbsp;&nbsp;&nbsp;&nbsp;
     def __int__(self,
     {%for x in list if x.EXTRA not in ['auto_increment','on update CURRENT_TIMESTAMP'] %}
         {{x.COLUMN_NAME}}=None
