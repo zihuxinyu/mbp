@@ -79,7 +79,10 @@ def ShowBarSmart(barcode):
     zz = zczb.query.filter(zczb.zcbqh == barcode).first()
     znum= len( getChild(barcode))
     if zz:
-       return '名称:{0}\r\n规格:{1}\r\n启用日期:{2}\r\n报废标识:{3}\r\n子资产数:{4}'.format(zz.swmc,zz.ggxh,zz.qyrq,zz.bfbz,znum)
+        if znum>0:
+            return '名称:{0}\r\n规格:{1}\r\n启用日期:{2}\r\n报废标识:{3}\r\n子资产数:{4}'.format(zz.swmc,zz.ggxh,zz.qyrq,zz.bfbz,znum)
+        else:
+            return '名称:{0}\r\n规格:{1}\r\n启用日期:{2}\r\n报废标识:{3}'.format(zz.swmc, zz.ggxh, zz.qyrq, zz.bfbz)
     else:
         return None
 def getChild(barcode):

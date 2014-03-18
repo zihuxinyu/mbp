@@ -120,13 +120,15 @@ class WechatUser(db.Model):
         self.code = code
         self.checked = checked
 
+
 class BarcodeList(db.Model):
     __tablename__ = "barcodelist"
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
     barcode = db.Column('barcode')
     source = db.Column('source')
-    type = db.Column('type')
     msgid = db.Column('msgid')
+    opdate = db.Column('opdate')
+    type = db.Column('type')
 
     def __int__(self, barcode=None, source=None, type=None, msgid=None):
         self.barcode = barcode

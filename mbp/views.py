@@ -6,7 +6,7 @@ from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session, session as gsession
 from mbp import lm, app, robot, db
 from flask.templating import render_template
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
@@ -117,13 +117,13 @@ def barcodelist(page=1):
     :param page:
     :return:
     """
-    pagination = BarcodeList.query.paginate(page, POSTS_PER_PAGE, True)
+    pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).paginate(page, POSTS_PER_PAGE, True)
     fields = ['barcode', 'type']
     fields_cn = ['二维码', '输入类型',]
-    specfile = {'sdsc-yhjzl1': '<span class="label label-danger">停机</span>',
-                '1': 'dddddddd'}
+    specfile = {'input': '手工输入',
+                'image': '拍照上传'}
     return render_template('list.html', pagination=pagination,
-                           fields=fields, fields_cn=fields_cn)
+                           fields=fields, fields_cn=fields_cn,specfile=specfile)
 
 
 @app.route('/list/<int:page>', methods=['GET', 'POST'])

@@ -2,12 +2,12 @@
 <hr>
 class {{tablename}}(db.Model):<br>
 <code>
-
+    __tablename__=={{tablename}}<br>
     {% for x in list %}
     &nbsp;&nbsp;&nbsp;&nbsp;
     {%if x.EXTRA=='auto_increment'%}
     {{x.COLUMN_NAME}}=db.Column(Integer, unique=True, primary_key=True, autoincrement=True)<br>
-    {%elif x.EXTRA=='on update CURRENT_TIMESTAMP'%}
+
     {%else%}
     {{x.COLUMN_NAME}}=db.Column('{{x.COLUMN_NAME}}')<br>
     {%endif%}
