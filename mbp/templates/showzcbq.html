@@ -1,8 +1,38 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
-
+{% from "_formhelper.html" import render_field %}
 {% block content %}
+{%if barcodeinfo.ztbz %}
+
+
+<span class="label label-danger">状态标识:{{barcodeinfo.ztbz}}</span>
+<span class="label label-primary">物理位置:{{barcodeinfo.wlwz}}</span>
+
+
+{%endif%}
+
+
+<div class="wall">
+<form class="form-inline " role="form" action="{{url_for('showzc',**request.args)}}" method="post">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+        <label class="sr-only" for="ztbz"> 状态标识:</label>
+        {{ form.ztbz}}
+    </div>
+    <div class="form-group">
+        <label class="sr-only" for="wlwz"> 物理位置:</label>
+        <input class=" input form-control" id="wlwz" name="wlwz" placeholder="物理位置" type="text" value="">
+    </div>
+    <button type="submit" class="btn btn-success">更新</button>
+
+</form>
+</div>
+
+
+
 {%if child%}
+
 <div class="btn-group">
     <button type="button" class="btn btn-danger">子资产 <span class="badge">{{child|length}}</span></button>
     <button type="button" class="btn btn-danger dropdown-toggle " data-toggle="dropdown">
@@ -19,8 +49,9 @@
         {%endfor%}
     </ul>
 </div>
+<hr>
 {%endif%}
-        <hr>
+
 <h4>以下是{{entry.zcbqh}}详细内容</h4>
 <div class="table-responsive">
 

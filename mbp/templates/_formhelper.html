@@ -8,19 +8,19 @@
     {% set class_ = class_ + ' required' %}
     {% endif %}
     {% if field.type == 'BooleanField' %}
-    <div class="col-sm-offset-2 col-sm-10">
+    <div class="col-sm-offset-4 col-sm-8">
         <label class="checkbox">
             {{ field(class_=class_, **kwargs) }}
             {{ field.label.text|safe }}
         </label>
 
         {% else %}
-        <label for="{{ field.id }}" class="col-sm-2 control-label ">
+        <label for="{{ field.id }}" class="col-sm-4 control-label ">
             {% if with_label %}{{ field.label.text }}{% if field.flags.required %}<span
                 class="label label-danger small"> *</span>{% endif %}:{% endif %}
         </label>
 
-        <div class="col-sm-10">
+        <div class="col-sm-8">
 
 
             {% if field.type in ('TextField', 'TextAreaField', 'PasswordField') %}

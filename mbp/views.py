@@ -140,10 +140,11 @@ def barcodelist(page=1):
     :return:
     """
     pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).paginate(page, POSTS_PER_PAGE, True)
-    fields = ['barcode','user_code','topdpt', 'type','opdate']
-    fields_cn = ['二维码', '账户','部门','类型','时间' ]
+    fields = ['barcode','user_code','topdpt','ztbz','wlwz', 'type','opdate']
+    fields_cn = ['二维码', '账户','部门','状态标识','物理位置','类型','时间' ]
     specfile = {'input': '手工输入',
-                'image': '拍照上传'}
+                'image': '拍照上传',
+                'None':''}
     return render_template('list.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
@@ -305,7 +306,11 @@ def bd(source=None):
     if source:
         w = WechatUser.query.filter(and_(WechatUser.source == source, WechatUser.checked == 1)).first()
         if w:
-            return render_template('msg.html', msg='您已经绑定了' + w.usercode)
+            staff = portal_user.query.filter(portal_user.user_code == w.usercode).first()
+            login_user(staff, remember=True)
+            flash('您已经绑定了' + w.usercode)
+            return redirect(url_for('index'))
+
     from  forms import WechatUserSendcode
 
     form = WechatUserSendcode()
@@ -345,8 +350,13 @@ def bdchk(source=None, usercode=None):
                     WechatUser.checked: 1
                 })
 
+
+                staff = portal_user.query.filter(portal_user.user_code == w.usercode).first()
+                login_user(staff, remember=True)
                 db.session.commit()
-                return render_template('msg.html', msg='绑定成功!请返回微信聊天窗口吧')
+                flash('绑定成功')
+                return redirect(url_for('index'))
+
     return render_template('checkcode.html', action='bdchk', opname='绑定账户', form=form, title='请输入验证码')
 
 
@@ -372,19 +382,44 @@ def sendlogincode(usercode=None):
     sendsmscode(user_code=usercode, code=code)
 
 
-@app.route('/showzc/<zcbh>', methods=['GET', 'POST'])
+@app.route('/showzc/', methods=['GET', 'POST'])
+@login_required
 def showzc(zcbh=None):
     """
     显示资产编号的详细信息
     :param zcbh:
     :return:
     """
+
     from mbp.models import zczb
+    from  forms import BarcodeListUpdate
+
+    if (not zcbh ) and request.args.get('zcbh'):
+        zcbh=str(request.args.get('zcbh'))
+    msgid = request.args.get('msgid')
+
+
+    bb = BarcodeList.query.filter(and_(BarcodeList.user_code==g.user.user_code),
+                                  BarcodeList.barcode == zcbh
+    )
+    form=BarcodeListUpdate()
+
+    if form.validate_on_submit():
+        #更新最新状态
+        ztbz=form.ztbz.data
+        wlwz=form.wlwz.data
+
+        if bb:
+            bb.update({BarcodeList.wlwz:wlwz,
+                       BarcodeList.ztbz:ztbz})
+            db.session.commit()
+        flash('更新成功')
+
 
     zz = zczb.query.filter(zczb.zcbqh == zcbh).first()
     child = BarcodeLogic.getChild(zcbh)
 
-    return render_template('showzcbq.html', entry=zz, child=child)
+    return render_template('showzcbq.html', form=form, entry=zz, child=child,barcodeinfo=bb.first())
 
 
 

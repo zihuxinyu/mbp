@@ -19,8 +19,8 @@ class portal_user(db.Model):
     msg = db.Column('msg')
     msgexpdate = db.Column('msgexpdate')
 
-
-    def __int__(self, user_code=None, user_name=None, user_mobile=None, dpt_name=None, topdpt=None, manager=None, msg=None,
+    def __int__(self, user_code=None, user_name=None, user_mobile=None, dpt_name=None, topdpt=None, manager=None,
+                msg=None,
                 msgexpdate=None):
         self.user_code = user_code
         self.user_name = user_name
@@ -42,7 +42,6 @@ class portal_user(db.Model):
 
     def get_id(self):
         return unicode(self.user_code)
-
 
 
 class Snlist(db.Model):
@@ -73,7 +72,6 @@ class wiz_user(db.Model):
         self.reguser = reguser
         self.regpsw = regpsw
         self.regcode = regcode
-
 
 
 class Staff(db.Model):
@@ -132,15 +130,20 @@ class BarcodeList(db.Model):
     opdate = db.Column('opdate')
     type = db.Column('type')
     topdpt = db.Column('topdpt')
+    ztbz = db.Column('ztbz')
+    wlwz = db.Column('wlwz')
 
-    def __int__(self, barcode=None, source=None, user_code=None, msgid=None, type=None,opdate=None, topdpt=None):
+    def __int__(self, barcode=None, source=None, user_code=None, topdpt=None, msgid=None, opdate=None, type=None,
+                ztbz=None, wlwz=None):
         self.barcode = barcode
         self.source = source
         self.user_code = user_code
-        self.msgid = msgid
-        self.type = type
-        self.opdate=opdate
         self.topdpt = topdpt
+        self.msgid = msgid
+        self.opdate = opdate
+        self.type = type
+        self.ztbz = ztbz
+        self.wlwz = wlwz
 
 
 class WechatReceive(db.Model):
@@ -445,7 +448,6 @@ class mission(db.Model):
     missionname = db.Column('missionname')
     startdate = db.Column('startdate')
     enddate = db.Column('enddate')
-
 
     def __int__(self, missionname=None, startdate=None, enddate=None):
         self.missionname = missionname

@@ -16,14 +16,14 @@ class {{tablename}}(db.Model):<br>
 
     &nbsp;&nbsp;&nbsp;&nbsp;
     def __int__(self,
-    {%for x in list if x.EXTRA not in ['auto_increment','on update CURRENT_TIMESTAMP'] %}
+    {%for x in list if x.EXTRA not in ['auto_increment'] %}
         {{x.COLUMN_NAME}}=None
         {%if not loop.last%},{%endif%}
     {%endfor%}
 
     ):<br>
     {% for x in list %}
-    {%if x.EXTRA!='auto_increment' and x.EXTRA!='on update CURRENT_TIMESTAMP'%}
+    {%if x.EXTRA!='auto_increment' %}
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     self.{{x.COLUMN_NAME}}={{x.COLUMN_NAME}}<br>
     {%endif%}

@@ -78,7 +78,7 @@ def ShowBarDetail(barcodelist, message):
             description=zz if  zz else "尚未收录",
             img="http://d.hiphotos.baidu.com/baike/c0%3Dbaike150%2C5%2C5%2C150%2C50/sign"
                 "=5800ef19a61ea8d39e2f7c56f6635b2b/38dbb6fd5266d01662dec68a972bd40734fae6cd7a891570.jpg",
-            url='http://dyit.org/showzc/' + x
+            url='http://dyit.org/showzc/?zcbh=' + x+'&msgid='+str(message.id)
         )
         reply.add_article(article)
     return reply
