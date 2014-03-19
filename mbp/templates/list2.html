@@ -4,8 +4,9 @@
 {% from "_listview.html" import listview %}
 {% block content %}
 
+
 <!----显示表格---->
-{{ listview(pagination,fields,fields_cn,specfile) }}
+{{ listview(pagination,fields,fields_cn,specfile,tablecount=2) }}
 <!-- 调用分页模板 -->
 {{ pagination_html(pagination, request.endpoint, request.query_string) }}
 {% endblock %}

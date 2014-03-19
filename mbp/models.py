@@ -127,14 +127,18 @@ class BarcodeList(db.Model):
     source = db.Column('source')
     user_code = db.Column('user_code')
     msgid = db.Column('msgid')
+    topdpt= db.Column('topdpt')
     opdate = db.Column('opdate')
     type = db.Column('type')
-    topdpt = db.Column('topdpt')
     ztbz = db.Column('ztbz')
+    ztbz1 = db.Column('ztbz1')
+    ztbz2 = db.Column('ztbz2')
+    ztbz3 = db.Column('ztbz3')
+    ztbz4 = db.Column('ztbz4')
     wlwz = db.Column('wlwz')
 
     def __int__(self, barcode=None, source=None, user_code=None, topdpt=None, msgid=None, opdate=None, type=None,
-                ztbz=None, wlwz=None):
+                ztbz=None, ztbz1=None, ztbz2=None, ztbz3=None, ztbz4=None, wlwz=None):
         self.barcode = barcode
         self.source = source
         self.user_code = user_code
@@ -143,6 +147,10 @@ class BarcodeList(db.Model):
         self.opdate = opdate
         self.type = type
         self.ztbz = ztbz
+        self.ztbz1 = ztbz1
+        self.ztbz2 = ztbz2
+        self.ztbz3 = ztbz3
+        self.ztbz4 = ztbz4
         self.wlwz = wlwz
 
 

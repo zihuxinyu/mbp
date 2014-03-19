@@ -2,6 +2,7 @@
 import random
 import string
 from config import POSTS_PER_PAGE, ADMINS
+
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session, session as gsession
 from mbp import lm, app, robot, db
@@ -130,23 +131,7 @@ def missionbarcode(page=1):
                            fields=fields, fields_cn=fields_cn)
 
 
-@app.route('/barcodelist/<int:page>', methods=['GET', 'POST'])
-@app.route('/barcodelist')
-@login_required
-def barcodelist(page=1):
-    """
-    资产列表
-    :param page:
-    :return:
-    """
-    pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).paginate(page, POSTS_PER_PAGE, True)
-    fields = ['barcode','user_code','topdpt','ztbz','wlwz', 'type','opdate']
-    fields_cn = ['二维码', '账户','部门','状态标识','物理位置','类型','时间' ]
-    specfile = {'input': '手工输入',
-                'image': '拍照上传',
-                'None':''}
-    return render_template('list.html', pagination=pagination,
-                           fields=fields, fields_cn=fields_cn, specfile=specfile)
+
 
 
 @app.route('/list/<int:page>', methods=['GET', 'POST'])
@@ -206,12 +191,7 @@ def showsnlist(page=1):
                            specfile=specfile)
 
 
-@app.route('/sendmail')
-def sendtest():
-    from email import send_email
 
-    send_email('MSGSEND#15605468613#哈哈哈', 'sd-lcgly@chinaunicom.cn', ['sd-lcgly@chinaunicom.cn'], None, None)
-    return "ok"
 
 
 @robot.handler
@@ -403,14 +383,21 @@ def showzc(zcbh=None):
                                   BarcodeList.barcode == zcbh
     )
     form=BarcodeListUpdate()
+    # 下电标识:
+    # 报废标识:未报废, 闲置-待报废, 已报废
+    # 设备生命周期:在用-长期使用, 在用-两年内下线（2015年内）, 在用-年内下线（2014年内）, 闲置-可用, 不可用, 在用-开发测试
 
+    form.ztbz.choices = [('未下电', '未下电'), ('已下电-已拆除', '已下电-已拆除'), ('已下电-待拆除', '已下电-待拆除')]
+    form.ztbz1.choices = [('未报废', '未报废'), ('闲置-待报废', '闲置-待报废'), ('已报废', '已报废')]
+    form.ztbz2.choices = [('在用-长期使用', '在用-长期使用'), ('在用-两年内下线（2015年内）', '在用-两年内下线（2015年内）'),
+                          ('闲置-可用', '闲置-可用'),('在用-开发测试','在用-开发测试')]
     if form.validate_on_submit():
         #更新最新状态
         ztbz=form.ztbz.data
-        wlwz=form.wlwz.data
-
+        ztbz1=form.ztbz1.data
+        ztbz2=form.ztbz2.data
         if bb:
-            bb.update({BarcodeList.wlwz:wlwz,
+            bb.update({BarcodeList.ztbz1:ztbz1,BarcodeList.ztbz2:ztbz2,
                        BarcodeList.ztbz:ztbz})
             db.session.commit()
         flash('更新成功')
@@ -422,6 +409,23 @@ def showzc(zcbh=None):
     return render_template('showzcbq.html', form=form, entry=zz, child=child,barcodeinfo=bb.first())
 
 
+@app.route('/barcodelist/<int:page>', methods=['GET', 'POST'])
+@app.route('/barcodelist')
+@login_required
+def barcodelist(page=1):
+    """
+    资产列表
+    :param page:
+    :return:
+    """
+    pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).paginate(page, POSTS_PER_PAGE, True)
+    fields = ['barcode',  'ztbz', 'ztbz1','ztbz2', 'user_code', 'topdpt','type', 'opdate']
+    fields_cn = ['二维码', '下电标识', '报废标识', '生命周期', '账户', '部门','类型','时间']
+    specfile = {'input': '手工输入',
+                'image': '拍照上传',
+                'None': ''}
+    return render_template('list.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
 @app.route('/unchecked/<int:page>', methods=['GET', 'POST'])
@@ -467,13 +471,14 @@ def checked(page=1):
 
     from Logic import MissionLogic
 
-    zz = zczb.query.filter(zczb.zcbqh.in_(
-        MissionLogic.getCompleteZCBQHbyMissionId(mid)
-    ))
+
+
+    zz = zczb.query.filter(zczb.zcbqh.in_(MissionLogic.getCompleteZCBQHbyMissionId(mid)))\
+        #.add_columns(BarcodeList.ztbz, BarcodeList.ztbz1, BarcodeList.ztbz2).filter(BarcodeList.barcode == zczb.zcbqh)
     pagination = zz.paginate(page, POSTS_PER_PAGE, True)
-    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc']
-    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称']
-    specfile = {'input': '手工输入',
+    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc','ztbz', 'ztbz1', 'ztbz2']
+    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称','下电标识','报废标识','生命周期']
+    specfile = {'未下电': '手工输入',
                 'image': '拍照上传'}
     return render_template('list.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
@@ -496,6 +501,6 @@ def cs(tablename):
 
 @app.route('/test')
 def test():
-    from Logic.MissionLogic import getWrokingMissions
-    mm=getWrokingMissions()
-    return mm[0].missionname
+    from Logic.BarcodeLogic import getPortalUser
+    ppp=getPortalUser('weibh')
+    return  ppp.topdpt

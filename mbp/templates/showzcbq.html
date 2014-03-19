@@ -2,13 +2,12 @@
 {% extends "base.html" %}
 {% from "_formhelper.html" import render_field %}
 {% block content %}
+
+
 {%if barcodeinfo.ztbz %}
-
-
-<span class="label label-danger">状态标识:{{barcodeinfo.ztbz}}</span>
-<span class="label label-primary">物理位置:{{barcodeinfo.wlwz}}</span>
-
-
+<span class="label label-info">下电标识:{{barcodeinfo.ztbz}}</span>
+<span class="label label-success">报废标识:{{barcodeinfo.ztbz1}}</span>
+<span class="label label-warning">设备生命周期:{{barcodeinfo.ztbz2}}</span>
 {%endif%}
 
 
@@ -17,22 +16,26 @@
     {{ form.hidden_tag() }}
 
     <div class="form-group">
-        <label class="sr-only" for="ztbz"> 状态标识:</label>
+        <label for="ztbz"> 下电标识:</label>
         {{ form.ztbz}}
     </div>
     <div class="form-group">
-        <label class="sr-only" for="wlwz"> 物理位置:</label>
-        <input class=" input form-control" id="wlwz" name="wlwz" placeholder="物理位置" type="text" value="">
+        <label for="ztbz"> 报废标识:</label>
+        {{ form.ztbz1}}
     </div>
+    <div class="form-group">
+        <label for="ztbz"> 设备生命周期:</label>
+        {{ form.ztbz2}}
+    </div>
+
     <button type="submit" class="btn btn-success">更新</button>
 
 </form>
 </div>
-
+<hr>
 
 
 {%if child%}
-
 <div class="btn-group">
     <button type="button" class="btn btn-danger">子资产 <span class="badge">{{child|length}}</span></button>
     <button type="button" class="btn btn-danger dropdown-toggle " data-toggle="dropdown">

@@ -26,6 +26,8 @@ class WechatChkCode(BaseForm):
     code=TextField('请输入验证码',validators=[Required()])
 
 class BarcodeListUpdate(BaseForm):
+
     wlwz = TextField('物理位置')
-    ztbz = SelectField(u'状态标识',
-                           choices=[('已下电', '已下电'), ('实际报废', '实际报废'), ('待报废', '待报废')])
+    ztbz = SelectField('下电标识')
+    ztbz1 = SelectField('报废标识')
+    ztbz2 = SelectField('设备生命周期')

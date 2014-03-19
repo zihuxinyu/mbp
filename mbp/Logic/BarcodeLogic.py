@@ -44,16 +44,16 @@ def SaveBarcode(barcodelist, message, type='input'):
         uu=getUserBySource(message.source)
         if uu:
             pp=getPortalUser(uu)
-        bb = BarcodeList(source=message.source, barcode=x,
+            bb = BarcodeList(source=message.source, barcode=x,
                          type=type, msgid=message.id,
                          user_code=uu,opdate=now(),
                          topdpt=pp.topdpt
         )
-        db.session.add(bb)
-        mb=mission_barcode.query.filter(and_(mission_barcode.barcode==x,  mission_barcode.msgid==None) )
-        if mb.first():
-            #只更新没有扫描到得二维码.
-            mb.update({mission_barcode.msgid:message.id})
+            db.session.add(bb)
+            mb=mission_barcode.query.filter(and_(mission_barcode.barcode==x,  mission_barcode.msgid==None) )
+            if mb.first():
+                #只更新没有扫描到得二维码.
+                mb.update({mission_barcode.msgid:message.id})
 
     db.session.commit()
 
