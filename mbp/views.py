@@ -1,10 +1,8 @@
 # -*- coding: utf8 -*-
-import random
-import string
-from config import POSTS_PER_PAGE, ADMINS
+from config import POSTS_PER_PAGE
 
 from flask_login import current_user, login_required, logout_user, login_user
-from flask.globals import g, request, session, session as gsession
+from flask.globals import g, request, session
 from mbp import lm, app, robot, db
 from flask.templating import render_template
 from sqlalchemy import and_, desc
@@ -12,7 +10,7 @@ from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
 from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
-from Logic import WechatLogic, BarcodeLogic
+from Logic import WechatLogic, BarcodeLogic, DBLogic
 
 
 @lm.user_loader
@@ -42,7 +40,7 @@ def index():
     remaining = getUnCompletedbyMissionId(mid)
     ended = getCompletedbyMissionId(mid)
     allcount = remaining + ended
-    return render_template('index.html',remaining=remaining,ended=ended,allcount=allcount)
+    return render_template('index.html', remaining=remaining, ended=ended, allcount=allcount)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -112,9 +110,6 @@ def about():
     return render_template('about.html')
 
 
-
-
-
 @app.route('/mission_barcode/<int:page>', methods=['GET', 'POST'])
 @app.route('/mission_barcode')
 @login_required
@@ -129,9 +124,6 @@ def missionbarcode(page=1):
                 'image': '拍照上传'}
     return render_template('list.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn)
-
-
-
 
 
 @app.route('/list/<int:page>', methods=['GET', 'POST'])
@@ -189,9 +181,6 @@ def showsnlist(page=1):
     return render_template('list.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn,
                            specfile=specfile)
-
-
-
 
 
 @robot.handler
@@ -330,7 +319,6 @@ def bdchk(source=None, usercode=None):
                     WechatUser.checked: 1
                 })
 
-
                 staff = portal_user.query.filter(portal_user.user_code == w.usercode).first()
                 login_user(staff, remember=True)
                 db.session.commit()
@@ -375,14 +363,13 @@ def showzc(zcbh=None):
     from  forms import BarcodeListUpdate
 
     if (not zcbh ) and request.args.get('zcbh'):
-        zcbh=str(request.args.get('zcbh'))
+        zcbh = str(request.args.get('zcbh'))
     msgid = request.args.get('msgid')
 
-
-    bb = BarcodeList.query.filter(and_(BarcodeList.user_code==g.user.user_code),
+    bb = BarcodeList.query.filter(and_(BarcodeList.user_code == g.user.user_code),
                                   BarcodeList.barcode == zcbh
     )
-    form=BarcodeListUpdate()
+    form = BarcodeListUpdate()
     # 下电标识:
     # 报废标识:未报废, 闲置-待报废, 已报废
     # 设备生命周期:在用-长期使用, 在用-两年内下线（2015年内）, 在用-年内下线（2014年内）, 闲置-可用, 不可用, 在用-开发测试
@@ -390,23 +377,22 @@ def showzc(zcbh=None):
     form.ztbz.choices = [('未下电', '未下电'), ('已下电-已拆除', '已下电-已拆除'), ('已下电-待拆除', '已下电-待拆除')]
     form.ztbz1.choices = [('未报废', '未报废'), ('闲置-待报废', '闲置-待报废'), ('已报废', '已报废')]
     form.ztbz2.choices = [('在用-长期使用', '在用-长期使用'), ('在用-两年内下线（2015年内）', '在用-两年内下线（2015年内）'),
-                          ('闲置-可用', '闲置-可用'),('在用-开发测试','在用-开发测试')]
+                          ('闲置-可用', '闲置-可用'), ('在用-开发测试', '在用-开发测试')]
     if form.validate_on_submit():
         #更新最新状态
-        ztbz=form.ztbz.data
-        ztbz1=form.ztbz1.data
-        ztbz2=form.ztbz2.data
+        ztbz = form.ztbz.data
+        ztbz1 = form.ztbz1.data
+        ztbz2 = form.ztbz2.data
         if bb:
-            bb.update({BarcodeList.ztbz1:ztbz1,BarcodeList.ztbz2:ztbz2,
-                       BarcodeList.ztbz:ztbz})
+            bb.update({BarcodeList.ztbz1: ztbz1, BarcodeList.ztbz2: ztbz2,
+                       BarcodeList.ztbz: ztbz})
             db.session.commit()
         flash('更新成功')
-
 
     zz = zczb.query.filter(zczb.zcbqh == zcbh).first()
     child = BarcodeLogic.getChild(zcbh)
 
-    return render_template('showzcbq.html', form=form, entry=zz, child=child,barcodeinfo=bb.first())
+    return render_template('showzcbq.html', form=form, entry=zz, child=child, barcodeinfo=bb.first())
 
 
 @app.route('/barcodelist/<int:page>', methods=['GET', 'POST'])
@@ -418,9 +404,11 @@ def barcodelist(page=1):
     :param page:
     :return:
     """
-    pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).paginate(page, POSTS_PER_PAGE, True)
-    fields = ['barcode',  'ztbz', 'ztbz1','ztbz2', 'user_code', 'topdpt','type', 'opdate']
-    fields_cn = ['二维码', '下电标识', '报废标识', '生命周期', '账户', '部门','类型','时间']
+    pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).distinct(BarcodeList.barcode).paginate(page,
+                                                                                                             POSTS_PER_PAGE,
+                                                                                                             True)
+    fields = ['barcode', 'ztbz', 'ztbz1', 'ztbz2', 'user_code', 'topdpt', 'type', 'opdate']
+    fields_cn = ['二维码', '下电标识', '报废标识', '生命周期', '账户', '部门', '类型', '时间']
     specfile = {'input': '手工输入',
                 'image': '拍照上传',
                 'None': ''}
@@ -432,7 +420,6 @@ def barcodelist(page=1):
 @app.route('/unchecked/', methods=['GET', 'POST'])
 @login_required
 def unchecked(page=1):
-
     """
     没有核查的资产列表
     :param page:
@@ -471,16 +458,19 @@ def checked(page=1):
 
     from Logic import MissionLogic
 
+    zz = zczb.query.filter(zczb.zcbqh.in_(MissionLogic.getCompleteZCBQHbyMissionId(mid))).add_columns(BarcodeList.ztbz,
+                                                                                                      BarcodeList.ztbz1,
+                                                                                                      BarcodeList
+                                                                                                      .ztbz2).filter(
+        BarcodeList.barcode == zczb.zcbqh)
 
-
-    zz = zczb.query.filter(zczb.zcbqh.in_(MissionLogic.getCompleteZCBQHbyMissionId(mid)))\
-        #.add_columns(BarcodeList.ztbz, BarcodeList.ztbz1, BarcodeList.ztbz2).filter(BarcodeList.barcode == zczb.zcbqh)
     pagination = zz.paginate(page, POSTS_PER_PAGE, True)
-    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc','ztbz', 'ztbz1', 'ztbz2']
-    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称','下电标识','报废标识','生命周期']
+    xx = zz.all()
+    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc']
+    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称']
     specfile = {'未下电': '手工输入',
                 'image': '拍照上传'}
-    return render_template('list.html', pagination=pagination,
+    return render_template('list.html', pagination=pagination, xx=xx,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
@@ -499,8 +489,20 @@ def cs(tablename):
         print(x)
     return render_template('cs.html', list=entries, tablename=tablename)
 
+
 @app.route('/test')
 def test():
-    from Logic.BarcodeLogic import getPortalUser
-    ppp=getPortalUser('weibh')
-    return  ppp.topdpt
+    db = DBLogic.ado()
+    sql = 'SELECT * FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode AS ' \
+          'mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid ' \
+          'IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
+
+    zz = zczb.query.add_columns(BarcodeList.ztbz,
+                                         BarcodeList.ztbz1,
+                                         BarcodeList.ztbz2).filter(
+        BarcodeList.barcode == zczb.zcbqh).count()
+    print(zz)
+    zz=str(zz)
+    for article in db.query(zz):
+        print article.barcodelist_ztbz
+    return str(len(db.query(zz)))

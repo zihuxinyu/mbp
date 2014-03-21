@@ -3,7 +3,9 @@
 {% from "_paginathion.html" import pagination_html %}
 {% from "_listview.html" import listview %}
 {% block content %}
-
+{%for x in xx %}
+        {{x}}
+        {%endfor%}
 
 <!----显示表格---->
 {{ listview(pagination,fields,fields_cn,specfile,tablecount=2) }}
