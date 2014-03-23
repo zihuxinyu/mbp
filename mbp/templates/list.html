@@ -3,10 +3,7 @@
 {% from "_paginathion.html" import pagination_html %}
 {% from "_listview.html" import listview %}
 {% block content %}
-{% for item in pagination.items %}
-        {{loop.index}}--{{item.ztbz}}<br>
 
-        {%endfor%}
 <!----显示表格---->
 {{ listview(pagination,fields,fields_cn,specfile) }}
 <!-- 调用分页模板 -->

@@ -5,8 +5,7 @@ from werkzeug.exceptions import abort
 from math import ceil
 
 
-def ado():
-    return torndb.Connection(DB_HOST, DB_DATEBASE, DB_USER, DB_PSW)
+
 
 
 class Pagination(object):
@@ -108,32 +107,10 @@ class Pagination(object):
                 last = num
 
 
-class BaseQuery():
-    """The default query object used for models, and exposed as
-    :attr:`~SQLAlchemy.Query`. This can be subclassed and
-    replaced for individual models by setting the :attr:`~Model.query_class`
-    attribute.  This is a subclass of a standard SQLAlchemy
-    :class:`~sqlalchemy.orm.query.Query` class and has all the methods of a
-    standard query as well.
-    """
+class AdoHelper():
 
-    def get_or_404(self, ident):
-        """Like :meth:`get` but aborts with 404 if not found instead of
-        returning `None`.
-        """
-        rv = self.get(ident)
-        if rv is None:
-            abort(404)
-        return rv
-
-    def first_or_404(self):
-        """Like :meth:`first` but aborts with 404 if not found instead of
-        returning `None`.
-        """
-        rv = self.first()
-        if rv is None:
-            abort(404)
-        return rv
+    def db(self):
+        return torndb.Connection(DB_HOST, DB_DATEBASE, DB_USER, DB_PSW)
 
     def paginate(self, page, per_page=20, error_out=True, sql=None):
         """Returns `per_page` items from page `page`.  By default it will
@@ -143,15 +120,15 @@ class BaseQuery():
         Returns an :class:`Pagination` object.
         """
 
-        sql = sql.upper()
-        countsql = 'select count(*) as count  ' + sql[sql.find('FROM'):]
-        print(countsql)
+        sql = sql.lower()
+        countsql = 'select count(*) as count  from ({0}) tmp_count '.format(sql) #+ sql[sql.find('from'):]
+        #print(countsql)
         if 'limit' in sql:
             print("please del your limit keywords")
         sql = sql + ' limit {0},{1}'.format((page - 1) * per_page, per_page)
-        print(sql)
+        #print(sql)
 
-        items =  ado().query(sql)
+        items =self.db().query(sql)
         if error_out and page < 1:
             abort(404)
 
@@ -161,5 +138,5 @@ class BaseQuery():
             total = len(items)
         else:
             #total = self.order_by(None).count()
-            total = ado().get(countsql).count
+            total = self.db().get(countsql).count
         return Pagination(self, page, per_page, total, items)

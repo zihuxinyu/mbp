@@ -1,4 +1,4 @@
-{% macro listview(pagination,fields,fields_cn,specfile,tablecount=1) -%}
+{% macro listview(pagination,fields,fields_cn,specfile) -%}
 {#pagination ：要分页显示的实体      pagination = Staff.query.paginate(page, POSTS_PER_PAGE, True)#}
 {#fields：要显示的字段     fields = ['staffid', 'chnl_id', 'chnl_name']#}
 {#fields_cn： 对应字段的汉字   fields_cn=['登录ID','代理商ID','代理商名称']#}
@@ -24,11 +24,9 @@
             {% for field in fields %}
             {# 遍历每一个字段，输出对应内容#}
             <td>
-                {%if tablecount >1%}
-                {{ showdata2( pagination.items,field,specfile) }}
-                {%else%}
+
                 {{ showdata(item[field],specfile) }}
-                {%endif%}
+
             </td>
             {% endfor %}
         </tr>
@@ -40,29 +38,6 @@
         {% endif %}
     </table>
 </div>
-{%- endmacro %}
-{% macro showdata2(text,field,specfile) -%}
-{%set final=''%}
-{% if text[1][0][field] %}
-    {%set final=text[1][0][field]%}
-{%else%}
-    {% if text[1][field] %}
-        {%set final=text[1][field]%}
-    {%else%}
-        {%set final=text[field]%}
-    {%endif%}
-{%endif%}
-{% if specfile %}
-{#                    处理特殊的文字，进行特殊标记#}
-{% if final in specfile %}
-        {{ specfile[final] |safe|trim }}
-    {% else %}
-        {{final}}
-    {% endif %}
-{% else %}
-    {{ final }}
-{% endif %}
-
 {%- endmacro %}
 {% macro showdata(text,specfile) -%}
 {% if specfile %}

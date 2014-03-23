@@ -10,7 +10,8 @@ from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from mbp.forms import LoginForm
 from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
-from Logic import WechatLogic, BarcodeLogic, DBLogic
+from Logic import WechatLogic, BarcodeLogic
+from Logic.DBLogic import AdoHelper
 
 
 @lm.user_loader
@@ -138,8 +139,7 @@ def list(page=1):
     pagination = Staff.query.filter(Staff.chnl_id.like('%1%')).paginate(page, POSTS_PER_PAGE, True)
     fields = ['staffid', 'chnl_id', 'chnl_name']
     fields_cn = ['登录ID', '代理商ID', '代理商名称']
-    specfile = {'sdsc-yhjzl1': '<span class="label label-danger">停机</span>',
-                '1': 'dddddddd'}
+    specfile = {}
     return render_template('list.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn,
                            specfile=specfile)
@@ -458,19 +458,16 @@ def checked(page=1):
 
     from Logic import MissionLogic
 
-    zz = zczb.query.filter(zczb.zcbqh.in_(MissionLogic.getCompleteZCBQHbyMissionId(mid))).add_columns(BarcodeList.ztbz,
-                                                                                                      BarcodeList.ztbz1,
-                                                                                                      BarcodeList
-                                                                                                      .ztbz2).filter(
-        BarcodeList.barcode == zczb.zcbqh)
+    sql = 'SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2  ,ggxh FROM zczb, ' \
+          'barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode  FROM mission_barcode WHERE mission_barcode' \
+          '.missionid = {0} AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
 
-    pagination = zz.paginate(page, POSTS_PER_PAGE, True)
-    xx = zz.all()
-    fields = ['zcbqh', 'swmc', 'ggxh', 'zrbmmc']
-    fields_cn = ['资产标签号', '实物名称', '规格型号', '责任部门名称']
-    specfile = {'未下电': '手工输入',
-                'image': '拍照上传'}
-    return render_template('list.html', pagination=pagination, xx=xx,
+    sql = sql.format(MissionLogic.getCompleteZCBQHbyMissionId(mid))
+    xx = AdoHelper().paginate(page, sql=sql)
+    fields = ['zcbqh', 'swmc', 'ggxh', 'ztbz', 'ztbz1', 'ztbz2', 'user_code', 'zrbmmc']
+    fields_cn = ['资产标签号', '实物名称', '规格型号', '下电标识', '报废标识', '生命周期', '核查人', '责任部门名称']
+    specfile = {'None': ''}
+    return render_template('list.html', pagination=xx,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
@@ -491,15 +488,18 @@ def cs(tablename):
 
 
 @app.route('/test/<int:page>/')
+@app.route('/test/')
 def test(page=1):
-    db = DBLogic.ado()
     sql = 'SELECT * FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode AS ' \
           'mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid ' \
+          '' \
           'IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
-    sql=" select * from zczb "
 
+    xx = AdoHelper().paginate(page, sql=sql)
+    fields = ['zcbqh', 'ztbz', 'swmc', 'ggxh', 'zrbmmc']
+    fields_cn = ['资产标签号', '状态标识', '实物名称', '规格型号', '责任部门名称']
+    specfile = {'未下电': '手工输入',
+                'image': '拍照上传', 'None': ''}
+    return render_template('list.html', pagination=xx,
+                           fields=fields, fields_cn=fields_cn, specfile=specfile)
 
-    xx= DBLogic. BaseQuery().paginate(page,sql=sql)
-
-
-    return render_template('list.html', pagination=xx)

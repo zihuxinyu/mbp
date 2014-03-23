@@ -31,9 +31,9 @@ def getUnCompleteZCBQHbyMissionId(MissionId):
 
 
 def getCompleteZCBQHbyMissionId(MissionId):
-    return db.session.query(mission_barcode.barcode) \
+    return mission_barcode.query \
         .filter(mission_barcode.missionid == MissionId) \
-        .filter(mission_barcode.msgid != None)
+        .filter(mission_barcode.msgid != None).first().missionid
 
 
 def getWrokingMissions():
