@@ -499,7 +499,7 @@ def test(page=1):
     sql=" select * from zczb "
 
 
-    xx= DBLogic. BaseQuery().paginate(page,sql=sql,ado=db)
+    xx= DBLogic. BaseQuery().paginate(page,sql=sql)
 
 
     return render_template('list.html', pagination=xx)

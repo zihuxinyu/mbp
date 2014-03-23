@@ -135,7 +135,7 @@ class BaseQuery():
             abort(404)
         return rv
 
-    def paginate(self, page, per_page=20, error_out=True, sql=None, ado=None):
+    def paginate(self, page, per_page=20, error_out=True, sql=None):
         """Returns `per_page` items from page `page`.  By default it will
         abort with 404 if no items were found and the page was larger than
         1.  This behavor can be disabled by setting `error_out` to `False`.
@@ -151,7 +151,7 @@ class BaseQuery():
         sql = sql + ' limit {0},{1}'.format((page - 1) * per_page, per_page)
         print(sql)
 
-        items = ado.query(sql)
+        items =  ado().query(sql)
         if error_out and page < 1:
             abort(404)
 
@@ -161,5 +161,5 @@ class BaseQuery():
             total = len(items)
         else:
             #total = self.order_by(None).count()
-            total = ado.get(countsql).count
+            total = ado().get(countsql).count
         return Pagination(self, page, per_page, total, items)
