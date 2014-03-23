@@ -490,19 +490,16 @@ def cs(tablename):
     return render_template('cs.html', list=entries, tablename=tablename)
 
 
-@app.route('/test')
-def test():
+@app.route('/test/<int:page>/')
+def test(page=1):
     db = DBLogic.ado()
     sql = 'SELECT * FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode AS ' \
           'mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid ' \
           'IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
+    sql=" select * from zczb "
 
-    zz = zczb.query.add_columns(BarcodeList.ztbz,
-                                         BarcodeList.ztbz1,
-                                         BarcodeList.ztbz2).filter(
-        BarcodeList.barcode == zczb.zcbqh).count()
-    print(zz)
-    zz=str(zz)
-    for article in db.query(zz):
-        print article.barcodelist_ztbz
-    return str(len(db.query(zz)))
+
+    xx= DBLogic. BaseQuery().paginate(page,sql=sql,ado=db)
+
+
+    return render_template('list.html', pagination=xx)
