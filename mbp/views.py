@@ -490,11 +490,8 @@ def cs(tablename):
 @app.route('/test/<int:page>/')
 @app.route('/test/')
 def test(page=1):
-    sql = 'SELECT * FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode AS ' \
-          'mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid ' \
-          '' \
-          'IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
-
+    sql = 'SELECT zczb.*,barcodelist.ztbz FROM zczb , barcodelist  WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode AS mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
+    #sql="select * from zczb"
     xx = AdoHelper().paginate(page, sql=sql)
     fields = ['zcbqh', 'ztbz', 'swmc', 'ggxh', 'zrbmmc']
     fields_cn = ['资产标签号', '状态标识', '实物名称', '规格型号', '责任部门名称']
