@@ -383,9 +383,11 @@ def showzc(zcbh=None):
         ztbz = form.ztbz.data
         ztbz1 = form.ztbz1.data
         ztbz2 = form.ztbz2.data
+        wlwz = form.wlwz.data
         if bb:
             bb.update({BarcodeList.ztbz1: ztbz1, BarcodeList.ztbz2: ztbz2,
-                       BarcodeList.ztbz: ztbz})
+                       BarcodeList.ztbz: ztbz, BarcodeList.wlwz: wlwz})
+
             db.session.commit()
         flash('更新成功')
 
@@ -407,8 +409,8 @@ def barcodelist(page=1):
     pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).distinct(BarcodeList.barcode).paginate(page,
                                                                                                              POSTS_PER_PAGE,
                                                                                                              True)
-    fields = ['barcode', 'ztbz', 'ztbz1', 'ztbz2', 'user_code', 'topdpt', 'type', 'opdate']
-    fields_cn = ['二维码', '下电标识', '报废标识', '生命周期', '账户', '部门', '类型', '时间']
+    fields = ['barcode', 'ztbz', 'ztbz1', 'ztbz2', 'wlwz' 'user_code', 'topdpt', 'type', 'opdate']
+    fields_cn = ['二维码', '下电标识', '报废标识', '生命周期', '物理位置', '账户', '部门', '类型', '时间']
     specfile = {'input': '手工输入',
                 'image': '拍照上传',
                 'None': ''}
@@ -458,14 +460,17 @@ def checked(page=1):
 
     from Logic import MissionLogic
 
-    sql = 'SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2  ,ggxh FROM zczb, ' \
+    sql = 'SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2,wlwz  ,ggxh,barcodelist.opdate ' \
+          'FROM zczb, ' \
           'barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode  FROM mission_barcode WHERE mission_barcode' \
-          '.missionid = {0} AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
+          '.missionid = {0} AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh order by ' \
+          'barcodelist.opdate desc '
 
     sql = sql.format(MissionLogic.getCompleteZCBQHbyMissionId(mid))
+    print(sql)
     xx = AdoHelper().paginate(page, sql=sql)
-    fields = ['zcbqh', 'swmc', 'ggxh', 'ztbz', 'ztbz1', 'ztbz2', 'user_code', 'zrbmmc']
-    fields_cn = ['资产标签号', '实物名称', '规格型号', '下电标识', '报废标识', '生命周期', '核查人', '责任部门名称']
+    fields = ['zcbqh', 'swmc', 'ggxh', 'ztbz', 'ztbz1', 'ztbz2', 'wlwz', 'user_code', 'zrbmmc', 'opdate']
+    fields_cn = ['资产标签号', '实物名称', '规格型号', '下电标识', '报废标识', '生命周期', '物理位置', '核查人', '责任部门名称', '操作时间']
     specfile = {'None': ''}
     return render_template('list.html', pagination=xx,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
@@ -490,7 +495,9 @@ def cs(tablename):
 @app.route('/test/<int:page>/')
 @app.route('/test/')
 def test(page=1):
-    sql = 'SELECT zczb.*,barcodelist.ztbz FROM zczb , barcodelist  WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode AS mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
+    sql = 'SELECT zczb.*,barcodelist.ztbz FROM zczb , barcodelist  WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode ' \
+          'AS mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode' \
+          '.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
     #sql="select * from zczb"
     xx = AdoHelper().paginate(page, sql=sql)
     fields = ['zcbqh', 'ztbz', 'swmc', 'ggxh', 'zrbmmc']

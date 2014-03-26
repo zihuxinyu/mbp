@@ -8,6 +8,7 @@
 <span class="label label-info">下电标识:{{barcodeinfo.ztbz}}</span>
 <span class="label label-success">报废标识:{{barcodeinfo.ztbz1}}</span>
 <span class="label label-warning">设备生命周期:{{barcodeinfo.ztbz2}}</span>
+<span class="label label-info">物理位置:{{barcodeinfo.wlwz}}</span>
 {%endif%}
 
 
@@ -26,6 +27,10 @@
     <div class="form-group">
         <label for="ztbz"> 设备生命周期:</label>
         {{ form.ztbz2}}
+    </div>
+    <div class="form-group">
+        <label for="wlwz"> 物理位置:</label>
+        {{ form.wlwz}}
     </div>
 
     <button type="submit" class="btn btn-success">更新</button>
