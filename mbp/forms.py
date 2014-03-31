@@ -3,7 +3,7 @@
 from flask_wtf import Form
 from wtforms.validators import Required
 from wtforms.fields.simple import TextField
-from wtforms.fields.core import BooleanField, SelectField
+from wtforms.fields.core import BooleanField, SelectField, DateTimeField
 from wtforms.ext.i18n.form import Form as w
 
 
@@ -31,3 +31,13 @@ class BarcodeListUpdate(BaseForm):
     ztbz = SelectField('下电标识')
     ztbz1 = SelectField('报废标识')
     ztbz2 = SelectField('设备生命周期')
+
+class FMsqllist(BaseForm):
+    title = TextField('title')
+    sqlContent = TextField('sqlContent')
+    paras = TextField('paras')
+    frequency = TextField('frequency')
+    #lastexec = DateTimeField('lastexec')
+    #nextexec = DateTimeField('nextexec')
+    user_code = TextField('user_code')
+    #opdate = DateTimeField('opdate')

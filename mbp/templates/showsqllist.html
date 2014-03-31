@@ -1,0 +1,19 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% from "_formhelper.html" import render_field %}
+{% block content %}
+<div class="well well-large">
+    <form class="form-inline" role="form" action="{{url_for(action,**request.args)}}" method="post">
+        {{ form.hidden_tag() }}
+        <h2 class="form-signin-heading">增加任务</h2>
+        {{render_field(form.title)}}
+        {{render_field(form.sqlContent)}}
+        {{render_field(form.paras)}}
+        {{render_field(form.frequency)}}
+
+        {{render_field(form.user_code)}}
+        <button type="submit" class="btn btn-success">提交</button>
+    </form>
+
+</div>
+{% endblock %}

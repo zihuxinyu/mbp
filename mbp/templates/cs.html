@@ -1,5 +1,6 @@
 
 <hr>
+定义类<br>
 class {{tablename}}(db.Model):<br>
 <code>
     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -29,3 +30,42 @@ class {{tablename}}(db.Model):<br>
     {%endif%}
     {%endfor%}
 </code>
+
+<hr>
+定义forms.py<br>
+<br>
+class FM{{tablename}}(BaseForm):<br>
+{% for x in list %}
+&nbsp;&nbsp;&nbsp;&nbsp;
+{%if x.EXTRA!='auto_increment'%}
+{{x.COLUMN_NAME}}=TextField('{{x.COLUMN_NAME}}')<br>
+{%endif%}
+{%endfor%}
+
+
+<hr>
+定义views.py<br>
+
+{% for x in list %}
+{%if x.EXTRA!='auto_increment'%}
+{{x.COLUMN_NAME}}=form.{{x.COLUMN_NAME}}.data<br>
+{%endif%}
+{%endfor%}
+<br>
+m{{tablename}}={{tablename}}(
+{%for x in list if x.EXTRA not in ['auto_increment'] %}
+{{x.COLUMN_NAME}}={{x.COLUMN_NAME}}
+{%if not loop.last%},{%endif%}
+{%endfor%}
+)
+        <br>
+db.session.add(m{{tablename}})
+        <br>
+db.session.commit()
+
+        <hr>
+        定义模板<br>
+{%for x in list if x.EXTRA not in ['auto_increment'] %}
+{{ '{{' }}render_field(form.{{x.COLUMN_NAME}}){{ '}}' }}<br>
+{%endfor%}
+

@@ -492,6 +492,43 @@ def cs(tablename):
     return render_template('cs.html', list=entries, tablename=tablename)
 
 
+@app.route('/sqllist/', methods=['GET', 'POST'])
+@login_required
+def sqllist():
+
+
+    """
+    sql列表
+
+    :return:
+    """
+    from mbp.models import sqllist
+    from  forms import FMsqllist
+    from Logic import DateLogic
+
+    form = FMsqllist()
+
+    if form.validate_on_submit():
+        #更新最新状态
+        title = form.title.data
+        sqlContent = form.sqlContent.data
+        paras = form.paras.data
+        frequency = form.frequency.data
+
+
+        user_code = form.user_code.data
+        opdate =DateLogic.now()
+        msqllist = sqllist(title=title, sqlContent=sqlContent, paras=paras, frequency=frequency,
+                           user_code=user_code, opdate=opdate)
+        db.session.add(msqllist)
+        db.session.commit()
+        flash('添加成功')
+
+
+
+    return render_template('showsqllist.html', form=form,action='sqllist')
+
+
 @app.route('/test/<int:page>/')
 @app.route('/test/')
 def test(page=1):
