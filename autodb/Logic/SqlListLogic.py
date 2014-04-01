@@ -1,6 +1,6 @@
 # coding: utf-8
 import cx_Oracle
-from mbp.Logic import DateLogic
+from autodb.Logic import DateLogic
 
 
 def nextexec(frequency=None,lastexec=None):
@@ -49,8 +49,7 @@ def OracleExec(sqlContent=None,paras=None):
     :return:
     """
 
-    from mbp.Logic.SqlListLogic import getFormatedSqllist
-    from mbp.Logic.SqlListLogic import replacepara
+
 
     errorMsglist = []
     sqllist = getFormatedSqllist(sqlContent)
