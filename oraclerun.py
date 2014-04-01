@@ -12,20 +12,24 @@ def db():
 def get():
     from autodb.Logic.SqlListLogic import nextexec
 
-    sql = "select * from sqllist where state=0 and nextexec='{0}'"
+    sql = "select * from sqllist where nextexec='{0}'"
     sql = sql.format(DateLogic.now())
     print(sql)
     all = db().query(sql)
     for x in all:
 
-        try:
-            #执行sql内容
-            execsql(guid=x.guid, sqlContent=x.sqlContent, paras=x.paras)
-        finally:
-            #计算下次执行时间,更新状态为0:执行完成
-            nextdate = nextexec(x.frequency, x.lastexec)
-            sqlupdate = "update sqllist set nextexec='{1}',state=0 where guid={0}"
-            db().execute(sqlupdate.format(x.guid, nextdate))
+        #计算下次执行时间,更新状态为0:执行完成
+        #更新执行时间,更新状态为1:正在执行
+        thdate= DateLogic.now()
+
+        nextdate = nextexec(x.frequency, thdate)
+        sqlupdate = "update sqllist set  nextexec='{1}',state=0,lastexec='{2}' where guid={0}"
+        db().execute(sqlupdate.format(x.guid, nextdate,thdate))
+
+        #执行sql内容
+        execsql(guid=x.guid, sqlContent=x.sqlContent, paras=x.paras)
+
+
 
 
 @asyncfun
@@ -33,12 +37,12 @@ def execsql(guid=None, sqlContent=None, paras=None):
     from autodb.Logic.SqlListLogic import OracleExec
 
 
-    #更新执行时间,更新状态为1:正在执行
-    sqlupdate = "update sqllist set lastexec='{1}', state=1 where guid={0}"
-    db().execute(sqlupdate.format(guid, DateLogic.now()))
+
+
+
 
     #执行语句,记录错误
-    errorMsglist = OracleExec(sqlContent, paras)
+    errorMsglist = OracleExec(sqlContent)
     xx = [(guid, x.sql, x.success, x.message) for x in errorMsglist]
     sqlresult = "insert into `sqlresult` (`sguid`,`sqlContent`,`success`,`message`) values (%s,%s,%s,%s)"
     x = db().executemany_rowcount(sqlresult, xx)
@@ -46,10 +50,23 @@ def execsql(guid=None, sqlContent=None, paras=None):
 
 
 if __name__ == "__main__":
-    while True:
-        import time
-
-        time.sleep(1)
-        get();
-
+    # while True:
+    #     import time
+    #
+    #     time.sleep(1)
+    #     get();
+    import  datetime,time
+    from autodb.Logic.StringHelper import PadLeft
+    from autodb.Logic.DateLogic import getOffsetDate,converDateTimeToStr,getLastMonth
+    sql='当前日期:$yyMM$,当前账期$yyMM$,上个账期$yyMM-1$'
+    sql = sql.replace('$yyMMdd$', converDateTimeToStr(getOffsetDate(), format='%y%m%d'))
+    sql = sql.replace('$yyyyMMdd$', converDateTimeToStr(getOffsetDate(), format='%Y%m%d'))
+    sql = sql.replace('$yyyy-MM-dd$', converDateTimeToStr(getOffsetDate(), format='%Y-%m-%d'))
+    sql = sql.replace('$yyMM$', converDateTimeToStr(getOffsetDate(), format='%y%m'))
+    sql = sql.replace('$yyyyMM$', converDateTimeToStr(getOffsetDate(), format='%Y%m'))
+    sql = sql.replace('$yyyy-MM$', converDateTimeToStr(getOffsetDate(), format='%Y-%m'))
+    sql = sql.replace('$yy-MM$', converDateTimeToStr(getOffsetDate(), format='%y-%m'))
+    sql = sql.replace('$yyMM-1$', getLastMonth()[2:6])
+    print()
+    print(sql)
 

@@ -18,12 +18,12 @@ def getnextdate(lastdate=None, hours=0):
     from datetime import timedelta
     lastdate=lastdate if lastdate else  datetime.now()
     now = datetime.strptime(str(lastdate), '%Y-%m-%d %H:%M:%S')
-    aDay = timedelta(minutes=hours*60)
+    aDay = timedelta(minutes=hours)
     now = now + aDay
     return now.strftime('%Y-%m-%d %H:%M:%S')
 
 
-def getFormatedSqllist(sqlcontent):
+def getFormatedSqllist(sqlcontent, paras=None):
     '''
     获取格式化后的sql列表，主要去除注释
     '''
@@ -33,6 +33,8 @@ def getFormatedSqllist(sqlcontent):
     sql = ''
     for sublist in listx:
         if not sublist.startswith('--'):
+            #替换sql语句中得值
+            sublist = replacepara(sql, paras)
             sql += sublist + ' '
             #print(sublist)
     sqlist = sql.split(';')
@@ -42,7 +44,7 @@ def getFormatedSqllist(sqlcontent):
     return sqlist
 
 
-def OracleExec(sqlContent=None,paras=None):
+def OracleExec(sqlContent=None, paras=None):
     """
     执行SQL语句,并将结果返回
     :param sqlContent:
@@ -52,7 +54,7 @@ def OracleExec(sqlContent=None,paras=None):
 
 
     errorMsglist = []
-    sqllist = getFormatedSqllist(sqlContent)
+    sqllist = getFormatedSqllist(sqlcontent=sqlContent, paras=paras)
 
     host = '134.44.36.51'
     port = 1521
@@ -64,12 +66,9 @@ def OracleExec(sqlContent=None,paras=None):
     oraclecursor = oracledb.cursor()
     for i, sql in enumerate(sqllist):
         if sql.strip():
-            import  time
-            print('sleep')
-            time.sleep(1)
-            print('week')
+
             try:
-                sql = replacepara(sql, paras)
+
                 oraclecursor.execute(sql)
                 errorMsg = ErrorMsg(sql=sql, success=True)
                 errorMsglist.append(errorMsg)
@@ -112,4 +111,19 @@ def replacepara(sql=None,paras=None):
         old = '$' + _x[0] + '$'
         new = _x[1]
         sql = sql.replace(old, new)
+
+        
+    #替换通用的时间
+
+    from autodb.Logic.DateLogic import getOffsetDate, converDateTimeToStr, getLastMonth
+
+    #sql = '当前日期:$yyMM$,当前账期$yyMM$,上个账期$yyMM-1$'
+    sql = sql.replace('$yyMMdd$', converDateTimeToStr(getOffsetDate(), format='%y%m%d'))
+    sql = sql.replace('$yyyyMMdd$', converDateTimeToStr(getOffsetDate(), format='%Y%m%d'))
+    sql = sql.replace('$yyyy-MM-dd$', converDateTimeToStr(getOffsetDate(), format='%Y-%m-%d'))
+    sql = sql.replace('$yyMM$', converDateTimeToStr(getOffsetDate(), format='%y%m'))
+    sql = sql.replace('$yyyyMM$', converDateTimeToStr(getOffsetDate(), format='%Y%m'))
+    sql = sql.replace('$yyyy-MM$', converDateTimeToStr(getOffsetDate(), format='%Y-%m'))
+    sql = sql.replace('$yy-MM$', converDateTimeToStr(getOffsetDate(), format='%y-%m'))
+    sql = sql.replace('$yyMM-1$', getLastMonth()[2:6])
     return sql
