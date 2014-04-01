@@ -51,7 +51,7 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('mbp startup')
 
-from au import views
+from mbp import views
 
 
 @app.errorhandler(404)

@@ -32,12 +32,4 @@ class BarcodeListUpdate(BaseForm):
     ztbz1 = SelectField('报废标识')
     ztbz2 = SelectField('设备生命周期')
 
-class FMsqllist(BaseForm):
-    title = TextField('title')
-    sqlContent = TextField('sqlContent')
-    paras = TextField('paras')
-    frequency = TextField('frequency')
-    #lastexec = DateTimeField('lastexec')
-    #nextexec = DateTimeField('nextexec')
-    user_code = TextField('user_code')
-    #opdate = DateTimeField('opdate')
+
