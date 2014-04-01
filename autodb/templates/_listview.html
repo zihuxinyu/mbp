@@ -1,0 +1,54 @@
+{% macro listview(pagination,fields,fields_cn,specfile) -%}
+{#pagination ：要分页显示的实体      pagination = Staff.query.paginate(page, POSTS_PER_PAGE, True)#}
+{#fields：要显示的字段     fields = ['staffid', 'chnl_id', 'chnl_name']#}
+{#fields_cn： 对应字段的汉字   fields_cn=['登录ID','代理商ID','代理商名称']#}
+{#specfile ：特殊字段的处理  specfile={'sdsc-yhjzl1':'
+<button type="button" class="btn btn-danger btn-xs">停机</button>'}#}
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+            {% if not fields_cn %}
+            {% set fields_cn=fields %}
+            {% endif %}
+            {% for field_cn in fields_cn %}
+            <td>{{ field_cn }}</td>
+            {% endfor %}
+        </tr>
+        </thead>
+
+        {% if pagination %}
+        {% for item in pagination.items %}
+        <tr>
+            {% for field in fields %}
+            {# 遍历每一个字段，输出对应内容#}
+            <td>
+
+                {{ showdata(item[field],specfile) }}
+
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="{{ fields|count }}">NO DATA</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+{%- endmacro %}
+{% macro showdata(text,specfile) -%}
+{% if specfile %}
+{#                    处理特殊的文字，进行特殊标记#}
+{% if text|string|trim in specfile %}
+{{ specfile[text] |safe|trim }}
+
+{% else %}
+{{ text|string|trim }}
+{% endif %}
+{% else %}
+{{ text }}
+{% endif %}
+{%- endmacro %}
