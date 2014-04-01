@@ -50,23 +50,10 @@ def execsql(guid=None, sqlContent=None, paras=None):
 
 
 if __name__ == "__main__":
-    # while True:
-    #     import time
-    #
-    #     time.sleep(1)
-    #     get();
-    import  datetime,time
-    from autodb.Logic.StringHelper import PadLeft
-    from autodb.Logic.DateLogic import getOffsetDate,converDateTimeToStr,getLastMonth
-    sql='当前日期:$yyMM$,当前账期$yyMM$,上个账期$yyMM-1$'
-    sql = sql.replace('$yyMMdd$', converDateTimeToStr(getOffsetDate(), format='%y%m%d'))
-    sql = sql.replace('$yyyyMMdd$', converDateTimeToStr(getOffsetDate(), format='%Y%m%d'))
-    sql = sql.replace('$yyyy-MM-dd$', converDateTimeToStr(getOffsetDate(), format='%Y-%m-%d'))
-    sql = sql.replace('$yyMM$', converDateTimeToStr(getOffsetDate(), format='%y%m'))
-    sql = sql.replace('$yyyyMM$', converDateTimeToStr(getOffsetDate(), format='%Y%m'))
-    sql = sql.replace('$yyyy-MM$', converDateTimeToStr(getOffsetDate(), format='%Y-%m'))
-    sql = sql.replace('$yy-MM$', converDateTimeToStr(getOffsetDate(), format='%y-%m'))
-    sql = sql.replace('$yyMM-1$', getLastMonth()[2:6])
-    print()
-    print(sql)
+    while True:
+        import time
+
+        time.sleep(1)
+        get();
+
 

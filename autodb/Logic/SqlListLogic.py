@@ -112,7 +112,7 @@ def replacepara(sql=None,paras=None):
         new = _x[1]
         sql = sql.replace(old, new)
 
-        
+
     #替换通用的时间
 
     from autodb.Logic.DateLogic import getOffsetDate, converDateTimeToStr, getLastMonth
