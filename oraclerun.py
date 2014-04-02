@@ -23,24 +23,20 @@ def get():
         thdate= DateLogic.now()
 
         nextdate = nextexec(x.frequency, thdate)
-        sqlupdate = "update sqllist set  nextexec='{1}',state=0,lastexec='{2}' where guid={0}"
+        sqlupdate = "update sqllist set  nextexec='{1}',state=1,lastexec='{2}' where guid={0}"
         db().execute(sqlupdate.format(x.guid, nextdate,thdate))
 
         #执行sql内容
         execsql(guid=x.guid, sqlContent=x.sqlContent, paras=x.paras)
 
+        sqlupdate = "update sqllist set state=0 where guid={0}"
+        db().execute(sqlupdate.format(x.guid, nextdate, thdate))
 
 
 
 @asyncfun
 def execsql(guid=None, sqlContent=None, paras=None):
     from autodb.Logic.SqlListLogic import OracleExec
-
-
-
-
-
-
     #执行语句,记录错误
     errorMsglist = OracleExec(sqlContent)
     xx = [(guid, x.sql, x.success, x.message) for x in errorMsglist]
