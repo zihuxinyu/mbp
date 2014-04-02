@@ -12,8 +12,8 @@ def db():
 def get():
     from autodb.Logic.SqlListLogic import nextexec
 
-    sql = "select * from sqllist where nextexec='{0}'"
-    sql = sql.format(DateLogic.now())
+    sql = "select * from sqllist where state=0 and nextexec>='{0}' and nextexec<='{1}'"
+    sql = sql.format(DateLogic.now(minutes=-1),DateLogic.now())
     print(sql)
     all = db().query(sql)
     for x in all:

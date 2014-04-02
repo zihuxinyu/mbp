@@ -69,7 +69,7 @@ class Connection(object):
         try:
             self.reconnect()
         except Exception:
-            logging.error("Cannot connect to MySQL on %s", self.host,
+            logging.error("Cannot connect to ORACLE on %s", self.host,
                           exc_info=True)
 
     def __del__(self):
@@ -107,7 +107,7 @@ class Connection(object):
             self._execute(cursor, query, parameters, kwparameters)
             column_names = [d[0] for d in cursor.description]
 
-            return [Row(itertools.izip_longest(column_names, row)) for row in cursor]
+            return [Row(itertools.zip_longest(column_names, row)) for row in cursor]
         finally:
             cursor.close()
 

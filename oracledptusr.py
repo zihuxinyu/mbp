@@ -1,10 +1,10 @@
 # coding: utf-8
 
-import  tornoracle
+import  tornoracle3
 
 
 def db():
-    return tornoracle.Connection(host='134.44.36.51',
+    return tornoracle3.Connection(host='134.44.36.51',
                                  port='1521',
                                  database='dydb',
                                  user='weibh',
@@ -17,12 +17,22 @@ def db():
 
 
 if __name__ == "__main__":
-    list= db().query("select * from EXT_LOGINLOG t")
-    for x in list:
-        print(unicode(x.user_name,"utf-8").encode('utf-8'), str(x.createdate))
-        pass
+
+
     xx=db().get("select * from oraclerun")
-    print(xx.opdate)
+    print(xx.CN)
+
+
+    lines="({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', NULL, NULL),"
+    tmp="INSERT INTO `portal_user` (`guid`, `user_code`, `user_name`, `user_mobile`, `dpt_name`, `topdpt`, `manager`, `msg`, `msgexpdate`) VALUES"
+    list = db().query("select * from EXT_DPT_USR t")
+    for x in list:
+        #print(x.user_name, x.user_code)
+       tmp=tmp+lines.format('1',x.user_code,x.user_name,x.user_mobile,x.dpt_name,x.topdpt,x.manager)
+
+    man_file = open('man_data.txt', 'w')
+    man_file.write(tmp)
+    man_file.close()
 
 
 
