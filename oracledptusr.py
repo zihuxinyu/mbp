@@ -22,16 +22,17 @@ if __name__ == "__main__":
     xx=db().get("select * from oraclerun")
     print(xx.CN)
 
-
-    lines="({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', NULL, NULL),"
-    tmp="INSERT INTO `portal_user` (`guid`, `user_code`, `user_name`, `user_mobile`, `dpt_name`, `topdpt`, `manager`, `msg`, `msgexpdate`) VALUES"
+    man_file = open('man_data.txt', 'w')
+    lines=" ({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', NULL, NULL), \r\n"
+    man_file.writelines("INSERT INTO `portal_user` (`guid`, `user_code`, `user_name`, `user_mobile`, `dpt_name`, "
+                        "`topdpt`, `manager`, `msg`, `msgexpdate`) VALUES")
     list = db().query("select * from EXT_DPT_USR t")
+    i=0
     for x in list:
         #print(x.user_name, x.user_code)
-       tmp=tmp+lines.format('1',x.user_code,x.user_name,x.user_mobile,x.dpt_name,x.topdpt,x.manager)
-
-    man_file = open('man_data.txt', 'w')
-    man_file.write(tmp)
+        man_file.writelines(lines.format(i,x.user_code,x.user_name,x.user_mobile,x.dpt_name,x.topdpt,x.manager))
+        i=i+1
+    
     man_file.close()
 
 
