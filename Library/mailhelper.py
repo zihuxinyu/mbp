@@ -75,37 +75,37 @@ def getAttach(prefx=None,path='tmp/'):
     """
     import poplib
     from email import parser
-    
-    host = 'sd.pop.chinaunicom.cn'
-    username = 'sd-lcgly'
-    password = 'wbh123!!'
+    from Library.config import MAIL_PASSWORD,MAIL_POP,MAIL_USERNAME
 
-    pop_conn = poplib.POP3(host)
-    pop_conn.user(username)
-    pop_conn.pass_(password)
+
+    pop_conn = poplib.POP3(MAIL_POP)
+    pop_conn.user(MAIL_USERNAME)
+    pop_conn.pass_(MAIL_PASSWORD)
     num, total_size = pop_conn.stat()
     for i in range(num):
         emsg = pop_conn.retr(i + 1)[1]
         message=parser.Parser().parsestr("\n".join(emsg))
-        print(message["Subject"], message["From"], message["To"]        )
-        for part in message.walk():
+        if message["Subject"].startswith(prefx):
 
-            fileName = part.get_filename()
-            contentType = part.get_content_type()
-            #print(contentType)
-            # 保存附件
-            if fileName:
-                data = part.get_payload(decode=True)
+            #print(message["Subject"], message["From"], message["To"]        )
+            for part in message.walk():
 
-                fEx = open(fileName, 'wb')
-                fEx.write(data)
-                fEx.close()
-                print(fileName,'ok')
-            #elif contentType == 'text/plain' or contentType == 'text/html':
-            #    #保存正文
-            #    data = part.get_payload(decode=True)
-            #    print(data)
+                fileName = part.get_filename()
+                contentType = part.get_content_type()
+                #print(contentType)
+                # 保存附件
+                if fileName:
+                    data = part.get_payload(decode=True)
+                    fullpath=path+fileName
+                    fEx = open(fullpath, 'wb')
+                    fEx.write(data)
+                    fEx.close()
+                    print(fileName,'ok')
+                #elif contentType == 'text/plain' or contentType == 'text/html':
+                #    #保存正文
+                #    data = part.get_payload(decode=True)
+                #    print(data)
 
-        pop_conn.dele(i + 1)
+            pop_conn.dele(i + 1)
 
     pop_conn.quit()

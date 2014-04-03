@@ -12,3 +12,15 @@ def getzipfile(filepath,zipname=None):
     zipFile = zipfile.ZipFile(zipname, 'w')
     zipFile.write(filepath, filename, zipfile.ZIP_DEFLATED)
     zipFile.close()
+
+def extractfile(filepath,zipname=None):
+    """
+    解压并删除文件
+    :param filepath:
+    :param zipname:
+    """
+    zipFile = zipfile.ZipFile(filepath+zipname)
+    for file in zipFile.namelist():
+        zipFile.extract(file, filepath)
+    zipFile.close()
+    os.remove(filepath+zipname)
