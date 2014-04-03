@@ -19,31 +19,37 @@ def db():
 
 
 if __name__ == "__main__":
-    tablename="portal_user"
-    tmpsqlpath='tmp/{0}.sql'.format(tablename)
-    tmpzippath='tmp/{0}.zip'.format(tablename)
-    selectsql='select * from Ext_dpt_usr'
+    #目的mysql表名
+    tablename = "portal_user"
+    #sql文件路径
+    tmpsqlpath = 'tmp/{0}.sql'.format(tablename)
+    #压缩包地址
+    tmpzippath = 'tmp/{0}.zip'.format(tablename)
+    #从源数据库获取语句
+    selectsql = 'select * from Ext_dpt_usr'
 
+    head = "TRUNCATE {0};\r\nINSERT INTO `{0}` (`guid`, `user_code`, `user_name`, `user_mobile`, "
+    "`dpt_name`, "
+    "`topdpt`, `manager`, `msg`, `msgexpdate`) VALUES "
+
+    lines = "({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', NULL, NULL), \r\n"
 
     man_file = open(tmpsqlpath, 'w', encoding='utf-8')
-    lines = "({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', NULL, NULL), \r\n"
-    man_file.writelines(
-        "TRUNCATE {0};\r\nINSERT INTO `{0}` (`guid`, `user_code`, `user_name`, `user_mobile`, "
-        "`dpt_name`, "
-        "`topdpt`, `manager`, `msg`, `msgexpdate`) VALUES ".format(tablename))
+    man_file.writelines(head.format(tablename))
 
-    list=db().query(selectsql)
+    list = db().query(selectsql)
     i = 1
     for x in list:
         #去除最后的逗号
         l = len(list)
         lines = lines.rstrip(', \r\n') if (i == l) else lines
         man_file.writelines(lines.format(i, x.user_code, x.user_name, x.user_mobile, x.dpt_name, x.topdpt, x.manager))
-        i = i + 1
+        i += 1
+    
     man_file.close()
 
     #压缩文件打包
-    getzipfile(filepath= tmpsqlpath,zipname=tmpzippath)
+    getzipfile(filepath=tmpsqlpath, zipname=tmpzippath)
     #删除文件
     os.remove(tmpsqlpath)
 
