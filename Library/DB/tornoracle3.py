@@ -100,6 +100,27 @@ class Connection(object):
         finally:
             cursor.close()
 
+    def getcolumn_names(self, query, *parameters, **kwparameters):
+        """返回字段名列表"""
+        cursor = self._cursor()
+        try:
+            self._execute(cursor, query, parameters, kwparameters)
+            column_names = [d[0] for d in cursor.description]
+
+            return column_names
+        finally:
+            cursor.close()
+
+    def querywithcolumn_names(self, query, *parameters, **kwparameters):
+        """Returns a row list for the given query and parameters."""
+        cursor = self._cursor()
+        try:
+            self._execute(cursor, query, parameters, kwparameters)
+
+
+            return [row for row in cursor]
+        finally:
+            cursor.close()
     def query(self, query, *parameters, **kwparameters):
         """Returns a row list for the given query and parameters."""
         cursor = self._cursor()
