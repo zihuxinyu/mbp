@@ -19,12 +19,13 @@ def db():
 
 
 def sendportal():
+    path = os.path.abspath(os.path.dirname(__file__)) + '/tmp/'
     #目的mysql表名
     tablename = "portal_user"
     #sql文件路径
-    tmpsqlpath = 'tmp/{0}.sql'.format(tablename)
+    tmpsqlpath =  path+'{0}.sql'.format(tablename)
     #压缩包地址
-    tmpzippath = 'tmp/{0}.zip'.format(tablename)
+    tmpzippath = path +'{0}.zip'.format(tablename)
     #从源数据库获取语句
     selectsql = 'select * from Ext_dpt_usr'
 
@@ -63,6 +64,8 @@ def sendportal():
 
 if __name__ == "__main__":
     import time
-    #5小时执行一次
-    time.sleep(60*60*5)
-    sendportal()
+    while True:
+        #5小时执行一次
+        time.sleep(60*60*1)
+        sendportal()
+        #time.sleep(120)

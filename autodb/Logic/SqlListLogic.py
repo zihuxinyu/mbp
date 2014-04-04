@@ -124,4 +124,5 @@ def replacepara(sql=None,paras=None):
     sql = sql.replace('$yyyy-MM$', converDateTimeToStr(getOffsetDate(), format='%Y-%m'))
     sql = sql.replace('$yy-MM$', converDateTimeToStr(getOffsetDate(), format='%y-%m'))
     sql = sql.replace('$yyMM-1$', getLastMonth()[2:6])
+    print(sql)
     return sql
