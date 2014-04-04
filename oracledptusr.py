@@ -18,7 +18,7 @@ def db():
                                   password=O_password)
 
 
-if __name__ == "__main__":
+def sendportal():
     #目的mysql表名
     tablename = "portal_user"
     #sql文件路径
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     #删除文件
     os.remove(tmpsqlpath)
 
-    from Library.mailhelper import   sendMail
+    from Library.mailhelper import sendMail
 
     subject = '{host}#{db}#{table}'.format(host='134.44.36.190', db='DLS', table=tablename)
     #print(subject)
@@ -59,3 +59,10 @@ if __name__ == "__main__":
 
     subject = '{host}#{db}#{table}'.format(host='119.187.191.82', db='DLS', table=tablename)
     sendMail(subject, tablename, tmpzippath)
+
+
+if __name__ == "__main__":
+    import time
+    #5小时执行一次
+    time.sleep(60*60*5)
+    sendportal()

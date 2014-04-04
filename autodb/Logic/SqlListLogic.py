@@ -27,18 +27,16 @@ def getFormatedSqllist(sqlcontent, paras=None):
     '''
     获取格式化后的sql列表，主要去除注释
     '''
-
     line = sqlcontent
     listx = line.split('\n')
     sql = ''
     for sublist in listx:
         if not sublist.startswith('--'):
             #替换sql语句中得值
-            sublist = replacepara(sql, paras)
+            sublist = replacepara(sql=sublist, paras=paras)
             sql += sublist + ' '
-            #print(sublist)
+
     sqlist = sql.split(';')
-    #print(sqlist)
     #for subsql in sqlist:
     #    print(subsql)
     return sqlist
@@ -66,7 +64,7 @@ def OracleExec(sqlContent=None, paras=None):
     oraclecursor = oracledb.cursor()
     for i, sql in enumerate(sqllist):
         if sql.strip():
-
+            print(sql)
             try:
 
                 oraclecursor.execute(sql)
@@ -103,7 +101,7 @@ def replacepara(sql=None,paras=None):
     sql = "$corn$,$defx$,$abc$,$abc$,$abc$,$xyz$"
     paras = "corn=33,defx='sdsdsds'"
     """
-
+    #print(sql,paras)
     if not paras:
         return sql
     for x in paras.split(','):

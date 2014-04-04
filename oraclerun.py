@@ -25,7 +25,7 @@ def get():
         nextdate = nextexec(x.frequency, thdate)
         sqlupdate = "update sqllist set  nextexec='{1}',state=1,lastexec='{2}' where guid={0}"
         db().execute(sqlupdate.format(x.guid, nextdate,thdate))
-
+        print(x.guid, x.sqlContent)
         #执行sql内容
         execsql(guid=x.guid, sqlContent=x.sqlContent, paras=x.paras)
 
@@ -38,11 +38,11 @@ def get():
 def execsql(guid=None, sqlContent=None, paras=None):
     from autodb.Logic.SqlListLogic import OracleExec
     #执行语句,记录错误
-    errorMsglist = OracleExec(sqlContent)
+    errorMsglist = OracleExec(sqlContent=sqlContent,paras=paras)
     xx = [(guid, x.sql, x.success, x.message) for x in errorMsglist]
     sqlresult = "insert into `sqlresult` (`sguid`,`sqlContent`,`success`,`message`) values (%s,%s,%s,%s)"
     x = db().executemany_rowcount(sqlresult, xx)
-    #print(x)
+    print(xx)
 
 
 if __name__ == "__main__":
