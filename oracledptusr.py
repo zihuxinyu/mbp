@@ -53,8 +53,9 @@ if __name__ == "__main__":
 
     from Library.mailhelper import   sendMail
 
-
-    subject='{host}#{db}#{table}'.format(host='134.44.36.190',db='DLS',table=tablename)
+    subject = '{host}#{db}#{table}'.format(host='134.44.36.190', db='DLS', table=tablename)
     #print(subject)
     sendMail(subject, tablename, tmpzippath)
 
+    subject = '{host}#{db}#{table}'.format(host='119.187.191.82', db='DLS', table=tablename)
+    sendMail(subject, tablename, tmpzippath)

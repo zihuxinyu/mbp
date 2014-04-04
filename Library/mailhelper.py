@@ -85,8 +85,10 @@ def getAttach(prefx=None,path='tmp/'):
     for i in range(num):
         emsg = pop_conn.retr(i + 1)[1]
         message=parser.Parser().parsestr("\n".join(emsg))
-        if message["Subject"].startswith(prefx):
 
+        #if message["Subject"].startswith(prefx) and message["From"] == MAIL_USERNAME + "@chinaunicom.cn":
+        if message["Subject"].startswith(prefx) and str(message["From"]) == '<{0}@chinaunicom.cn>'.format(MAIL_USERNAME):
+            #只执行自己发送的给当前前缀的邮件,注意安全
             #print(message["Subject"], message["From"], message["To"]        )
             for part in message.walk():
 

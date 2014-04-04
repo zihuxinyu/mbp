@@ -5,25 +5,43 @@
 {host}#{db}#{table}
 134.44.36.190#DLS#portal_user
 '''
-import os
-from Library.mailhelper import  getAttach
-from Library.ziphelper import extractfile
-
-path = 'tmp/'
-cmd= 'mysql -u root -p9Loveme? DLS < ./{0}'
-
-
-# 读取邮件
-getAttach(prefx='134.44.36.190#DLS#',path=path)
+def main():
+    import os
+    from Library.mailhelper import  getAttach
+    from Library.ziphelper import extractfile
+    from Library.config import DB_USER,DB_PSW,DB_DATEBASE,AUTOINIP
 
 
-for filename in os.listdir(path):
-    if filename.endswith('.zip'):
-        #解压并删除
-        extractfile(filepath=path, zipname=filename)
-for filename in os.listdir(path):
-    if filename.endswith('.sql'):
-        #执行sql语句
-        os.system(cmd.format(path+filename))
+    path =os.path.abspath(os.path.dirname(__file__))+'/tmp/'
+
+    cmd= 'cd {4} && mysql -u {1} -p{2} {3} < ./{0}'
+
+    #只接收本机的数据内容
+    prefx='{0}#{1}'.format(AUTOINIP,DB_DATEBASE)
+    #print(prefx)
+
+    # 读取邮件
+    getAttach(prefx=prefx,path=path)
+
+
+    for filename in os.listdir(path):
+        if filename.endswith('.zip'):
+            #解压并删除
+            extractfile(filepath=path, zipname=filename)
+    for filename in os.listdir(path):
+        if filename.endswith('.sql'):
+            #执行sql语句
+            print(cmd.format(filename, DB_USER, DB_PSW, DB_DATEBASE, path))
+            os.system(cmd.format(filename,DB_USER,DB_PSW,DB_DATEBASE,path))
+            os.remove(path+filename)
+
+if __name__=='__main__':
+    while True:
+        import time
+        #间隔10分
+        time.sleep(600)
+        main()
+        print('over')
+
 
 
