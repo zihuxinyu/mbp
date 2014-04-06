@@ -9,7 +9,9 @@ def getzipfile(filepath,zipname=None):
     """
     filename= os.path.split(filepath)[1]
     zipname=zipname if zipname else filename.split('.')[0]+'.zip'
+    #print(filepath,zipname)
     zipFile = zipfile.ZipFile(zipname, 'w')
+
     zipFile.write(filepath, filename, zipfile.ZIP_DEFLATED)
     zipFile.close()
 
@@ -19,6 +21,7 @@ def extractfile(filepath,zipname=None):
     :param filepath:
     :param zipname:
     """
+    print(filepath+zipname)
     zipFile = zipfile.ZipFile(filepath+zipname)
     for file in zipFile.namelist():
         zipFile.extract(file, filepath)

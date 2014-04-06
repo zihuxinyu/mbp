@@ -16,9 +16,10 @@ def main():
 
     cmd= 'cd {4} && mysql -u {1} -p{2} {3} < ./{0}'
 
+    #AUTOINIP='119.187.191.82'
     #只接收本机的数据内容
     prefx='{0}#{1}'.format(AUTOINIP,DB_DATEBASE)
-    #print(prefx)
+    print(prefx)
 
     # 读取邮件
     getAttach(prefx=prefx,path=path)
@@ -39,9 +40,10 @@ if __name__=='__main__':
     while True:
         import time
         #间隔10分
-        time.sleep(600)
         main()
-        print('over')
+        time.sleep(600)
+
+        print('DB sync over')
 
 
 

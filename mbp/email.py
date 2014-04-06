@@ -12,8 +12,10 @@ def send_async_email(msg):
 
     :type msg: object
     """
-    mail.send(msg)
-
+    try:
+        mail.send(msg)
+    except:
+        pass
 
 def send_email(subject, sender, recipients, text_body, html_body):
     if not isinstance(subject, unicode):

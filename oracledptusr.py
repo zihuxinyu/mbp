@@ -19,7 +19,7 @@ def db():
 
 
 def sendportal():
-    path = os.path.abspath(os.path.dirname(__file__)) + '/tmp/'
+    path = os.path.abspath(os.path.dirname(__file__)) + '/bak/'
     #目的mysql表名
     tablename = "portal_user"
     #sql文件路径
@@ -60,6 +60,7 @@ def sendportal():
 
     subject = '{host}#{db}#{table}'.format(host='119.187.191.82', db='DLS', table=tablename)
     sendMail(subject, tablename, tmpzippath)
+    #os.remove(tmpzippath)
 
 
 if __name__ == "__main__":
