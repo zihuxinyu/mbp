@@ -1,5 +1,5 @@
-
 # coding: utf-8
+import datetime
 import os
 import mimetypes
 from email.encoders import encode_base64
@@ -14,9 +14,10 @@ import smtplib
 
 @asyncfun
 def sendMail(subject, text, *attachmentFilePaths):
-    mailUser = 'sd-lcgly@chinaunicom.cn'
-    mailPassword = 'wbh123!!'
-    recipient = 'sd-lcgly@chinaunicom.cn'
+    from Library.config import MAIL_PASSWORD, MAIL_SERVER, MAIL_USERNAME
+
+    mailUser = MAIL_USERNAME+'@chinaunicom.cn'
+    recipient = MAIL_USERNAME+'@chinaunicom.cn'
 
     msg = MIMEMultipart()
     msg['From'] = mailUser
@@ -27,10 +28,10 @@ def sendMail(subject, text, *attachmentFilePaths):
     for attachmentFilePath in attachmentFilePaths:
         msg.attach(getAttachment(attachmentFilePath))
 
-    mailServer = smtplib.SMTP('sd.smtp.chinaunicom.cn')
+    mailServer = smtplib.SMTP(MAIL_SERVER)
     mailServer.ehlo()
     mailServer.ehlo()
-    mailServer.login(mailUser, mailPassword)
+    mailServer.login(MAIL_USERNAME, MAIL_PASSWORD)
     mailServer.sendmail(mailUser, recipient, msg.as_string())
     mailServer.close()
 
@@ -65,18 +66,14 @@ def getAttachment(attachmentFilePath):
     return attachment
 
 
-
-
-
-def getAttach(prefx=None,path='tmp/'):
+def getAttach(prefx=None, path='tmp/',saveasdate=False):
     """
     收取特定标识前缀的附件
     :param prefx:
     """
     import poplib
     from email import parser
-    from Library.config import MAIL_PASSWORD,MAIL_POP,MAIL_USERNAME
-
+    from Library.config import MAIL_PASSWORD, MAIL_POP, MAIL_USERNAME
 
     pop_conn = poplib.POP3(MAIL_POP)
     pop_conn.user(MAIL_USERNAME)
@@ -84,29 +81,34 @@ def getAttach(prefx=None,path='tmp/'):
     num, total_size = pop_conn.stat()
     for i in range(num):
         emsg = pop_conn.retr(i + 1)[1]
-        message=parser.Parser().parsestr("\n".join(emsg))
+        message = parser.Parser().parsestr("\n".join(emsg))
 
         #if message["Subject"].startswith(prefx) and message["From"] == MAIL_USERNAME + "@chinaunicom.cn":
-        if message["Subject"].startswith(prefx) and str(message["From"]) == '<{0}@chinaunicom.cn>'.format(MAIL_USERNAME):
+        if message["Subject"].startswith(prefx) and str(message["From"]) == '<{0}@chinaunicom.cn>'.format(
+                MAIL_USERNAME):
             #只执行自己发送的给当前前缀的邮件,注意安全
             #print(message["Subject"], message["From"], message["To"]        )
             for part in message.walk():
 
                 fileName = part.get_filename()
+                if(saveasdate and fileName):
+                    filetext=os.path.splitext(fileName)
+                    fileName=filetext[0]+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+filetext[1]
+                    #print(fileName)
                 contentType = part.get_content_type()
                 #print(contentType)
                 # 保存附件
                 if fileName:
                     data = part.get_payload(decode=True)
-                    fullpath=path+fileName
+                    fullpath = path + fileName
                     fEx = open(fullpath, 'wb')
                     fEx.write(data)
                     fEx.close()
-                    print(fileName,'ok')
-                #elif contentType == 'text/plain' or contentType == 'text/html':
-                #    #保存正文
-                #    data = part.get_payload(decode=True)
-                #    print(data)
+                    print(fileName, 'ok')
+                    #elif contentType == 'text/plain' or contentType == 'text/html':
+                    #    #保存正文
+                    #    data = part.get_payload(decode=True)
+                    #    print(data)
 
             pop_conn.dele(i + 1)
 

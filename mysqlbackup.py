@@ -2,8 +2,7 @@
 '''
 定时将数据库进行备份,发送邮件送走
 接收规则
-BACKUP#{host}#DB
-BACKUP#134.44.36.190#DB
+
 '''
 def main():
     import os
