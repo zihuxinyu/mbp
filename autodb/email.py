@@ -37,9 +37,10 @@ def sendsmscode(user_code=None,code=None):
     :param user_code:
     :param code:
     """
+    from Library.config import MAIL_USERNAME
+    mailUser = MAIL_USERNAME + '@chinaunicom.cn'
+
     xx = portal_user.query.filter(portal_user.user_code == user_code).first()
     if xx:
         sendstr = 'MSG#{0}#{1}'.format(xx.user_mobile, code)
-        send_email(sendstr, 'sd-lcgly@chinaunicom.cn',
-                   ['sd-lcgly@chinaunicom.cn'], sendstr,
-                   sendstr)
+        send_email(sendstr, mailUser,[mailUser], sendstr, sendstr)

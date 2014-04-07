@@ -1,13 +1,20 @@
 # -*- coding: utf8 -*-
+from autodb.Logic.LoginLogic import sendlogincode
+from autodb.models import portal_user
 
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
-from autodb import app,db
+from autodb import app,db,lm
 from flask.templating import render_template
+from sqlalchemy.sql.elements import and_
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from autodb.forms import LoginForm
 
+
+@lm.user_loader
+def load_user(id):
+    return portal_user.query.filter(portal_user.user_code == id).first()
 
 
 @app.before_request
@@ -23,13 +30,63 @@ def internal_error(error):
 
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    return "index"
+    return redirect(url_for('sqllist'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    #    if g.user is not None and g.user.is_authenticated():
+    #        return redirect( url_for( 'index' ) )
+    form = LoginForm()
+    if form.validate_on_submit():
+        # session['remember_me'] = form.remember_me.data
+        #return after_login(form.staffid.data)
+        sendlogincode(usercode=form.usercode.data)
+        flash('验证码发送成功!')
+        return redirect(url_for('loginchk', usercode=form.usercode.data))
+    return render_template('login.html', action='login',
+                           title='登录', opname='登录系统',
+                           form=form)
 
-    return "login"
+
+@app.route('/loginchk', methods=['GET', 'POST'])
+def loginchk(source=None, usercode=None):
+    """
+    验证绑定码是否匹配
+    :param source:
+    :param usercode:
+    :return:
+    """
+    from forms import LoginChkCode
+
+    usercode = request.args.get('usercode')
+    form = LoginChkCode()
+    if form.validate_on_submit():
+        code = form.code.data
+        if usercode and code:
+            x = portal_user.query.filter(and_(portal_user.user_code == usercode,
+                                              portal_user.msg == code))
+
+            w = x.first()
+            if w:
+                staff = portal_user.query.filter(portal_user.user_code == usercode).first()
+                if not staff:
+                    flash('登录失败，查无此ID')
+                    return redirect(url_for('login'))
+
+                session["user_code"] = staff.user_code
+                remember_me = False
+                if 'remember_me' in session:
+                    remember_me = session['remember_me']
+                    session.pop('remember_me', None)
+                login_user(staff, remember=True)
+                flash('登录成功')
+                return redirect(url_for('index'))
+
+            else:
+                flash('验证失败,请重试')
+                return redirect(url_for('login'))
+    return render_template('checkcode.html', action='loginchk', opname='登录系统', form=form, title='请输入验证码')
 
 
 @app.route('/logout')
@@ -38,8 +95,10 @@ def logout():
     return redirect(url_for('index'))
 
 
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/sqllist/', methods=['GET', 'POST'])
+@login_required
 def sqllist():
     """
     sql列表

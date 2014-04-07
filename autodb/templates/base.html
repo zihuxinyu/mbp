@@ -37,8 +37,11 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
 
-                <li
-                <a href="{{ url_for('sqllist') }}">liebie</a></li>
+                <li>
+                <a href="{{ url_for('sqllist') }}">任务列表</a></li>
+                {% if g.user.is_authenticated() %}
+                <li><a href="{{ url_for('logout') }}">注销登陆</a></li>
+                {% endif %}
 
 
             </ul>

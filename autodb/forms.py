@@ -15,6 +15,9 @@ class LoginForm(BaseForm):
     usercode = TextField('请输入门户账户', validators=[Required()])
 
 
+class LoginChkCode(BaseForm):
+    code = TextField('请输入验证码', validators=[Required()])
+
 
 
 class FMsqllist(BaseForm):
