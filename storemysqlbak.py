@@ -25,11 +25,12 @@ def main():
     getAttach(prefx=prefx, path=path,saveasdate=True)
 
     for filename in os.listdir(path):
-        if  filename.endswith('.zip'):
+        if  filename.endswith('.zip') and '.all.sql' in filename:
+            filecwd='/weibaohui/{0}'.format(filename.split('.all.sql')[0])
             #解压并删除
             #print(filename)
-            #ftp_up(path+filename)
-            #os.remove(path + filename)
+            ftp_up(path+filename,ftpcwd=filecwd)
+            os.remove(path + filename)
             pass
 
 
