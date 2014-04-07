@@ -11,9 +11,9 @@ def ftp_up(fullpath,ftpcwd='Weibaohui/'):
     :param ftpcwd:ftp切换目录
     """
     filenname=os.path.split(fullpath)[1]
-    print(filenname)
+    #print(filenname)
     ftp = FTP()
-    ftp.set_debuglevel(2)  #打开调试级别2，显示详细信息;0为关闭调试信息
+    ftp.set_debuglevel(0)  #打开调试级别2，显示详细信息;0为关闭调试信息
     ftp.connect(FTP_IP,int(FTP_PORT))  #连接
     ftp.login(FTP_USR,FTP_PSW)  #登录，如果匿名登录则用空串代替即可
     ftp.cwd(ftpcwd) #选择操作目录
