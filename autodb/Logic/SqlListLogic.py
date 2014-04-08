@@ -9,18 +9,18 @@ def nextexec(frequency=None,lastexec=None):
     frequency=str(frequency)
     lastexec=lastexec if  lastexec else DateLogic.now()
 
-    if frequency.startswith('hour:'):
-        return getnextdate(lastdate=lastexec,hours=int(frequency.split(':')[1])*1)
+    if frequency.startswith('min:'):
+        return getnextdate(lastdate=lastexec, minutes=int(frequency.split(':')[1])*1)
     else:
-        return getnextdate(lastdate=lastexec, hours=int(frequency.split(':')[1])*24)
+        return getnextdate(lastdate=lastexec, minutes=int(frequency.split(':')[1])*60)
 
-def getnextdate(lastdate=None, hours=0):
+def getnextdate(lastdate=None, minutes=0):
 
     from datetime import datetime
     from datetime import timedelta
     lastdate=lastdate if lastdate else  datetime.now()
     now = datetime.strptime(str(lastdate), '%Y-%m-%d %H:%M:%S')
-    aDay = timedelta(minutes=hours)
+    aDay = timedelta(minutes=minutes)
     now = now + aDay
     return now.strftime('%Y-%m-%d %H:%M:%S')
 
