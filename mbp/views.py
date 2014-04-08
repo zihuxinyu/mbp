@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+import StringIO
 from config import POSTS_PER_PAGE
 
 from flask_login import current_user, login_required, logout_user, login_user
@@ -7,7 +8,7 @@ from mbp import lm, app, robot, db
 from flask.templating import render_template
 from sqlalchemy import and_, desc
 from werkzeug.utils import redirect
-from flask.helpers import url_for, flash
+from flask.helpers import url_for, flash, make_response
 from mbp.forms import LoginForm
 from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
 from Logic import WechatLogic, BarcodeLogic
@@ -508,4 +509,23 @@ def test(page=1):
                 'image': '拍照上传', 'None': ''}
     return render_template('list.html', pagination=xx,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
+
+
+@app.route('/excel/')
+def excel():
+    import tablib
+    headers = ('area', 'user', 'recharge')
+    data = [
+        ('1', 'Rooney', 20),
+        ('2', 'John', 30),
+    ]
+    data = tablib.Dataset(*data, headers=headers)
+    
+
+    output = StringIO.StringIO()
+    output.write(data.xls)
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = 'application/vnd.ms-excel'
+    response.headers['Content-Disposition'] = 'attachment; filename=123.xls'
+    return response
 
