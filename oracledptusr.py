@@ -56,10 +56,10 @@ def sendportal():
 
     subject = '{host}#{db}#{table}'.format(host='134.44.36.190', db='DLS', table=tablename)
     #print(subject)
-    sendMail(subject, tablename, tmpzippath)
+    #sendMail(subject, tablename, tmpzippath)
 
     subject = '{host}#{db}#{table}'.format(host='119.187.191.82', db='DLS', table=tablename)
-    sendMail(subject, tablename, tmpzippath)
+    #sendMail(subject, tablename, tmpzippath)
     #os.remove(tmpzippath)
 
 
@@ -67,6 +67,6 @@ if __name__ == "__main__":
     import time
     while True:
         #5小时执行一次
-        time.sleep(60*60*1)
+        #time.sleep(60*60*1)
         sendportal()
         #time.sleep(120)

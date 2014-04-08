@@ -23,6 +23,7 @@ import itertools
 import logging
 import os
 import time
+
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
 try:
@@ -52,16 +53,13 @@ class Connection(object):
     oraclecursor = oracledb.cursor()
     """
 
-    def __init__(self, host,port, database, user=None, password=None):
+    def __init__(self, host, port, database, user=None, password=None):
         self.host = host
-        self.port=port
+        self.port = port
         self.database = database
-        self.user=user
-        self.password=password
+        self.user = user
+        self.password = password
         self.dsn = cx_Oracle.makedsn(host, port, database)
-
-
-
 
         self._db = None
 
@@ -69,7 +67,7 @@ class Connection(object):
         try:
             self.reconnect()
         except Exception:
-            logging.error("Cannot connect to MySQL on %s", self.host,
+            logging.error("Cannot connect to ORACLE on %s", self.host,
                           exc_info=True)
 
     def __del__(self):
@@ -100,6 +98,27 @@ class Connection(object):
         finally:
             cursor.close()
 
+    def getcolumn_names(self, query, *parameters, **kwparameters):
+        """返回字段名列表"""
+        cursor = self._cursor()
+        try:
+            self._execute(cursor, query, parameters, kwparameters)
+            column_names = [d[0] for d in cursor.description]
+
+            return column_names
+        finally:
+            cursor.close()
+
+    def querywithcolumn_names(self, query, *parameters, **kwparameters):
+        """Returns a row list for the given query and parameters."""
+        cursor = self._cursor()
+        try:
+            self._execute(cursor, query, parameters, kwparameters)
+
+            return [row for row in cursor]
+        finally:
+            cursor.close()
+
     def query(self, query, *parameters, **kwparameters):
         """Returns a row list for the given query and parameters."""
         cursor = self._cursor()
@@ -107,7 +126,7 @@ class Connection(object):
             self._execute(cursor, query, parameters, kwparameters)
             column_names = [d[0] for d in cursor.description]
 
-            return [Row(itertools.izip_longest(column_names, row)) for row in cursor]
+            return [Row(itertools.zip_longest(column_names, row)) for row in cursor]
         finally:
             cursor.close()
 
@@ -128,17 +147,15 @@ class Connection(object):
     # rowcount is a more reasonable default return value than lastrowid,
     # but for historical compatibility execute() must return lastrowid.
     def execute(self, query, *parameters, **kwparameters):
-        """Executes the given query, returning the lastrowid from the query."""
-        return self.execute_lastrowid(query, *parameters, **kwparameters)
-
-    def execute_lastrowid(self, query, *parameters, **kwparameters):
-        """Executes the given query, returning the lastrowid from the query."""
         cursor = self._cursor()
         try:
             self._execute(cursor, query, parameters, kwparameters)
-            return cursor.lastrowid
+
         finally:
-            cursor.close()
+            self.close()
+            pass
+
+
 
     def execute_rowcount(self, query, *parameters, **kwparameters):
         """Executes the given query, returning the rowcount from the query."""
@@ -156,17 +173,7 @@ class Connection(object):
         """
         return self.executemany_lastrowid(query, parameters)
 
-    def executemany_lastrowid(self, query, parameters):
-        """Executes the given query against all the given param sequences.
 
-        We return the lastrowid from the query.
-        """
-        cursor = self._cursor()
-        try:
-            cursor.executemany(query, parameters)
-            return cursor.lastrowid
-        finally:
-            cursor.close()
 
     def executemany_rowcount(self, query, parameters):
         """Executes the given query against all the given param sequences.
@@ -183,10 +190,8 @@ class Connection(object):
     update = execute_rowcount
     updatemany = executemany_rowcount
 
-    insert = execute_lastrowid
-    insertmany = executemany_lastrowid
-
-
+    insert = execute
+    insertmany = executemany
 
     def _cursor(self):
         self.reconnect()
@@ -195,7 +200,7 @@ class Connection(object):
     def _execute(self, cursor, query, parameters, kwparameters):
         try:
             return cursor.execute(query, kwparameters or parameters)
-        except :
+        except:
             logging.error("Error connecting to ORACEL on %s", self.host)
             cursor.close()
             self.close()
@@ -207,7 +212,7 @@ class Row(dict):
 
     def __getattr__(self, name):
         try:
-            name=name.upper()
+            name = name.upper()
             return self[name]
         except KeyError:
             raise AttributeError(name)

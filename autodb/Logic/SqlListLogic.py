@@ -2,6 +2,8 @@
 import cx_Oracle
 from autodb.Logic import DateLogic
 
+from Library.config import O_database, O_host, O_password, O_port, O_user
+from Library.DB import tornoracle
 
 def nextexec(frequency=None,lastexec=None):
     frequency=str(frequency)
@@ -42,6 +44,14 @@ def getFormatedSqllist(sqlcontent, paras=None):
     return sqlist
 
 
+
+def db():
+    return tornoracle.Connection(host=O_host,
+                                  port=O_port,
+                                  database=O_database,
+                                  user=O_user,
+                                  password=O_password)
+
 def OracleExec(sqlContent=None, paras=None):
     """
     执行SQL语句,并将结果返回
@@ -53,30 +63,20 @@ def OracleExec(sqlContent=None, paras=None):
 
     errorMsglist = []
     sqllist = getFormatedSqllist(sqlcontent=sqlContent, paras=paras)
+    print(sqllist)
 
-    host = '134.44.36.51'
-    port = 1521
-    dbase = 'dydb'
-    login = 'weibh'
-    passwrd = '1234'
-    dsn = cx_Oracle.makedsn(host, port, dbase)
-    oracledb = cx_Oracle.connect(login, passwrd, dsn, threaded=True)
-    oraclecursor = oracledb.cursor()
     for i, sql in enumerate(sqllist):
         if sql.strip():
             print(sql)
             try:
-
-                oraclecursor.execute(sql)
+                db().execute(sql)
                 errorMsg = ErrorMsg(sql=sql, success=True)
                 errorMsglist.append(errorMsg)
             except cx_Oracle.DatabaseError as e:
                 errorMsg = ErrorMsg(sql=sql, success=False,message=e.message)
                 errorMsglist.append(errorMsg)
                 pass
-    oraclecursor.close()
-    oracledb.commit()
-    oracledb.close()
+
     return errorMsglist
 
 
