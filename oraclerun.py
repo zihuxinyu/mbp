@@ -1,5 +1,6 @@
 # coding: utf-8
 from config import DB_HOST, DB_DATEBASE, DB_USER, DB_PSW
+
 from decos import asyncfun
 from autodb.Logic import DateLogic
 import torndb
@@ -9,6 +10,22 @@ os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
 def db():
     return torndb.Connection(DB_HOST, DB_DATEBASE, DB_USER, DB_PSW)
+
+def pooldb(sql):
+    from DBUtils.PooledDB import PooledDB
+    from Library.config import O_database, O_host, O_password, O_port, O_user
+
+    import cx_Oracle
+    dsn= cx_Oracle.makedsn(O_host, O_port, O_database)
+    pool = PooledDB(cx_Oracle, user=O_user, password=O_password, dsn=dsn, mincached=2,
+                    maxcached=2, maxshared=2, maxconnections=2)
+
+
+    conn = pool.connection()
+    cursor = conn.cursor()
+    cursor.execute(sql)
+
+    conn.close();
 
 
 def get():

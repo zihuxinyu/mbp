@@ -59,7 +59,7 @@ def OracleExec(sqlContent=None, paras=None):
     :return:
     """
 
-
+    import time
 
     errorMsglist = []
     sqllist = getFormatedSqllist(sqlcontent=sqlContent, paras=paras)
@@ -68,6 +68,7 @@ def OracleExec(sqlContent=None, paras=None):
     for i, sql in enumerate(sqllist):
         if sql.strip():
             print(sql)
+            time.sleep(1)
             try:
                 db().execute(sql)
                 errorMsg = ErrorMsg(sql=sql, success=True)

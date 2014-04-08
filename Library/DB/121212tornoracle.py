@@ -23,7 +23,6 @@ import itertools
 import logging
 import os
 import time
-from DBUtils.PooledDB import PooledDB
 
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
 
@@ -40,6 +39,9 @@ except ImportError:
 
 version = "0.1"
 version_info = (0, 1, 0, 0)
+
+
+
 
 
 class Connection(object):
@@ -62,14 +64,13 @@ class Connection(object):
         self.password = password
         self.dsn = cx_Oracle.makedsn(host, port, database)
 
-        self._pool = None
+
         self._db = None
 
         self._last_use_time = time.time()
         try:
             self.reconnect()
         except Exception:
-            print('ccc', Exception.message)
             logging.error("Cannot connect to ORACLE on %s", self.host,
                           exc_info=True)
 
@@ -85,16 +86,9 @@ class Connection(object):
 
     def reconnect(self):
         """Closes the existing database connection and re-opens it."""
-        #self.close()
-        # self._db = cx_Oracle.connect(self.user, self.password, self.dsn, threaded=True)
-        # self._db.autocommit = True
-        if getattr(self, "_pool", None) is not None:
-            self._db = self._pool.connection()
-        else:
-            pool = PooledDB(cx_Oracle, user=self.user, password=self.password, dsn=self.dsn, mincached=2,
-                            maxcached=20, maxshared=20, maxconnections=20)
-            self._pool=pool
-            self._db = pool.connection()
+        self.close()
+        self._db = cx_Oracle.connect(self.user, self.password, self.dsn, threaded=True)
+        self._db.autocommit = True
 
     def iter(self, query, *parameters, **kwparameters):
         """Returns an iterator for the given query and parameters."""
@@ -165,6 +159,8 @@ class Connection(object):
             self.close()
             pass
 
+
+
     def execute_rowcount(self, query, *parameters, **kwparameters):
         """Executes the given query, returning the rowcount from the query."""
         cursor = self._cursor()
@@ -180,6 +176,8 @@ class Connection(object):
         We return the lastrowid from the query.
         """
         return self.executemany_lastrowid(query, parameters)
+
+
 
     def executemany_rowcount(self, query, parameters):
         """Executes the given query against all the given param sequences.
