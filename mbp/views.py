@@ -362,13 +362,14 @@ def showzc(zcbh=None):
 
     from mbp.models import zczb
     from  forms import BarcodeListUpdate
-
+    from mbp.Logic.DateLogic import now
     if (not zcbh ) and request.args.get('zcbh'):
         zcbh = str(request.args.get('zcbh'))
     msgid = request.args.get('msgid')
 
-    bb = BarcodeList.query.filter(and_(BarcodeList.user_code == g.user.user_code),
-                                  BarcodeList.barcode == zcbh
+    bb = BarcodeList.query.filter(and_(BarcodeList.user_code == g.user.user_code,
+                                       BarcodeList.barcode == zcbh,BarcodeList.msgid==msgid
+    )
     )
     form = BarcodeListUpdate()
     # 下电标识:
@@ -387,7 +388,8 @@ def showzc(zcbh=None):
         wlwz = form.wlwz.data
         if bb:
             bb.update({BarcodeList.ztbz1: ztbz1, BarcodeList.ztbz2: ztbz2,
-                       BarcodeList.ztbz: ztbz, BarcodeList.wlwz: wlwz})
+                       BarcodeList.ztbz: ztbz, BarcodeList.wlwz: wlwz,
+                       BarcodeList.opdate:now()})
 
             db.session.commit()
         flash('更新成功')
@@ -395,7 +397,7 @@ def showzc(zcbh=None):
     zz = zczb.query.filter(zczb.zcbqh == zcbh).first()
     child = BarcodeLogic.getChild(zcbh)
 
-    return render_template('showzcbq.html', form=form, entry=zz, child=child, barcodeinfo=bb.first())
+    return render_template('showzcbq.html', form=form, entry=zz, child=child, barcodeinfo=bb.first(),msgid=msgid)
 
 
 @app.route('/barcodelist/<int:page>', methods=['GET', 'POST'])
@@ -521,23 +523,22 @@ def excel():
 
     import tablib
 
+
+
     type = request.args.get('type')
     if type=='checked':
         sql='SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2,wlwz  ,ggxh,barcodelist.opdate FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode  FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh order by barcodelist.opdate desc'
-        pass
+        listdata=[]
+        data=AdoHelper().db().query(sql)
+        headers = ([x for x in data[0]])
+        for d in data:
+            listdata.append([d[x] for x in d])
 
-    headers = ('area', 'user', 'recharge')
-    data = [
-        ('1', 'Rooney', 20),
-        ('2', 'John', 30),
-    ]
-    data = tablib.Dataset(*data, headers=headers)
-    
-
-    output = StringIO.StringIO()
-    output.write(data.xls)
-    response = make_response(output.getvalue())
-    response.headers['Content-Type'] = 'application/vnd.ms-excel'
-    response.headers['Content-Disposition'] = 'attachment; filename=123.xls'
-    return response
+        data = tablib.Dataset(*listdata, headers=headers)
+        output = StringIO.StringIO()
+        output.write(data.xls)
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'application/vnd.ms-excel'
+        response.headers['Content-Disposition'] = 'attachment; filename=list.xls'
+        return response
 

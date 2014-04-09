@@ -52,7 +52,7 @@ def SaveBarcode(barcodelist, message, type='input'):
             db.session.add(bb)
             mb=mission_barcode.query.filter(and_(mission_barcode.barcode==x,  mission_barcode.msgid==None) )
             if mb.first():
-                #只更新没有扫描到得二维码.
+                #只更新没有扫描到得二维码,填了msgid证明已经查过
                 mb.update({mission_barcode.msgid:message.id})
 
     db.session.commit()

@@ -8,14 +8,15 @@ from datetime import timedelta
 
 
 def now(minutes=0):
-    from datetime import datetime
-    from datetime import timedelta
+    # from datetime import datetime
+    # from datetime import timedelta
+    #
+    # now = datetime.now()
+    # aDay = timedelta( minutes=minutes)
+    # now = now + aDay
+    import  time
 
-
-    now = datetime.now()
-    aDay = timedelta( minutes=minutes)
-    now = now + aDay
-    return now.strftime('%Y-%m-%d %H:%M:%S')
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
 
 
