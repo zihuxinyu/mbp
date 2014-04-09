@@ -1,4 +1,4 @@
-{% macro listview(pagination,fields,fields_cn,specfile) -%}
+{% macro listview(pagination,fields,fields_cn,specfile,formater) -%}
 {#pagination ：要分页显示的实体      pagination = Staff.query.paginate(page, POSTS_PER_PAGE, True)#}
 {#fields：要显示的字段     fields = ['staffid', 'chnl_id', 'chnl_name']#}
 {#fields_cn： 对应字段的汉字   fields_cn=['登录ID','代理商ID','代理商名称']#}
@@ -24,8 +24,22 @@
             {% for field in fields %}
             {# 遍历每一个字段，输出对应内容#}
             <td>
-
+                {%if formater%}
+                {#如果有字段格式,字段不支持中文#}
+                {% for f in formater%}
+                {%if f==field%}
+                {#匹配到字段格式#}
+                {{formater[f].format(item[field])|safe}}
+                {%else%}
+                {#没有字段格式直接显示#}
                 {{ showdata(item[field],specfile) }}
+                {%endif%}
+                {%endfor%}
+                {%else%}
+                {#没有字段格式直接显示#}
+                {{ showdata(item[field],specfile) }}
+                {%endif %}
+
 
             </td>
             {% endfor %}
@@ -41,11 +55,13 @@
 {%- endmacro %}
 {% macro showdata(text,specfile) -%}
 {% if specfile %}
-{#                    处理特殊的文字，进行特殊标记#}
+{#处理特殊的文字，进行特殊标记#}
 {% if text|string|trim in specfile %}
+{#找到指定的文字,显示替换值#}
 {{ specfile[text] |safe|trim }}
 
 {% else %}
+{#没有的指定文字的话就直接显示本身#}
 {{ text|string|trim }}
 {% endif %}
 {% else %}

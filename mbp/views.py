@@ -403,19 +403,22 @@ def showzc(zcbh=None):
 @login_required
 def barcodelist(page=1):
     """
-    资产列表
+    清查日志
     :param page:
     :return:
     """
-    pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).distinct(BarcodeList.barcode).paginate(page,
-                                                                                                             POSTS_PER_PAGE,
-                                                                                                             True)
-    fields = ['barcode', 'ztbz', 'ztbz1', 'ztbz2', 'wlwz' 'user_code', 'topdpt', 'type', 'opdate']
+    sql = "SELECT *  FROM `barcodelist` ORDER BY `barcodelist`.`opdate` DESC"
+
+    #sql="select * from zczb"
+    xx = AdoHelper().paginate(page, sql=sql)
+    #pagination = BarcodeList.query.order_by(desc(BarcodeList.opdate)).distinct(BarcodeList.barcode).paginate(page,POSTS_PER_PAGE, True)
+    fields = ['barcode', 'ztbz', 'ztbz1', 'ztbz2', 'wlwz', 'user_code', 'topdpt', 'type', 'opdate']
     fields_cn = ['二维码', '下电标识', '报废标识', '生命周期', '物理位置', '账户', '部门', '类型', '时间']
+
     specfile = {'input': '手工输入',
                 'image': '拍照上传',
                 'None': ''}
-    return render_template('list.html', pagination=pagination,
+    return render_template('list.html', pagination=xx,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
@@ -472,8 +475,10 @@ def checked(page=1):
     xx = AdoHelper().paginate(page, sql=sql)
     fields = ['zcbqh', 'swmc', 'ggxh', 'ztbz', 'ztbz1', 'ztbz2', 'wlwz', 'user_code', 'zrbmmc', 'opdate']
     fields_cn = ['资产标签号', '实物名称', '规格型号', '下电标识', '报废标识', '生命周期', '物理位置', '核查人', '责任部门名称', '操作时间']
-    specfile = {'None': ''}
-    return render_template('list.html', pagination=xx,
+    specfile = {'None': '12'}
+    #各列的格式化处理
+    formater={'zcbqh':'<a href=/showzc/?zcbh={0}>{0}</a>'}
+    return render_template('yicha.html', pagination=xx, formater=formater,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
@@ -513,7 +518,14 @@ def test(page=1):
 
 @app.route('/excel/')
 def excel():
+
     import tablib
+
+    type = request.args.get('type')
+    if type=='checked':
+        sql='SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2,wlwz  ,ggxh,barcodelist.opdate FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode  FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh order by barcodelist.opdate desc'
+        pass
+
     headers = ('area', 'user', 'recharge')
     data = [
         ('1', 'Rooney', 20),
