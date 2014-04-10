@@ -440,8 +440,8 @@ class zczb(db.Model):
 class mission_barcode(db.Model):
     __tablename__ = 'mission_barcode'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
-    missionid = db.Column('missionid')
-    barcode = db.Column('barcode')
+    missionid = db.Column('missionid', db.Integer)
+    barcode = db.Column('barcode', db.String(100))
     msgid = db.Column('msgid')
 
     def __int__(self, missionid=None, barcode=None, msgid=None):
@@ -453,9 +453,9 @@ class mission_barcode(db.Model):
 class mission(db.Model):
     __tablename__ = 'mission'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
-    missionname = db.Column('missionname')
-    startdate = db.Column('startdate')
-    enddate = db.Column('enddate')
+    missionname = db.Column('missionname', db.String(100))
+    startdate = db.Column('startdate',db.DATE)
+    enddate = db.Column('enddate',db.DATE)
 
     def __int__(self, missionname=None, startdate=None, enddate=None):
         self.missionname = missionname

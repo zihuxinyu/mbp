@@ -12,6 +12,7 @@
 <span class="label label-info">物理位置:{{barcodeinfo.wlwz}}</span>
 {%endif%}
 
+{%if msgid%}
 
 <div class="wall">
 <form class="form-inline " role="form" action="{{url_for('showzc',**request.args)}}" method="post">
@@ -39,7 +40,7 @@
 </form>
 </div>
 <hr>
-
+{%endif%}
 
 {%if child%}
 <div class="btn-group">

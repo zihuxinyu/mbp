@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import StringIO
 from config import POSTS_PER_PAGE
+from flask import jsonify
 
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
@@ -420,7 +421,9 @@ def barcodelist(page=1):
     specfile = {'input': '手工输入',
                 'image': '拍照上传',
                 'None': ''}
-    return render_template('list.html', pagination=xx,
+    formater = {'barcode': '<a href=/showzc/?zcbh={0}>{0}</a>'}
+
+    return render_template('list.html', pagination=xx,formater=formater,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
 
@@ -542,3 +545,9 @@ def excel():
         response.headers['Content-Disposition'] = 'attachment; filename=list.xls'
         return response
 
+
+@app.route('/_add_numbers')
+def add_numbers():
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    return jsonify(result=a + b)

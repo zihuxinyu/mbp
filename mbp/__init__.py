@@ -24,32 +24,37 @@ lm.login_message = unicode('请先登录', 'utf-8')
 mail = Mail(app)
 db = SQLAlchemy(app)
 
+#初始化管理
+import mbp.manage
+
+
+
 robot = WeRoBot(app, token='08560a699966442fae5b3a165c0f8f71', enable_session=True)
 
-if not app.debug:
-    import logging
-    from logging.handlers import SMTPHandler
-
-    credentials = None
-    if MAIL_USERNAME or MAIL_PASSWORD:
-        credentials = (MAIL_USERNAME, MAIL_PASSWORD)
-    mail_handler = SMTPHandler((MAIL_SERVER, MAIL_PORT), 'no-reply@' + MAIL_SERVER, ADMINS, ' failure', credentials)
-    mail_handler.setLevel(logging.ERROR)
-    app.logger.addHandler(mail_handler)
-
-if not app.debug:
-    import logging
-    from logging.handlers import RotatingFileHandler
-
-    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    logging.getLogger('WeRoBot').setLevel(logging.INFO)
-
-    file_handler = RotatingFileHandler('tmp/log.log', 'a', 1 * 1024 * 1024, 10)
-    file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-    app.logger.addHandler(file_handler)
-    app.logger.setLevel(logging.INFO)
-    app.logger.info('mbp startup')
+# if not app.debug:
+#     import logging
+#     from logging.handlers import SMTPHandler
+#
+#     credentials = None
+#     if MAIL_USERNAME or MAIL_PASSWORD:
+#         credentials = (MAIL_USERNAME, MAIL_PASSWORD)
+#     mail_handler = SMTPHandler((MAIL_SERVER, MAIL_PORT), 'no-reply@' + MAIL_SERVER, ADMINS, ' failure', credentials)
+#     mail_handler.setLevel(logging.ERROR)
+#     app.logger.addHandler(mail_handler)
+#
+# if not app.debug:
+#     import logging
+#     from logging.handlers import RotatingFileHandler
+#
+#     logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+#     logging.getLogger('WeRoBot').setLevel(logging.INFO)
+#
+#     file_handler = RotatingFileHandler('tmp/log.log', 'a', 1 * 1024 * 1024, 10)
+#     file_handler.setLevel(logging.INFO)
+#     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+#     app.logger.addHandler(file_handler)
+#     app.logger.setLevel(logging.INFO)
+#     app.logger.info('mbp startup')
 
 from mbp import views
 
