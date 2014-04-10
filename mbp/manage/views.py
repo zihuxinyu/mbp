@@ -5,6 +5,11 @@ from flask.ext.admin.contrib.sqla import ModelView
 from wtforms import SelectField
 
 
+
+
+
+
+
 class MyView(BaseView):
     def is_accessible(self):
         #认证通过的才能显示,可以自定义逻辑
