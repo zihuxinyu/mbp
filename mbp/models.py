@@ -438,9 +438,12 @@ class zczb(db.Model):
 
 
 class mission_barcode(db.Model):
+    '''
+    定义任务与资产标签号关系
+    '''
     __tablename__ = 'mission_barcode'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
-    missionid = db.Column('missionid', db.Integer)
+    missionid = db.Column('missionid', db.String(10))
     barcode = db.Column('barcode', db.String(100))
     msgid = db.Column('msgid')
 
@@ -451,6 +454,9 @@ class mission_barcode(db.Model):
 
 
 class mission(db.Model):
+    '''
+    定义了任务
+    '''
     __tablename__ = 'mission'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
     missionname = db.Column('missionname', db.String(100))
@@ -462,3 +468,16 @@ class mission(db.Model):
         self.startdate = startdate
         self.enddate = enddate
 
+
+class mission_user(db.Model):
+    '''
+    定义了任务与用户关系
+    '''
+    __tablename__ = 'mission_user'
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    missionid = db.Column('missionid',db.String(10))
+    user_code = db.Column('user_code',db.String(30))
+
+    def __int__(self, missionid=None, user_code=None):
+        self.missionid = missionid
+        self.user_code = user_code

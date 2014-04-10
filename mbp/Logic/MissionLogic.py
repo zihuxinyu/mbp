@@ -1,6 +1,7 @@
 # coding: utf-8
 from mbp.models import *
 from sqlalchemy import  and_,or_,desc,asc
+from DBLogic import AdoHelper
 
 def getCompletedbyMissionId(MissionId):
     """
@@ -57,3 +58,11 @@ def getEndedMissions():
     mm = mission.query.filter(mission.enddate <= now()).all()
     return mm
 
+def getMissions():
+    #data=AdoHelper().db().query("select * from mission")
+    data=mission.query.all()
+    return [(str(x.guid),x.missionname) for x in data]
+
+def getMissionNameById(Id):
+    sql="SELECT missionname FROM `mission` where guid={0}".format(Id)
+    return AdoHelper().db().get(sql).missionname

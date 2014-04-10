@@ -517,6 +517,10 @@ def test(page=1):
     fields_cn = ['资产标签号', '状态标识', '实物名称', '规格型号', '责任部门名称']
     specfile = {'未下电': '手工输入',
                 'image': '拍照上传', 'None': ''}
+
+    from Logic.MissionLogic import getMissionNameById
+    xx= getMissionNameById(1)
+    print(xx)
     return render_template('list.html', pagination=xx,
                            fields=fields, fields_cn=fields_cn, specfile=specfile)
 
