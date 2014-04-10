@@ -6,11 +6,17 @@ from flask.ext.admin.form import rules
 from markupsafe import Markup
 from sqlalchemy.event import listens_for
 from wtforms import SelectField
-from mbp.models import mission_barcode,mission_user,mission
+from mbp.models import mission_barcode,mission_user,mission,usergroup
 from mbp.Logic.MissionLogic import getMissions,getMissionNameById
 
 def _getMissionHref(view, context, model, name):
     return Markup("<a href='/index?mid={0}' target=_blank>{0}-{1}</a>".format(model.missionid,getMissionNameById(model.missionid)))
+
+
+
+def _getUsergroupName(view, context, model, name):
+    groupname={'1':'系统管理员','2':'普通用户'}
+    return Markup("{0}".format(groupname[model.groupid]))
 
 
 class MyView(BaseView):
@@ -32,7 +38,8 @@ class Mission(ModelView):
 
 
     #可以创建新的
-    can_create = True
+    can_create = False
+    can_delete = False
 
     #显示字段
     column_list = ( 'missionname','startdate','enddate')
@@ -138,3 +145,50 @@ class MissionUser(ModelView):
         # You can pass name and other parameters if you want to
 
         super(MissionUser, self).__init__(mission_user, session, **kwargs)
+
+
+class UserGroup(ModelView):
+    #edit_template = 'admin/edit.html'
+    form_overrides = dict(groupid=SelectField)
+    form_args = dict(
+        # Pass the choices to the `SelectField`
+
+        groupid=dict(
+            choices=[('1','系统管理员'),('2','普通用户')]
+        ))
+
+    # form_create_rules = [
+    #     rules.Header("dsdsdsd"),
+    #     rules.HTML('''
+    #     <font color=red>ddd</font>
+    #     '''),
+    #
+    #     rules.FieldSet(('missionid', 'barcode'), '任务信息'),
+    #
+    # ]
+
+    column_formatters = {
+        'groupid': _getUsergroupName
+    }
+    #可以创建新的
+    can_create = True
+
+    #显示字段
+    column_list = ('groupid', 'user_code')
+    #设置过滤器
+    column_filters = ('groupid', 'user_code')
+    #描述
+    #column_descriptions = {'missionid':'任务ID', 'user_code':'4A工号'}
+    #字段显示名称
+    column_labels = {'groupid': '角色ID', 'user_code': '4A工号'}
+    #搜索字段
+    column_searchable_list = [usergroup.user_code]
+    #默认排序字段
+    column_default_sort = ('user_code', True)
+    #列表每页数量
+    page_size = 10
+
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+
+        super(UserGroup, self).__init__(usergroup, session, **kwargs)

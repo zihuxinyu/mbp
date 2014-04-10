@@ -481,3 +481,17 @@ class mission_user(db.Model):
     def __int__(self, missionid=None, user_code=None):
         self.missionid = missionid
         self.user_code = user_code
+
+
+class usergroup(db.Model):
+    '''
+    定义用户角色关系表
+    '''
+    __tablename__ = 'usergroup'
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    user_code = db.Column('user_code',db.String(50))
+    groupid = db.Column('groupid',db.String(50))
+
+    def __int__(self, user_code=None, groupid=None):
+        self.user_code = user_code
+        self.groupid = groupid
