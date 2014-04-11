@@ -3,10 +3,37 @@ import time
 
 from mbp import db
 from sqlalchemy import Integer
+from sqlalchemy.orm.interfaces import MapperExtension
+from sqlalchemy.orm.events import event
+import datetime
+from flask import  g
 
-ROLE_USER = 0
-ROLE_ADMIN = 1
 
+
+class BaseExtension(MapperExtension):
+    """Base entension class for all entities """
+
+    def before_insert(self, mapper, connection, instance):
+        """ set the created_at """
+        if hasattr(instance, 'created'):
+            instance.created = datetime.datetime.now()
+        if hasattr(instance,'createdby'):
+            instance.createdby=g.user.get_id()
+
+    def before_update(self, mapper, connection, instance):
+        """ set the updated_at """
+        if hasattr(instance, 'modified'):
+            instance.modified = datetime.datetime.now()
+        if hasattr(instance, 'modifiedby'):
+            instance.modifiedby = g.user.get_id()
+
+class BaseModel(object):
+    created = db.Column('created', nullable=True)
+    createdby = db.Column('createdby', nullable=True)
+    modified = db.Column('modified', nullable=True)
+    modifiedby = db.Column('modifiedby', nullable=True)
+
+    __mapper_args__ = {'extension': BaseExtension()}
 
 class portal_user(db.Model):
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
@@ -120,7 +147,7 @@ class WechatUser(db.Model):
         self.checked = checked
 
 
-class BarcodeList(db.Model):
+class BarcodeList(db.Model, BaseModel):
     __tablename__ = 'barcodelist'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
     barcode = db.Column('barcode')
@@ -437,7 +464,7 @@ class zczb(db.Model):
         self.sjlyfl = sjlyfl
 
 
-class mission_barcode(db.Model):
+class mission_barcode(db.Model, BaseModel):
     '''
     定义任务与资产标签号关系
     '''
@@ -453,11 +480,13 @@ class mission_barcode(db.Model):
         self.msgid = msgid
 
 
-class mission(db.Model):
+
+class mission(db.Model, BaseModel):
     '''
     定义了任务
     '''
     __tablename__ = 'mission'
+
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
     missionname = db.Column('missionname', db.String(100))
     startdate = db.Column('startdate',db.DATE)
@@ -469,7 +498,7 @@ class mission(db.Model):
         self.enddate = enddate
 
 
-class mission_user(db.Model):
+class mission_user(db.Model, BaseModel):
     '''
     定义了任务与用户关系
     '''
@@ -483,7 +512,7 @@ class mission_user(db.Model):
         self.user_code = user_code
 
 
-class usergroup(db.Model):
+class usergroup(db.Model,BaseModel):
     '''
     定义用户角色关系表
     '''
@@ -495,3 +524,7 @@ class usergroup(db.Model):
     def __int__(self, user_code=None, groupid=None):
         self.user_code = user_code
         self.groupid = groupid
+
+
+
+
