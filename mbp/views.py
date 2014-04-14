@@ -17,6 +17,8 @@ from Logic.DBLogic import AdoHelper
 import requests
 from mbp.Logic.MissionLogic import can_return
 from mbp.Logic.EmailLogic import sendsmscode
+from Logic.MissionLogic import getUnCompletedbyMissionId, getCompletedbyMissionId
+
 
 @lm.user_loader
 def load_user(id):
@@ -29,13 +31,10 @@ def before_request():
 
 
 
-
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    from Logic.MissionLogic import *
     #获取MissionId
     mid = request.args.get('mid')
     mid = '1' if not mid else mid
