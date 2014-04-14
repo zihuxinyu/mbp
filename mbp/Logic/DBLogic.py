@@ -1,11 +1,9 @@
 # coding: utf-8
-import torndb
-from Library.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
-from werkzeug.exceptions import abort
 from math import ceil
 
-
-
+from Library.DB import torndb
+from Library.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
+from werkzeug.exceptions import abort
 
 
 class Pagination(object):

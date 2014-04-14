@@ -2,7 +2,7 @@
 
 from flask_mail import Message
 from mbp import mail, app
-from decos import asyncfun
+from Library.threadinghelper import asyncfun
 from mbp.models import portal_user
 
 

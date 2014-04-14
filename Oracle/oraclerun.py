@@ -1,9 +1,9 @@
 # coding: utf-8
+from Library.DB import torndb
 from Library.config import DB_HOST, DB_DATEBASE, DB_USER, DB_PSW
 
 from decos import asyncfun
 from autodb.Logic import DateLogic
-import torndb
 import os
 
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
