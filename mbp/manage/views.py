@@ -6,7 +6,7 @@ from flask.ext.admin.form import rules
 from markupsafe import Markup
 from sqlalchemy.event import listens_for
 from wtforms import SelectField
-from mbp.models import mission_barcode,mission_user,mission,usergroup
+from mbp.models import mission_barcode,mission_user,mission,usergroup,BaseAuth
 from mbp.Logic.MissionLogic import getMissions,getMissionNameById
 
 def _getMissionHref(view, context, model, name):
@@ -22,18 +22,14 @@ def _getUsergroupName(view, context, model, name):
 class MyView(BaseView):
     def is_accessible(self):
         #认证通过的才能显示,可以自定义逻辑
-        print('dddddddddddddddddddddd',g.user.get_id())
         return g.user.is_authenticated()
     @expose('/')
     def index(self):
         return self.render('admin/index.html')
 
 
-class Mission(ModelView):
-    def is_accessible(self):
-        #认证通过的才能显示,可以自定义逻辑
+class Mission(BaseAuth,ModelView):
 
-        return g.user.is_authenticated()
     #edit_template = 'admin/edit.html'
 
 
@@ -61,7 +57,7 @@ class Mission(ModelView):
 
         super(Mission, self).__init__(mission, session, **kwargs)
 
-class MissionBarcode(ModelView):
+class MissionBarcode(BaseAuth,ModelView):
 
     #edit_template = 'admin/edit.html'
     form_overrides = dict(missionid=SelectField)
@@ -100,7 +96,7 @@ class MissionBarcode(ModelView):
         super(MissionBarcode, self).__init__(mission_barcode, session, **kwargs)
 
 
-class MissionUser(ModelView):
+class MissionUser(BaseAuth,ModelView):
     #edit_template = 'admin/edit.html'
     form_overrides = dict(missionid=SelectField)
     form_args = dict(
@@ -147,7 +143,7 @@ class MissionUser(ModelView):
         super(MissionUser, self).__init__(mission_user, session, **kwargs)
 
 
-class UserGroup(ModelView):
+class UserGroup(BaseAuth,ModelView):
     #edit_template = 'admin/edit.html'
     form_overrides = dict(groupid=SelectField)
     form_args = dict(

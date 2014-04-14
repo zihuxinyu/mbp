@@ -6,7 +6,7 @@ from decos import asyncfun
 from mbp.models import portal_user
 
 
-@asyncfun
+'''@asyncfun'''
 def send_async_email(msg):
     """
 

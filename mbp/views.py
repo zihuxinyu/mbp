@@ -512,18 +512,19 @@ def test(page=1):
           'AS mission_barcode_barcode FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode' \
           '.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh'
     #sql="select * from zczb"
-    xx = AdoHelper().paginate(page, sql=sql)
-    fields = ['zcbqh', 'ztbz', 'swmc', 'ggxh', 'zrbmmc']
-    fields_cn = ['资产标签号', '状态标识', '实物名称', '规格型号', '责任部门名称']
-    specfile = {'未下电': '手工输入',
-                'image': '拍照上传', 'None': ''}
+    # xx = AdoHelper().paginate(page, sql=sql)
+    # fields = ['zcbqh', 'ztbz', 'swmc', 'ggxh', 'zrbmmc']
+    # fields_cn = ['资产标签号', '状态标识', '实物名称', '规格型号', '责任部门名称']
+    # specfile = {'未下电': '手工输入',
+    #             'image': '拍照上传', 'None': ''}
+    #
+    # from Logic.MissionLogic import getMissionNameById
+    # xx= getMissionNameById(1)
+    # print(xx)
+    # return render_template('list.html', pagination=xx,
+    #                        fields=fields, fields_cn=fields_cn, specfile=specfile)
 
-    from Logic.MissionLogic import getMissionNameById
-    xx= getMissionNameById(1)
-    print(xx)
-    return render_template('list.html', pagination=xx,
-                           fields=fields, fields_cn=fields_cn, specfile=specfile)
-
+    return str(g.user.is_admin())
 
 @app.route('/excel/')
 def excel():

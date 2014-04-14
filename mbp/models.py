@@ -9,6 +9,17 @@ import datetime
 from flask import  g
 
 
+class BaseAuth(object):
+    def is_accessible(self):
+        #认证通过的才能显示,可以自定义逻辑
+        #return False
+        #当前运行类名 self.__class__.__name__
+        #TODO:增加按类进行权限控制
+        if g.user.get_id():
+            return g.user.is_admin()
+        else:
+            return False
+
 
 class BaseExtension(MapperExtension):
     """Base entension class for all entities """
@@ -69,6 +80,18 @@ class portal_user(db.Model):
 
     def get_id(self):
         return unicode(self.user_code)
+
+    def is_admin(self):
+        """
+        是否管理员
+
+        :return:
+        """
+        dd=usergroup.query.filter(usergroup.user_code == self.user_code).first()
+        if dd:
+            return dd.groupid == '1'
+        else:
+            return False
 
 
 class Snlist(db.Model):
