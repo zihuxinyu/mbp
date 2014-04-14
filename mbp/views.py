@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 import StringIO
-from config import POSTS_PER_PAGE
+from Library.config import POSTS_PER_PAGE
 from flask import jsonify
 
 from flask_login import current_user, login_required, logout_user, login_user
@@ -14,7 +14,9 @@ from mbp.forms import LoginForm
 from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
 from Logic import WechatLogic, BarcodeLogic
 from Logic.DBLogic import AdoHelper
-
+import requests
+from mbp.Logic.MissionLogic import can_return
+from mbp.Logic.EmailLogic import sendsmscode
 
 @lm.user_loader
 def load_user(id):
@@ -26,10 +28,7 @@ def before_request():
     g.user = current_user
 
 
-@app.errorhandler(500)
-def internal_error(error):
-    #db.session.rollback()
-    return render_template('500.html'), 500
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -187,13 +186,15 @@ def showsnlist(page=1):
 
 @robot.handler
 def echo(message):
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     return '抱歉,未能成功识别此{0},请重试'.format(message.type)
 
 
 @robot.image
 def echo(message):
-    import requests
-
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     r = requests.get('http://127.0.0.1:7000/?url=' + message.img)
     WechatLogic.SaveMessage(message=message,
                             imgcontent=r.text)
@@ -208,11 +209,13 @@ def echo(message):
 
 @robot.text
 def echo(message, session):
+
     WechatLogic.SaveMessage(message)
     w = WechatLogic.CheckUser(message.source)
     if not w:
         return WechatLogic.SendBDPage(message)
-
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     #先对输入的文字进行二维码提取.
     bar = BarcodeLogic.GetUnicomBarcode(message.content)
     if bar:
@@ -226,18 +229,24 @@ def echo(message, session):
 
 @robot.link
 def echo(message, session):
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     WechatLogic.SaveMessage(message)
     return message.url
 
 
 @robot.location
 def echo(message, session):
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     WechatLogic.SaveMessage(message)
     return message.label
 
 
 @robot.click
 def echo(message, session):
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     wechat = WechatReceive(id=message.id, target=message.target,
                            source=message.source, time=message.time,
                            raw=message.raw, type=message.type,
@@ -251,6 +260,8 @@ def echo(message, session):
 
 @robot.voice
 def echo(message, session):
+    if not can_return(message):
+        return "您不在清查人员之内,请联系当地资产管理员"
     WechatLogic.SaveMessage(message)
     #return  message.media_id
     return '我听见了.'
@@ -263,7 +274,7 @@ def echo(message):
 
 @robot.unsubscribe
 def echo(message):
-    return "dont"
+    return "Bye"
 
 
 @app.route('/bd/<source>', methods=['GET', 'POST'])
@@ -335,7 +346,6 @@ def sendcode(source=None, usercode=None):
     wechatuser = WechatUser(source=source, usercode=usercode, code=code)
     db.session.add(wechatuser)
     db.session.commit()
-    from email import sendsmscode
 
     sendsmscode(user_code=usercode, code=code)
 
@@ -347,7 +357,7 @@ def sendlogincode(usercode=None):
         portal_user.msg: code
     })
     db.session.commit()
-    from email import sendsmscode
+
 
     sendsmscode(user_code=usercode, code=code)
 
@@ -523,8 +533,8 @@ def test(page=1):
     # print(xx)
     # return render_template('list.html', pagination=xx,
     #                        fields=fields, fields_cn=fields_cn, specfile=specfile)
-
-    return str(g.user.is_admin())
+    from mbp.Logic.MissionLogic import is_user_in_mission
+    return str(is_user_in_mission('weibh'))+'sdsd'
 
 @app.route('/excel/')
 def excel():

@@ -2,6 +2,10 @@
 from mbp import db
 from mbp.models import zczb
 from sqlalchemy import and_, desc
+from mbp.models import BarcodeList, mission_barcode
+from  WechatLogic import getUserBySource
+from DateLogic import now
+from mbp.Logic.MissionLogic import is_barcode_in_mission
 def ChkUnicomBarcode(code):
     """
     验证是否联通公司资产编号
@@ -38,22 +42,21 @@ def SaveBarcode(barcodelist, message, type='input'):
     """
 
     for x in barcodelist:
-        from mbp.models import BarcodeList,mission_barcode
-        from  WechatLogic import getUserBySource
-        from DateLogic import now
+
         uu=getUserBySource(message.source)
         if uu:
-            pp=getPortalUser(uu)
-            bb = BarcodeList(source=message.source, barcode=x,
-                         type=type, msgid=message.id,
-                         user_code=uu,opdate=now(),
-                         topdpt=pp.topdpt
-        )
-            db.session.add(bb)
-            mb=mission_barcode.query.filter(and_(mission_barcode.barcode==x,  mission_barcode.msgid==None) )
-            if mb.first():
-                #只更新没有扫描到得二维码,填了msgid证明已经查过
-                mb.update({mission_barcode.msgid:message.id})
+            if is_barcode_in_mission(user_code=uu,barcode=x):
+            #如果此用户提交的时任务内的资产标签,那么保存下来
+                pp=getPortalUser(uu)
+                bb = BarcodeList(source=message.source, barcode=x,
+                             type=type, msgid=message.id,
+                             user_code=uu,opdate=now(),
+                             topdpt=pp.topdpt)
+                db.session.add(bb)
+                mb=mission_barcode.query.filter(and_(mission_barcode.barcode==x,  mission_barcode.msgid==None) )
+                if mb.first():
+                    #只更新没有扫描到得二维码,填了msgid证明已经查过
+                    mb.update({mission_barcode.msgid:message.id})
 
     db.session.commit()
 

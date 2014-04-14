@@ -1,6 +1,6 @@
 # coding: utf-8
 import torndb
-from config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
+from Library.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
 from werkzeug.exceptions import abort
 from math import ceil
 

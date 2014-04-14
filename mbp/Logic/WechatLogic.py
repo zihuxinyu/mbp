@@ -9,9 +9,9 @@ def getUserBySource(source):
     """
     根据微信source获取绑定的门户工号
     :param source:
-    :return:
+    :return:user_code
     """
-    ww= WechatUser.query.filter(WechatUser.source==source).first()
+    ww= WechatUser.query.filter(and_(WechatUser.source==source),(WechatUser.checked=='1')).first()
     if ww:
         return ww.usercode
     else:
@@ -99,9 +99,9 @@ def SendBDPage(message):
 
     reply = ArticlesReply(message=message)
     article = Article(
-        title="绑定门户账户",
-        description="请输入门户账户进行绑定",
-        img="https://github.com/apple-touch-icon-144.png",
+        title="请先绑定门户账户",
+        description="点此进行绑定,请在打开的页面输入云门户账户,验证码会下发到您的手机号码",
+        img="http://dyit.org/static/images/logo.gif",
         url='http://dyit.org/bd/' + message.source
     )
     reply.add_article(article)

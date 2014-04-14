@@ -4,7 +4,6 @@ from flask import g
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.form import rules
 from markupsafe import Markup
-from sqlalchemy.event import listens_for
 from wtforms import SelectField
 from mbp.models import mission_barcode,mission_user,mission,usergroup,BaseAuth
 from mbp.Logic.MissionLogic import getMissions,getMissionNameById
