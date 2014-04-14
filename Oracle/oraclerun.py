@@ -2,7 +2,7 @@
 from Library.DB import torndb
 from Library.config import DB_HOST, DB_DATEBASE, DB_USER, DB_PSW
 
-from decos import asyncfun
+from Library.threadinghelper import asyncfun
 from autodb.Logic import DateLogic
 import os
 

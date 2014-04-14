@@ -26,7 +26,8 @@ def sendMail(subject, text, *attachmentFilePaths):
     msg.attach(MIMEText(text))
 
     for attachmentFilePath in attachmentFilePaths:
-        msg.attach(getAttachment(attachmentFilePath))
+        if os.path.exists(attachmentFilePath):
+            msg.attach(getAttachment(attachmentFilePath))
 
     mailServer = smtplib.SMTP(MAIL_SERVER)
     mailServer.ehlo()

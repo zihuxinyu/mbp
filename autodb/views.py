@@ -22,10 +22,6 @@ def before_request():
     g.user = current_user
 
 
-@app.errorhandler(500)
-def internal_error(error):
-    #db.session.rollback()
-    return render_template('500.html'), 500
 
 
 @app.route('/index', methods=['GET', 'POST'])
