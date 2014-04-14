@@ -1,5 +1,5 @@
 # coding: utf-8
-from config import DB_HOST, DB_DATEBASE, DB_USER, DB_PSW
+from Library.config import DB_HOST, DB_DATEBASE, DB_USER, DB_PSW
 
 from decos import asyncfun
 from autodb.Logic import DateLogic
