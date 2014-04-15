@@ -36,7 +36,7 @@ def sendMail(subject, text, *attachmentFilePaths):
     mailServer.sendmail(mailUser, recipient, msg.as_string())
     mailServer.close()
 
-    print('Sent email to %s' % recipient)
+    print('Sent email to {0} with subject {1}'.format(recipient,subject))
 
 
 def getAttachment(attachmentFilePath):

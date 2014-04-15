@@ -32,99 +32,83 @@ def sendportal():
     """
     #目的mysql表名
     tablename = "portal_user"
-    #sql文件路径
-    tmpsqlpath =  path+'{0}.sql'.format(tablename)
-
-    realsqlpath = path + '{0}.{1}.sql'
-    #压缩包地址
-    tmpzippath = path +'{0}.zip'.format(tablename)
     #从源数据库获取语句
-    selectsql = 'select * from Ext_dpt_usr'
-
-    head = "SET NAMES utf8;TRUNCATE {0};\r\nINSERT INTO `{0}` (`guid`, `user_code`, `user_name`, `user_mobile`, `dpt_name`, `topdpt`, `manager`, `msg`, `msgexpdate`) VALUES "
-
-    lines = "({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', NULL, NULL), \r\n"
-
-    man_file = open(tmpsqlpath, 'w', encoding='utf-8')
-    man_file.writelines(head.format(tablename))
-
-    list = db().query(selectsql)
-    i = 1
-    for x in list:
-        #去除最后的逗号
-        l = len(list)
-        lines = lines.rstrip(', \r\n') if (i == l) else lines
-        man_file.writelines(lines.format(i, x.user_code, x.user_name, x.user_mobile, x.dpt_name, x.topdpt, x.manager))
-        i += 1
-
-    man_file.close()
-    #复制到realpath
-    to_database = ['autodb','zcgl']
+    selectsql = 'select rownum as guid, user_code, user_name, user_mobile, dpt_name, topdpt, manager, NULL as msg, ' \
+                'opdate as msgexpdate  from Ext_dpt_usr'
+    #发送出去
     host_database={'autodb':'134.44.36.190','zcgl':'119.187.191.82'}
-    for d in to_database:
-        realsqlpath = realsqlpath.format(tablename, d)
-        open(realsqlpath, "wb").write(open(tmpsqlpath, "rb").read())
-        #压缩文件打包
-        getzipfile(filepath=realsqlpath, zipname=tmpzippath)
-        #删除文件
-        os.remove(realsqlpath)
-
-        subject = '{host}#{db}#{table}'.format(host=host_database[d], db=d, table=tablename)
-        #print(subject)
-        sendMail(subject, tablename, tmpzippath)
-
-        #os.remove(tmpzippath)#多线程的删除可能会有问题
+    senddbzip(tablename=tablename,selectsql=selectsql, host_database=host_database)
 
 
 def sendDLS():
 
-
-    """
-    发送DLS同步数据
-
-    """
-    print(path)
-    #目的mysql表名
-    tablename = "dls_snlist"
-    #临时sql文件路径
-    tmpsqlpath = path + '{0}.sql'.format(tablename)
-    #每个数据库一个sql文件,最后分别压缩后发送
-    #格式要求table.db.sql,导入是判断以db.sql结尾来确认
-
-    realsqlpath= path + '{0}.{1}.sql'
-    #压缩包地址
-    tmpzippath = path + '{0}.zip'.format(tablename)
     #从源数据库获取语句
     selectsql = 'select * from DLS_SNLIST'
 
-    head = "SET NAMES utf8;TRUNCATE {0};\r\nINSERT INTO `{0}` (`user_id`, `serial_number`, `develop_depart_id`, " \
-           "`open_date`, `user_state_codeset`, `state_name`,`impdate`) VALUES "
+    #目的mysql表名
+    tablename = "dls_snlist"
 
-    lines = "('{0}', '{1}', '{2}', '{3}', '{4}', '{5}','{6}'), \r\n"
+    #发送出去
+    host_database = {'dls': '119.187.191.82', 'dls': '134.44.36.190'}
+    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
 
-    man_file = open(tmpsqlpath, 'w', encoding='utf-8')
-    man_file.writelines(head.format(tablename))
+
+
+def senddbzip(tablename, selectsql, host_database={}):
+    """
+    将同步文件发送出去
+    :param tablename:同步数据库表的名称
+    :param selectsql:数据来源,注意select 中字段要和tablename中一致
+    :param host_database:字典,格式为 数据库名:服务器IP
+    host_database = {'autodb': '134.44.36.190', 'zcgl': '119.187.191.82'}
+
+    """
+
+    #sql文件路径
+    _tmpsqlpath = path + '{0}.sql'.format(tablename)
+
+
+    #定义sql文件模板
+    _head = "SET NAMES utf8;TRUNCATE {0};\r\nINSERT INTO `{0}` ({1}) VALUES "
+    _lines = "({0}), \r\n"
+
+    #取得所有列
+    columns = db().getcolumn_names(selectsql)
+    _columns = ','.join(['`{0}`'.format(c.lower()) for c in columns])
+    head = _head.format(tablename, _columns)
+
+    man_file = open(_tmpsqlpath, 'w', encoding='utf-8')
+    man_file.writelines(head)
 
     list = db().query(selectsql)
     i = 1
     for x in list:
         #去除最后的逗号
+        #print(','.join([('\'{0}\'').format(str(x[c])) for c in columns]))
         l = len(list)
-        lines = lines.rstrip(', \r\n') if (i == l) else lines
-        #print(i,x.USER_ID,x.SERIAL_NUMBER,x.DEVELOP_DEPART_ID,x.OPEN_DATE,x.USER_STATE_CODESET,x.STATE_NAME,x.IMPDATE )
-        man_file.writelines(lines.format(x.USER_ID, x.SERIAL_NUMBER, x.DEVELOP_DEPART_ID, x.OPEN_DATE,
-                                         x.USER_STATE_CODESET, x.STATE_NAME, x.IMPDATE))
+        _lines = _lines.rstrip(', \r\n') if (i == l) else _lines
+        man_file.writelines(_lines.format(','.join([('\'{0}\'').format(str(x[c])) for c in columns])))
         i += 1
 
     man_file.close()
 
 
-    #复制到realpath
-    to_database=['dls']
-    host_database = {'dls': '134.44.36.190'}
-    for d in to_database:
-        realsqlpath=realsqlpath.format(tablename,d)
-        open(realsqlpath, "wb").write(open(tmpsqlpath, "rb").read())
+
+
+    #每个数据库一个sql文件,最后分别压缩后发送
+    #格式要求table.db.sql,导入是判断以db.sql结尾来确认
+    _realsqlpath = path + '{0}.{1}.sql'
+
+    #压缩包地址
+    tmpzippath = path + '{0}.zip'.format(tablename)
+
+
+
+    for d in host_database:
+        print(d,host_database[d])
+        realsqlpath = _realsqlpath.format(tablename, d)
+        print(realsqlpath)
+        open(realsqlpath, "wb").write(open(_tmpsqlpath, "rb").read())
         #压缩文件打包
         getzipfile(filepath=realsqlpath, zipname=tmpzippath)
         #删除文件
@@ -133,14 +117,14 @@ def sendDLS():
         sendMail(subject, tablename, tmpzippath)
         #os.remove(tmpzippath)#多线程的删除可能会有问题
 
-
 if __name__ == "__main__":
 
     while True:
-        #5小时执行一次
+        #1小时执行一次
 
         sendportal()
         sendDLS()
         time.sleep(60 * 60 * 1)
+        print('send sync db over')
         #time.sleep(120)
         pass

@@ -72,7 +72,7 @@ def loginchk(source=None, usercode=None):
     form = WechatChkCode()
     if form.validate_on_submit():
         code = form.code.data
-        if usercode and code:
+        if usercode and code and len(code)==4:
             x = portal_user.query.filter(and_(portal_user.user_code == usercode,
                                               portal_user.msg == code))
 
@@ -95,6 +95,8 @@ def loginchk(source=None, usercode=None):
             else:
                 flash('验证失败,请重试')
                 return redirect(url_for('login'))
+        flash('验证失败，查无此ID')
+        return redirect(url_for('index'))
     return render_template('checkcode.html', action='loginchk', opname='登录系统', form=form, title='请输入验证码')
 
 
