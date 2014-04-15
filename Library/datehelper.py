@@ -1,21 +1,20 @@
 # coding: utf-8
-from datetime import datetime
 from datetime import date
-from time import strftime, mktime,localtime
+from time import strftime, mktime, localtime
 from time import strptime
+from datetime import datetime
 from datetime import timedelta
-
-
+from stringhelper import PadLeft
+import time
 
 def now(minutes=0):
-    from datetime import datetime
-    from datetime import timedelta
 
 
     now = datetime.now()
-    aDay = timedelta( minutes=minutes)
+    aDay = timedelta(minutes=minutes)
     now = now + aDay
     return now.strftime('%Y-%m-%d %H:%M:%S')
+
 
 def getOffsetDate(days=0):
     """
@@ -23,18 +22,17 @@ def getOffsetDate(days=0):
     :param days:
     :return:datetime
     """
-    now=datetime.now()
-    aday=timedelta(days=days)
-    return now+aday
+    now = datetime.now()
+    aday = timedelta(days=days)
+    return now + aday
 
 
 def getLastMonth():
-    from StringHelper import PadLeft
-    import  time
+
     if time.localtime()[1] - 1:
-        x= str(time.localtime()[0]) + PadLeft( str(time.localtime()[1] - 1),2,'0')
+        x = str(time.localtime()[0]) + PadLeft(str(time.localtime()[1] - 1), 2, '0')
     else:
-        x= str(time.localtime()[0]-1)+'12'
+        x = str(time.localtime()[0] - 1) + '12'
 
     return x
 

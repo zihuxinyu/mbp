@@ -1,20 +1,19 @@
 # -*- coding: utf8 -*-
 import StringIO
-from config import POSTS_PER_PAGE
-from flask import jsonify
 
+from mbp.config import POSTS_PER_PAGE
+from flask import jsonify
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
-from mbp import lm, app, robot, db
+from mbp import lm, app, db
 from flask.templating import render_template
-from sqlalchemy import and_, desc
+from sqlalchemy import and_
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash, make_response
 from mbp.forms import LoginForm
-from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
+from mbp.models import Staff, Snlist, WechatUser, BarcodeList, portal_user, zczb
 from Logic import WechatLogic, BarcodeLogic
 from Logic.DBLogic import AdoHelper
-
 from mbp.Logic.EmailLogic import sendsmscode
 from Logic.MissionLogic import getUnCompletedbyMissionId, getCompletedbyMissionId
 

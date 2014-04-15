@@ -4,7 +4,6 @@ import sys
 from flask import Flask, render_template
 from mbp.config import WEROBOT_TOKEN
 from flask_login import LoginManager
-
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.werobot import WeRoBot

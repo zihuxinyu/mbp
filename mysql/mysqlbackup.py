@@ -1,15 +1,17 @@
 # coding: utf-8
+from Library.config import pythonpath
+import os
+from Library.config import DB_USER, DB_PSW, AUTOINIP
+from Library.mailhelper import sendMail
 '''
 定时将数据库进行备份,发送邮件送走
 接收规则
 
 '''
 def main():
-    import os
-    from Library.config import DB_USER,DB_PSW,DB_DATEBASE,AUTOINIP
-    from Library.mailhelper import sendMail
 
-    path =os.path.abspath(os.path.dirname(__file__))+'/tmp/'
+
+    path =pythonpath+'/bak/'
     zipfile='{0}.all.sql.zip'.format(AUTOINIP)
     backcmd='cd {3} && mysqldump -u {1} -p{2} --all-databases | gzip > {0}.all.sql.zip'
 

@@ -7,13 +7,13 @@ BACKUP#134.44.36.190#DB
 此文件接收所有的备份信息
 '''
 
-
+from Library.config import pythonpath
 def main():
     import os
     from Library.mailhelper import getAttach
     from Library.ftphelper import ftp_up
 
-    path = os.path.abspath(os.path.dirname(__file__)) + '/bak/'
+    path = pythonpath+ '/bak/'
 
 
     #AUTOINIP='119.187.191.82'
@@ -35,6 +35,8 @@ def main():
 
 
 if __name__ == '__main__':
+
+
     while True:
         import time
         #间隔23分
