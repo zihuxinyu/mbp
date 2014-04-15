@@ -4,7 +4,7 @@ from mbp.models import zczb
 from sqlalchemy import and_, desc
 from mbp.models import BarcodeList, mission_barcode
 from  WechatLogic import getUserBySource
-from DateLogic import now
+from Library.datehelper import now
 from mbp.Logic.MissionLogic import is_barcode_in_mission
 def ChkUnicomBarcode(code):
     """
