@@ -528,7 +528,7 @@ class mission_user(db.Model, BaseModel):
     __tablename__ = 'mission_user'
     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
     missionid = db.Column('missionid',db.String(10))
-    user_code = db.Column('user_code',db.String(30))
+    user_code = db.Column('user_code', db.String(50))
 
     def __int__(self, missionid=None, user_code=None):
         self.missionid = missionid

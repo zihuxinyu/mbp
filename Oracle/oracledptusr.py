@@ -59,7 +59,7 @@ def sendportal():
     sendMail(subject, tablename, tmpzippath)
 
     subject = '{host}#{db}#{table}'.format(host='119.187.191.82', db='DLS', table=tablename)
-    #sendMail(subject, tablename, tmpzippath)
+    sendMail(subject, tablename, tmpzippath)
     os.remove(tmpzippath)#多线程的删除可能会有问题
 
 

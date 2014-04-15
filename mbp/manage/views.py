@@ -1,12 +1,15 @@
 # coding: utf-8
 from flask.ext.admin import Admin, BaseView, expose
 from flask import g
+from  wtforms import TextAreaField
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.form import rules
 from markupsafe import Markup
 from wtforms import SelectField
 from mbp.models import mission_barcode,mission_user,mission,usergroup,BaseAuth
 from mbp.Logic.MissionLogic import getMissions,getMissionNameById
+from wtforms.widgets import TextArea
+
 
 def _getMissionHref(view, context, model, name):
     return Markup("<a href='/index?mid={0}' target=_blank>{0}-{1}</a>".format(model.missionid,getMissionNameById(model.missionid)))
@@ -26,6 +29,16 @@ class MyView(BaseView):
     def index(self):
         return self.render('admin/index.html')
 
+
+class CKTextAreaWidget(TextArea):
+    def __call__(self, field, **kwargs):
+
+        kwargs.setdefault('class_', 'ckeditor')
+        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+
+
+class CKTextAreaField(TextAreaField):
+    widget = CKTextAreaWidget()
 
 class Mission(BaseAuth,ModelView):
 
@@ -96,7 +109,7 @@ class MissionBarcode(BaseAuth,ModelView):
 
 
 class MissionUser(BaseAuth,ModelView):
-    #edit_template = 'admin/edit.html'
+    edit_template = 'admin/edit.html'
     form_overrides = dict(missionid=SelectField)
     form_args = dict(
         # Pass the choices to the `SelectField`

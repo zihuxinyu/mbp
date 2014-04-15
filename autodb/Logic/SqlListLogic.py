@@ -105,6 +105,8 @@ def replacepara(sql=None,paras=None):
     #print(sql,paras)
     if not paras:
         return sql
+    if not '=' in paras:
+        return sql
     for x in paras.split(','):
         _x = x.split('=')
         old = '$' + _x[0] + '$'
