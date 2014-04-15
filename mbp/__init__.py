@@ -2,9 +2,8 @@
 import sys
 
 from flask import Flask, render_template
-
+from mbp.config import WEROBOT_TOKEN
 from flask_login import LoginManager
-from Library.config import basedir, WEROBOT_TOKEN
 
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
@@ -14,7 +13,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')  #解决utf8编码问题
 
 app = Flask(__name__)
-app.config.from_pyfile(basedir+'/config.py')
+app.config.from_object(config)
 app.debug = True
 lm = LoginManager()
 lm.init_app(app)
@@ -24,8 +23,6 @@ lm.login_message = unicode('请先登录', 'utf-8')
 mail = Mail(app)
 db = SQLAlchemy(app)
 
-#初始化管理
-import mbp.manage
 
 
 
@@ -33,6 +30,9 @@ robot = WeRoBot(app, token=WEROBOT_TOKEN, enable_session=True)
 
 
 from mbp import views
+from mbp.Logic import wechatrobot
+#初始化管理
+import mbp.manage
 
 
 @app.errorhandler(404)

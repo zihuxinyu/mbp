@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 import StringIO
-from Library.config import POSTS_PER_PAGE
+from config import POSTS_PER_PAGE
 from flask import jsonify
 
 from flask_login import current_user, login_required, logout_user, login_user
@@ -14,8 +14,7 @@ from mbp.forms import LoginForm
 from mbp.models import Staff, Snlist, WechatReceive, WechatUser, BarcodeList, portal_user, zczb
 from Logic import WechatLogic, BarcodeLogic
 from Logic.DBLogic import AdoHelper
-import requests
-from mbp.Logic.MissionLogic import can_return
+
 from mbp.Logic.EmailLogic import sendsmscode
 from Logic.MissionLogic import getUnCompletedbyMissionId, getCompletedbyMissionId
 
@@ -183,97 +182,6 @@ def showsnlist(page=1):
                            specfile=specfile)
 
 
-@robot.handler
-def echo(message):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    return '抱歉,未能成功识别此{0},请重试'.format(message.type)
-
-
-@robot.image
-def echo(message):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    r = requests.get('http://127.0.0.1:7000/?url=' + message.img)
-    WechatLogic.SaveMessage(message=message,
-                            imgcontent=r.text)
-    bar = BarcodeLogic.GetUnicomBarcode(r.text)
-    if bar:
-        BarcodeLogic.SaveBarcode(barcodelist=bar, message=message,
-                                 type='image')
-        return BarcodeLogic.ShowBarDetail(barcodelist=bar,
-                                          message=message)
-    return r.text
-
-
-@robot.text
-def echo(message, session):
-
-    WechatLogic.SaveMessage(message)
-    w = WechatLogic.CheckUser(message.source)
-    if not w:
-        return WechatLogic.SendBDPage(message)
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    #先对输入的文字进行二维码提取.
-    bar = BarcodeLogic.GetUnicomBarcode(message.content)
-    if bar:
-        BarcodeLogic.SaveBarcode(barcodelist=bar, message=message,
-                                 type='input')
-        return BarcodeLogic.ShowBarDetail(barcodelist=bar,
-                                          message=message)
-
-    return message.content
-
-
-@robot.link
-def echo(message, session):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    WechatLogic.SaveMessage(message)
-    return message.url
-
-
-@robot.location
-def echo(message, session):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    WechatLogic.SaveMessage(message)
-    return message.label
-
-
-@robot.click
-def echo(message, session):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    wechat = WechatReceive(id=message.id, target=message.target,
-                           source=message.source, time=message.time,
-                           raw=message.raw, type=message.type,
-                           latitude=message.Latitude, ckey=message.key,
-                           longitude=message.Longitude, lprecision=message.Precision
-    )
-    db.session.add(wechat)
-    db.session.commit()
-    return str(wechat.guid) + message.key
-
-
-@robot.voice
-def echo(message, session):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    WechatLogic.SaveMessage(message)
-    #return  message.media_id
-    return '我听见了.'
-
-
-@robot.subscribe
-def echo(message):
-    return "welcome"
-
-
-@robot.unsubscribe
-def echo(message):
-    return "Bye"
 
 
 @app.route('/bd/<source>', methods=['GET', 'POST'])

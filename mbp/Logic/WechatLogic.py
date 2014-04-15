@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 import random
 import string
-from mbp import db
+from mbp import db,robot
 from sqlalchemy import and_
 from mbp.models import WechatUser, WechatReceive
 
@@ -106,3 +106,4 @@ def SendBDPage(message):
     )
     reply.add_article(article)
     return reply
+

@@ -2,7 +2,7 @@
 from math import ceil
 
 from Library.DB import torndb
-from Library.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
+from mbp.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
 from werkzeug.exceptions import abort
 
 
