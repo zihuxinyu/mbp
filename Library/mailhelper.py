@@ -10,14 +10,21 @@ from Library.threadinghelper import asyncfun
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
+from Library.config import MAIL_PASSWORD, MAIL_SERVER, MAIL_USERNAME
 
 
 @asyncfun
 def sendMail(subject, text, *attachmentFilePaths):
-    from Library.config import MAIL_PASSWORD, MAIL_SERVER, MAIL_USERNAME
+    dosend(subject, text, *attachmentFilePaths)
 
-    mailUser = MAIL_USERNAME+'@chinaunicom.cn'
-    recipient = MAIL_USERNAME+'@chinaunicom.cn'
+def sendMail_Nosync(subject, text, *attachmentFilePaths):
+    dosend(subject, text, *attachmentFilePaths)
+
+
+def dosend(subject, text, *attachmentFilePaths):
+
+    mailUser = MAIL_USERNAME + '@chinaunicom.cn'
+    recipient = MAIL_USERNAME + '@chinaunicom.cn'
 
     msg = MIMEMultipart()
     msg['From'] = mailUser
@@ -36,7 +43,9 @@ def sendMail(subject, text, *attachmentFilePaths):
     mailServer.sendmail(mailUser, recipient, msg.as_string())
     mailServer.close()
 
-    print('Sent email to {0} with subject {1}'.format(recipient,subject))
+    print('Sent email to {0} with subject {1}'.format(recipient, subject))
+
+
 
 
 def getAttachment(attachmentFilePath):

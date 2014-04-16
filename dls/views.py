@@ -68,7 +68,7 @@ def loginchk(source=None, usercode=None):
         code = form.code.data
         if usercode and code and len(code)==4:
             x = Staff.query.filter(and_(Staff.staff_id == usercode,
-                                        Staff.msg == code))
+                                        Staff.msg == code,Staff.msgexpdate>=now()))
 
             w = x.first()
             if w:
@@ -248,7 +248,7 @@ def sendlogincode(usercode=None):
     xx = Staff.query.filter(Staff.staff_id == usercode)
     xx.update({
         Staff.msg: code,
-        Staff.msgexpdate:now()
+        Staff.msgexpdate:now(10)
     })
     db.session.commit()
 

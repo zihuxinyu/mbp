@@ -1,7 +1,7 @@
 #!env/bin/python
 # -*- coding: utf8 -*-
 import sys
-from dls import app
+from mbp import app
 
 if len(sys.argv)>1:
     port = int(sys.argv[1])

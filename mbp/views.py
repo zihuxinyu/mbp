@@ -16,7 +16,7 @@ from Logic import WechatLogic, BarcodeLogic
 from Logic.DBLogic import AdoHelper
 from mbp.Logic.EmailLogic import sendsmscode
 from Logic.MissionLogic import getUnCompletedbyMissionId, getCompletedbyMissionId
-
+from Library.datehelper import now
 
 @lm.user_loader
 def load_user(id):
@@ -262,7 +262,8 @@ def sendlogincode(usercode=None):
     code = WechatLogic.generate_code()
     xx = portal_user.query.filter(portal_user.user_code == usercode)
     xx.update({
-        portal_user.msg: code
+        portal_user.msg: code,
+        portal_user.msgexpdate:now(10)
     })
     db.session.commit()
 
