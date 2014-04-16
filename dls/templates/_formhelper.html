@@ -1,0 +1,42 @@
+{% macro render_field(field) -%}
+{% set with_label=kwargs.pop('with_label',False) %}
+{% set placeholder = field.label.text %}
+
+<div class="form-group {% if field.errors %}error{% endif %}">
+    {% set class_ = kwargs.pop('class_', '') %}
+    {% if field.flags.required %}
+    {% set class_ = class_ + ' required' %}
+    {% endif %}
+    {% if field.type == 'BooleanField' %}
+    <div class="col-sm-offset-4 col-sm-8">
+        <label class="checkbox">
+            {{ field(class_=class_, **kwargs) }}
+            {{ field.label.text|safe }}
+        </label>
+
+        {% else %}
+        <label for="{{ field.id }}" class="col-sm-4 control-label ">
+            {% if with_label %}{{ field.label.text }}{% if field.flags.required %}<span
+                class="label label-danger small"> *</span>{% endif %}:{% endif %}
+        </label>
+
+        <div class="col-sm-8">
+
+
+            {% if field.type in ('TextField', 'TextAreaField', 'PasswordField') %}
+            {% set class_ = class_ + ' input-xlarge form-control' %}
+            {% elif field.type == 'FileField' %}
+            {% set class_ = class_ + ' input-file form-control' %}
+            {% endif %}
+            {{ field(class_=class_, placeholder=placeholder, **kwargs) }}
+            {% endif %}
+            {% if field.errors %}
+            <span class="error help-inline">{{ field.errors|join(', ') }}</span>
+            {% endif %}
+            {% if field.description %}
+            <p class="help-block">{{ field.description|safe }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{%- endmacro %}

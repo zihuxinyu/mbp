@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ pagination.info|safe }}
+{{ pagination.links|safe }}
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in zz %}
+    <tr>
+        <td>{{ loop.index  }}</td>
+        <td>{{ user[0].zcbqh }}</td>
+        <td>{{ user[1].ztbz }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{{ pagination.links|safe }}
+{% endblock %}
