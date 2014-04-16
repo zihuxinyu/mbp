@@ -9,7 +9,6 @@ from Library.ziphelper import getzipfile
 from Library.DB import tornoracle3
 from Library.config import O_database, O_host, O_password, O_port, O_user,pythonpath
 from Library.mailhelper import sendMail
-
 import os
 import time
 
@@ -41,21 +40,24 @@ def sendportal():
 
 
 def sendDLS():
+    try:
+        selectsql = 'select * from DLS_SNLIST'
+        tablename = "dls_snlist"
+        host_database = {'dls': '119.187.191.82'}
+        senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+        host_database = {'dls': '134.44.36.190'}
+        senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
 
-    selectsql = 'select * from DLS_SNLIST'
-    tablename = "dls_snlist"
-    host_database = {'dls': '119.187.191.82'}
-    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
-    host_database = {'dls': '134.44.36.190'}
-    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
 
-
-    selectsql='SELECT staff_id, chnl_id, chnl_name,linkman_phone,NULL as msg,impdate as msgexpdate  FROM dls_staff_chnl'
-    tablename = "dls_staff_chnl"
-    host_database = {'dls': '119.187.191.82'}
-    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
-    host_database = {'dls': '134.44.36.190'}
-    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+        selectsql='SELECT staff_id, chnl_id, chnl_name,linkman_phone,NULL as msg,impdate as msgexpdate  FROM dls_staff_chnl'
+        tablename = "dls_staff_chnl"
+        host_database = {'dls': '119.187.191.82'}
+        senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+        host_database = {'dls': '134.44.36.190'}
+        senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+    except:
+        print('sendDLS()Error')
+        pass
 
 
 
@@ -77,15 +79,19 @@ def senddbzip(tablename, selectsql, host_database={}):
     _head = "SET NAMES utf8;TRUNCATE {0};\r\nINSERT INTO `{0}` ({1}) VALUES "
     _lines = "({0}), \r\n"
 
+
     #取得所有列
     columns = db().getcolumn_names(selectsql)
+
     _columns = ','.join(['`{0}`'.format(c.lower()) for c in columns])
     head = _head.format(tablename, _columns)
+
 
     man_file = open(_tmpsqlpath, 'w', encoding='utf-8')
     man_file.writelines(head)
 
     list = db().query(selectsql)
+
     i = 1
     for x in list:
         #去除最后的逗号
@@ -122,6 +128,7 @@ def senddbzip(tablename, selectsql, host_database={}):
         subject = '{host}#{db}#{table}'.format(host=host_database[d], db=d, table=tablename)
         sendMail(subject, tablename, tmpzippath)
         #os.remove(tmpzippath)#多线程的删除可能会有问题
+
 
 if __name__ == "__main__":
 

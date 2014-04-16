@@ -1,33 +1,20 @@
 # coding: utf-8
 import requests
 from mbp import db, robot
-from mbp.Logic.BarcodeLogic import GetUnicomBarcode, SaveBarcode, ShowBarDetail
-from mbp.Logic.MissionLogic import can_return
-from mbp.Logic.WechatLogic import SaveMessage,CheckUser,SendBDPage
-from mbp.models import WechatUser, WechatReceive
+from dls.Logic.WechatLogic import SaveMessage,CheckUser,SendBDPage
+from dls.models import WechatUser, WechatReceive
 
 
 @robot.handler
 def echo(message):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
+
     return '抱歉,未能成功识别此{0},请重试'.format(message.type)
 
 
 @robot.image
 def echo(message):
-    if not can_return(message):
-        return "您不在清查人员之内,请联系当地资产管理员"
-    r = requests.get('http://127.0.0.1:7000/?url=' + message.img)
-    SaveMessage(message=message,
-                imgcontent=r.text)
-    bar = GetUnicomBarcode(r.text)
-    if bar:
-        SaveBarcode(barcodelist=bar, message=message,
-                    type='image')
-        return ShowBarDetail(barcodelist=bar,
-                             message=message)
-    return r.text
+
+    return ""
 
 
 @robot.text

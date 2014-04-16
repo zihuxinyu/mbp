@@ -5,28 +5,10 @@
 <div class="jumbotron">
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
-                <div class=" alert alert-danger">
-                    <div class="caption">
-                        IT资产清查
-                    </div>
-                    <p>
-                        <a href={{url_for('unchecked')}} class="btn btn-danger btn-lg" role="button">
-                            待查资产 <span class="badge">{{remaining}}</span> </a>
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class=" alert alert-success">
-                    <div class="caption">
-                        IT资产清查
-                    </div>
-                    <p>
-                        <a href={{url_for('checked')}} class="btn btn-success btn-lg" role="button">
-                            已查资产 <span class="badge">{{ended}}</span> </a>
-                    </p>
-                </div>
-            </div>
+
+        欢迎您:{{uinfo.chnl_name}}
+         </div>
+
         </div>
     </div>
 </div>

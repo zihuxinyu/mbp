@@ -32,7 +32,9 @@ def before_request():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return "welcome"
+    uinfo=Staff.query.filter(Staff.staff_id==g.user.get_id()).first()
+    print(uinfo.staff_id)
+    return render_template('index.html',uinfo=uinfo)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -40,7 +42,7 @@ def login():
     #        return redirect( url_for( 'index' ) )
     form = LoginForm()
     if form.validate_on_submit():
-        # session['remember_me'] = form.remember_me.data
+        #session['remember_me'] = form.remember_me.data
         #return after_login(form.staffid.data)
         sendlogincode(usercode=form.usercode.data)
         flash('验证码发送成功!')
@@ -115,6 +117,7 @@ def list(page=1):
     :param page:
     :return:
     """
+
     pagination = Staff.query.filter(Staff.chnl_id.like('%1%')).paginate(page, POSTS_PER_PAGE, True)
     fields = ['staffid', 'chnl_id', 'chnl_name']
     fields_cn = ['登录ID', '代理商ID', '代理商名称']
@@ -141,10 +144,13 @@ def showsnlist(page=1):
     :param page:
     :return:
     """
+    from Logic.DBLogic import AdoHelper
 
-    pagination = Snlist.query.filter(Snlist.develop_depart_id == session["chnl_id"]).order_by(
-        Snlist.serial_number.desc()).paginate(page, POSTS_PER_PAGE,
-                                              True)
+
+    sql = "select * from DLS_SNLIST where develop_depart_id ='{0}' order by open_date desc"
+    sql=sql.format(session["chnl_id"])
+    pagination=AdoHelper().paginate(page,sql=sql,per_page=POSTS_PER_PAGE)
+
     fields = ['serial_number', 'open_date', 'user_state_codeset']
     fields_cn = ['号码', '开户时间', '状态']
     specfile = {'0': '<span class="label label-success">开通</span>',

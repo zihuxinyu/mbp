@@ -1,9 +1,11 @@
 # -*- coding: utf8 -*-
 import random
 import string
-from mbp import db,robot
+from dls import db,robot
 from sqlalchemy import and_
-from mbp.models import WechatUser, WechatReceive
+from dls.models import WechatUser, WechatReceive
+from werobot.reply import ArticlesReply, Article, create_reply
+from dls.config import SITE_URL
 
 def getUserBySource(source):
     """
@@ -90,19 +92,19 @@ def CheckUser(source):
         return False
 
 def SendBDPage(message):
+
     """
     产生绑定账户的页面
     :param message:
     :return:
     """
-    from werobot.reply import ArticlesReply, Article, create_reply
 
     reply = ArticlesReply(message=message)
     article = Article(
-        title="请先绑定门户账户",
-        description="点此进行绑定,请在打开的页面输入云门户账户,验证码会下发到您的手机号码",
-        img="http://dyit.org/static/images/logo.gif",
-        url='http://dyit.org/bd/' + message.source
+        title="请先绑代理商工号",
+        description="点此进行绑定,请在打开的页面输入代理商工号,验证码会下发到返档手机号码",
+        img=SITE_URL+"static/images/logo.gif",
+        url=SITE_URL +'bd/' + message.source
     )
     reply.add_article(article)
     return reply

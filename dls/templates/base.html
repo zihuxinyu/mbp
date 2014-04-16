@@ -38,7 +38,7 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li {%if request.endpoint=='showsnlist' %}class="active"{%endif%}><a href="{{ url_for('showsnlist') }}">号码明细</a></li>
+                <li {%if request.endpoint=='showsnlist' %}class="active"{%endif%}><a href="{{ url_for('showsnlist') }}">发展明细</a></li>
 
 
                 {% if g.user.is_authenticated() %}

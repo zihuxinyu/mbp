@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from flask_mail import Message
-from mbp import mail, app
+from dls import mail, app
 from Library.threadinghelper import asyncfun
-from mbp.models import portal_user
+from dls.models import Staff
 
 
 '''@asyncfun'''
@@ -33,15 +33,16 @@ def send_email(subject, sender, recipients, text_body, html_body):
 
 
 def sendsmscode(user_code=None,code=None):
-
+    print(user_code,code)
+    #return ""
     """
     给user_code的手机号发送验证码code
     :param user_code:
     :param code:
     """
-    xx = portal_user.query.filter(portal_user.user_code == user_code).first()
+    xx = Staff.query.filter(Staff.staff_id == user_code).first()
     if xx:
-        sendstr = 'MSG#{0}#{1}'.format(xx.user_mobile, code)
+        sendstr = 'MSG#{0}#{1}'.format(xx.linkman_phone, code)
         send_email(sendstr, 'sd-lcgly@chinaunicom.cn',
                    ['sd-lcgly@chinaunicom.cn'], sendstr,
                    sendstr)

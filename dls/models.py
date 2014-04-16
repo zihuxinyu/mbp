@@ -24,7 +24,7 @@ class Snlist(db.Model):
 
 class Staff(db.Model):
     __tablename__ = 'dls_staff_chnl'
-    staff_id = db.Column('staff_id')
+    staff_id = db.Column('staff_id', unique = True, primary_key = True)
     chnl_id = db.Column('chnl_id')
     chnl_name = db.Column('chnl_name')
     linkman_phone = db.Column('linkman_phone')
