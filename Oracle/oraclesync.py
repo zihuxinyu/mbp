@@ -42,14 +42,19 @@ def sendportal():
 
 def sendDLS():
 
-    #从源数据库获取语句
     selectsql = 'select * from DLS_SNLIST'
-
-    #目的mysql表名
     tablename = "dls_snlist"
+    host_database = {'dls': '119.187.191.82'}
+    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+    host_database = {'dls': '134.44.36.190'}
+    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
 
-    #发送出去
-    host_database = {'dls': '119.187.191.82', 'dls': '134.44.36.190'}
+
+    selectsql='SELECT staff_id, chnl_id, chnl_name,linkman_phone,NULL as msg,impdate as msgexpdate  FROM dls_staff_chnl'
+    tablename = "dls_staff_chnl"
+    host_database = {'dls': '119.187.191.82'}
+    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+    host_database = {'dls': '134.44.36.190'}
     senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
 
 
@@ -57,7 +62,7 @@ def sendDLS():
 def senddbzip(tablename, selectsql, host_database={}):
     """
     将同步文件发送出去
-    :param tablename:同步数据库表的名称
+    :param tablename:同步数据库表的名称,mysql目标数据库名
     :param selectsql:数据来源,注意select 中字段要和tablename中一致
     :param host_database:字典,格式为 数据库名:服务器IP
     host_database = {'autodb': '134.44.36.190', 'zcgl': '119.187.191.82'}
@@ -100,13 +105,14 @@ def senddbzip(tablename, selectsql, host_database={}):
     _realsqlpath = path + '{0}.{1}.sql'
 
     #压缩包地址
-    tmpzippath = path + '{0}.zip'.format(tablename)
+    _tmpzippath = path + '{0}.{1}.zip'
 
 
 
     for d in host_database:
         print(d,host_database[d])
         realsqlpath = _realsqlpath.format(tablename, d)
+        tmpzippath=_tmpzippath.format(tablename,d)
         print(realsqlpath)
         open(realsqlpath, "wb").write(open(_tmpsqlpath, "rb").read())
         #压缩文件打包
@@ -124,7 +130,8 @@ if __name__ == "__main__":
 
         sendportal()
         sendDLS()
-        time.sleep(60 * 60 * 1)
         print('send sync db over')
+        time.sleep(60 * 60 * 1)
+
         #time.sleep(120)
         pass
