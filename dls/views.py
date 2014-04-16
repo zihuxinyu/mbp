@@ -14,6 +14,7 @@ from dls.models import Staff, Snlist, WechatUser
 from Logic import WechatLogic
 from Logic.DBLogic import AdoHelper
 from dls.Logic.EmailLogic import sendsmscode
+from Library.datehelper import now
 
 
 @lm.user_loader
@@ -74,7 +75,8 @@ def loginchk(source=None, usercode=None):
                     flash('登录失败，查无此ID')
                     return redirect(url_for('login'))
 
-                session["user_code"] = staff.user_code
+                session["user_code"] = staff.staff_id
+                session["chnl_id"]=staff.chnl_id
                 remember_me = False
                 if 'remember_me' in session:
                     remember_me = session['remember_me']
@@ -173,7 +175,7 @@ def bd(source=None):
     if source:
         w = WechatUser.query.filter(and_(WechatUser.source == source, WechatUser.checked == 1)).first()
         if w:
-            staff = portal_user.query.filter(portal_user.user_code == w.usercode).first()
+            staff = Staff.query.filter(Staff.staff_id == w.usercode).first()
             login_user(staff, remember=True)
             flash('您已经绑定了' + w.usercode)
             return redirect(url_for('index'))
@@ -217,7 +219,7 @@ def bdchk(source=None, usercode=None):
                     WechatUser.checked: 1
                 })
 
-                staff = portal_user.query.filter(portal_user.user_code == w.usercode).first()
+                staff = Staff.query.filter(Staff.staff_id == w.usercode).first()
                 login_user(staff, remember=True)
                 db.session.commit()
                 flash('绑定成功')
@@ -237,9 +239,10 @@ def sendcode(source=None, usercode=None):
 
 def sendlogincode(usercode=None):
     code = WechatLogic.generate_code()
-    xx = portal_user.query.filter(portal_user.user_code == usercode)
+    xx = Staff.query.filter(Staff.staff_id == usercode)
     xx.update({
-        portal_user.msg: code
+        Staff.msg: code,
+        Staff.msgexpdate:now()
     })
     db.session.commit()
 
@@ -274,6 +277,7 @@ def test(page=1):
 
 @app.route('/excel/')
 def excel():
+    return ""
     import tablib
     type = request.args.get('type')
     if type=='checked':
