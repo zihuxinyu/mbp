@@ -37,8 +37,8 @@
         <button type="submit" class="btn btn-success">应用</button>
     </form>
 </div>
-
-
+        <br>
+<div class="container">
 <ul class="nav nav-tabs">
     <li
     {%if request.args.get('t')=='list' %}class="active"{%endif%} ><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=list">列表</a></li>
@@ -57,6 +57,7 @@
 <!----显示表格---->
 {{ listview(groupdata,gfields,gfields_cn) }}
 {%endif%}
+    </div>
 <script type="text/javascript" src="{{ url_for('static', filename='datetime/js/bootstrap-datetimepicker.js') }}" charset="UTF-8"></script>
 <script type="text/javascript" charset="UTF-8"
         src="{{ url_for('static', filename='datetime/js/locales/bootstrap-datetimepicker.zh-CN.js') }}"></script>
