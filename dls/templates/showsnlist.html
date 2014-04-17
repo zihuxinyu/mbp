@@ -10,7 +10,7 @@
 <div class="container">
     <form  role="form" action="{{url_for(action)}}" method="post">
         {{ form.hidden_tag() }}
-
+        <input type="hidden" id="t" name="t" value="{{request.args.get('t')}}"/>
 
             <div class="form-group">
                 <label for="startdate" class="col-md-1 control-label">起始时间</label>
@@ -44,19 +44,19 @@
     {%if request.args.get('t')=='list' %}class="active"{%endif%} ><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=list">列表</a></li>
     <li
     {%if request.args.get('t')=='group' %}class="active"{%endif%}><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=group">统计</a></li>
-   
+
 </ul>
 
-
+{%if request.args.get('t')=='list'%}
 <!----显示表格---->
 {{ listview(pagination,fields,fields_cn,specfile,formater) }}
 <!-- 调用分页模板 -->
 {{ pagination_html(pagination, request.endpoint, request.query_string) }}
-
-
+{%endif%}
+{%if request.args.get('t')=='group'%}
 <!----显示表格---->
 {{ listview(groupdata,gfields,gfields_cn) }}
-
+{%endif%}
 <script type="text/javascript" src="{{ url_for('static', filename='datetime/js/bootstrap-datetimepicker.js') }}" charset="UTF-8"></script>
 <script type="text/javascript" charset="UTF-8"
         src="{{ url_for('static', filename='datetime/js/locales/bootstrap-datetimepicker.zh-CN.js') }}"></script>

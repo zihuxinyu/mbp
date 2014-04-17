@@ -282,7 +282,8 @@ def showsnlist(page=1):
     if form.validate_on_submit():
         startdate = form.startdate.data
         enddate = form.enddate.data
-        return  redirect(url_for('showsnlist',s=startdate,e=enddate))
+        t = form.t.data
+        return  redirect(url_for('showsnlist',s=startdate,e=enddate,t=t))
 
 
     if request.args.get('s') and request.args.get('e'):
@@ -291,12 +292,13 @@ def showsnlist(page=1):
     else:
         startdate = now(-60 * 24 * 30).split(' ')[0]
         enddate = now().split(' ')[0]
-        return redirect(url_for('showsnlist', s=startdate, e=enddate))
+        t= request.args.get('t') if request.args.get('t') else 'list'
+        return redirect(url_for('showsnlist', s=startdate, e=enddate,t=t))
 
     sql = "select * from DLS_SNLIST where   open_date <='{1}' and open_date >='{2}' and develop_depart_id  in ( " \
           "select chnl_id from dls_staff_chnl where staff_id='{0}') order by open_date desc"
     sql = sql.format(g.user.get_id(), enddate, startdate)
-    print(sql)
+    #print(sql)
     pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
 
     fields = ['serial_number', 'open_date', 'user_state_codeset']
@@ -315,7 +317,7 @@ def showsnlist(page=1):
     sql="SELECT state_name ,count(serial_number) as count FROM `dls_snlist` where   open_date <='{1}' and open_date >='{2}' and develop_depart_id  in ( " \
         "select chnl_id from dls_staff_chnl where staff_id='{0}') group by state_name order by count desc"
     sql = sql.format(g.user.get_id(), enddate, startdate)
-    print(sql)
+    #print(sql)
     groupdata=AdoHelper().paginate(1,sql=sql,per_page=20000)
 
     gfields = ['state_name', 'count']

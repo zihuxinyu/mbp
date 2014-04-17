@@ -27,4 +27,5 @@ class WechatChkCode(BaseForm):
 class SearchForm(BaseForm):
     startdate = DateField('起始时间', validators=[Required()])
     enddate = DateField('结束时间', validators=[Required()])
+    t = TextField('类型')
 
