@@ -312,6 +312,16 @@ def showsnlist(page=1):
                 'F': '<span class="label label-danger">申请预销停机</span>'
     }
 
+    sql="SELECT state_name ,count(serial_number) as count FROM `dls_snlist` where   open_date <='{1}' and open_date >='{2}' and develop_depart_id  in ( " \
+        "select chnl_id from dls_staff_chnl where staff_id='{0}') group by state_name order by count desc"
+    sql = sql.format(g.user.get_id(), enddate, startdate)
+    print(sql)
+    groupdata=AdoHelper().paginate(1,sql=sql,per_page=20000)
+
+    gfields = ['state_name', 'count']
+    gfields_cn = ['状态', '数量']
     return render_template('showsnlist.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn,
-                           specfile=specfile, form=form, action='showsnlist',startdate=startdate,enddate=enddate)
+                           specfile=specfile, form=form, action='showsnlist',
+                           startdate=startdate,enddate=enddate,
+                           groupdata=groupdata,gfields=gfields,gfields_cn=gfields_cn)
