@@ -1,4 +1,4 @@
-from mbp import app
+from dls import app
 
 if __name__ == "__main__":
     app.run()

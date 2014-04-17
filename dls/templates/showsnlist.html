@@ -1,0 +1,31 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% from "_paginathion.html" import pagination_html %}
+{% from "_formhelper.html" import render_field %}
+{% from "_listview.html" import listview %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='datetime/css/bootstrap-datetimepicker.css') }}">
+<script src="{{ url_for('static', filename='datetime/js/bootstrap-datetimepicker.min.js') }}"></script>
+<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='datetime/js/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+
+<form class="form-inline form-signin" role="form" action="{{url_for(action,**request.args)}}" method="post">
+    {{ form.hidden_tag() }}
+    <div class="input-append date" id="datetimepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
+        <input class="span2" size="16" type="text" value="12-02-2012">
+        <span class="add-on"><i class="icon-remove"></i></span>
+        <span class="add-on"><i class="icon-th"></i></span>
+    </div>
+
+
+    <button type="submit" class="btn btn-success">应用</button>
+</form>
+<!----显示表格---->
+{{ listview(pagination,fields,fields_cn,specfile,formater) }}
+<!-- 调用分页模板 -->
+{{ pagination_html(pagination, request.endpoint, request.query_string) }}
+
+        <script >
+
+            $('#datetimepicker').datetimepicker();
+        </script>
+{% endblock %}

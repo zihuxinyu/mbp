@@ -109,3 +109,34 @@ def SendBDPage(message):
     reply.add_article(article)
     return reply
 
+
+def SendSnList(message):
+    """
+    点击进入发展列表进行查询的界面
+    :param message:
+    :return:
+    """
+
+    reply = ArticlesReply(message=message)
+    article = Article(
+        title="号码状态查询",
+        description="包含号码,发展时间,当前状态等信息",
+        img=SITE_URL + "static/images/logo.gif",
+        url=SITE_URL + 'showsnlist'
+    )
+    reply.add_article(article)
+    return reply
+
+
+def SendGuid(message):
+    """
+    返回操作导航
+    :param message:
+    :return:
+    """
+    t='''
+    操作导航:\n
+    1:查询,查询发展明细
+    2:政策,查询最新政策信息
+        '''
+    return t

@@ -15,6 +15,8 @@ from Logic import WechatLogic
 from Logic.DBLogic import AdoHelper
 from dls.Logic.EmailLogic import sendsmscode
 from Library.datehelper import now
+from Logic.DBLogic import AdoHelper
+from  dls.forms import WechatUserSendcode,SearchForm,WechatChkCode
 
 
 @lm.user_loader
@@ -108,65 +110,6 @@ def about():
 
 
 
-@app.route('/list/<int:page>', methods=['GET', 'POST'])
-@app.route('/list')
-@login_required
-def list(page=1):
-    """
-    展示代理商列表
-    :param page:
-    :return:
-    """
-
-    pagination = Staff.query.filter(Staff.chnl_id.like('%1%')).paginate(page, POSTS_PER_PAGE, True)
-    fields = ['staffid', 'chnl_id', 'chnl_name']
-    fields_cn = ['登录ID', '代理商ID', '代理商名称']
-    specfile = {}
-    return render_template('list.html', pagination=pagination,
-                           fields=fields, fields_cn=fields_cn,
-                           specfile=specfile)
-
-
-@app.route('/showsnlist/<int:page>', methods=['GET', 'POST'])
-@app.route('/showsnlist')
-@login_required
-def showsnlist(page=1):
-    """
-开通
-申请停机
-挂失停机
-局方停机
-欠费停机
-申请销号
-高额停机
-欠费销号
-申请预销停机
-    :param page:
-    :return:
-    """
-    from Logic.DBLogic import AdoHelper
-
-
-    sql = "select * from DLS_SNLIST where develop_depart_id ='{0}' order by open_date desc"
-    sql=sql.format(session["chnl_id"])
-    pagination=AdoHelper().paginate(page,sql=sql,per_page=POSTS_PER_PAGE)
-
-    fields = ['serial_number', 'open_date', 'user_state_codeset']
-    fields_cn = ['号码', '开户时间', '状态']
-    specfile = {'0': '<span class="label label-success">开通</span>',
-                '1': '<span class="label label-warning">申请停机</span>',
-                '2': '<span class="label label-warning">挂失停机</span>',
-                '4': '<span class="label label-warning">局方停机</span>',
-                '5': '<span class="label label-warning">欠费停机</span>',
-                '6': '<span class="label label-info">申请销号</span>',
-                '7': '<span class="label label-warning">高额停机</span>',
-                '9': '<span class="label label-danger">欠费销号</span>',
-                'F': '<span class="label label-danger">申请预销停机</span>'
-    }
-    return render_template('list.html', pagination=pagination,
-                           fields=fields, fields_cn=fields_cn,
-                           specfile=specfile)
-
 
 
 
@@ -186,7 +129,6 @@ def bd(source=None):
             flash('您已经绑定了' + w.usercode)
             return redirect(url_for('index'))
 
-    from  forms import WechatUserSendcode
 
     form = WechatUserSendcode()
     if form.validate_on_submit():
@@ -207,7 +149,6 @@ def bdchk(source=None, usercode=None):
     :param usercode:
     :return:
     """
-    from forms import WechatChkCode
 
     source = request.args.get('source')
     usercode = request.args.get('usercode')
@@ -226,6 +167,8 @@ def bdchk(source=None, usercode=None):
                 })
 
                 staff = Staff.query.filter(Staff.staff_id == w.usercode).first()
+                session["user_code"] = staff.staff_id
+                session["chnl_id"] = staff.chnl_id
                 login_user(staff, remember=True)
                 db.session.commit()
                 flash('绑定成功')
@@ -303,3 +246,70 @@ def excel():
         return response
 
 
+@app.route('/list/<int:page>', methods=['GET', 'POST'])
+@app.route('/list')
+@login_required
+def list(page=1):
+    """
+    展示代理商列表
+    :param page:
+    :return:
+    """
+
+    pagination = Staff.query.filter(Staff.chnl_id.like('%1%')).paginate(page, POSTS_PER_PAGE, True)
+    fields = ['staffid', 'chnl_id', 'chnl_name']
+    fields_cn = ['登录ID', '代理商ID', '代理商名称']
+    specfile = {}
+    return render_template('list.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn,
+                           specfile=specfile)
+
+
+@app.route('/showsnlist/<int:page>', methods=['GET', 'POST'])
+@app.route('/showsnlist')
+@login_required
+def showsnlist(page=1):
+    """
+    开通
+    申请停机
+    挂失停机
+    局方停机
+    欠费停机
+    申请销号
+    高额停机
+    欠费销号
+    申请预销停机
+    :param page:
+    :return:
+    """
+
+    form =SearchForm()
+    if form.validate_on_submit():
+        startdate = form.startdate.data
+        enddate=form.enddate.data
+    else:
+        startdate=now(-60*24*900)
+        enddate=now()
+
+    sql = "select * from DLS_SNLIST where develop_depart_id ='{0}' and open_date <='{1}' and open_date >='{2}' order by open_date desc"
+    sql = sql.format(session["chnl_id"],enddate,startdate)
+    print(sql)
+    pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
+
+    fields = ['serial_number', 'open_date', 'user_state_codeset']
+    fields_cn = ['号码', '开户时间', '状态']
+    specfile = {'0': '<span class="label label-success">开通</span>',
+                '1': '<span class="label label-warning">申请停机</span>',
+                '2': '<span class="label label-warning">挂失停机</span>',
+                '4': '<span class="label label-warning">局方停机</span>',
+                '5': '<span class="label label-warning">欠费停机</span>',
+                '6': '<span class="label label-info">申请销号</span>',
+                '7': '<span class="label label-warning">高额停机</span>',
+                '9': '<span class="label label-danger">欠费销号</span>',
+                'F': '<span class="label label-danger">申请预销停机</span>'
+    }
+
+
+    return render_template('showsnlist.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn,
+                           specfile=specfile,form=form,action='showsnlist')
