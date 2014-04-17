@@ -52,6 +52,7 @@ class Staff(db.Model):
     def get_id(self):
         return unicode(self.staff_id)
 
+
     def __init__(self, staff_id, chnl_id, chnl_name):
         self.staff_id = staff_id
         self.chnl_id = chnl_id

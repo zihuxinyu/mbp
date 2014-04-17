@@ -16,7 +16,7 @@ from Logic.DBLogic import AdoHelper
 from dls.Logic.EmailLogic import sendsmscode
 from Library.datehelper import now
 from Logic.DBLogic import AdoHelper
-from  dls.forms import WechatUserSendcode,SearchForm,WechatChkCode
+from  dls.forms import WechatUserSendcode, SearchForm, WechatChkCode
 
 
 @lm.user_loader
@@ -29,14 +29,14 @@ def before_request():
     g.user = current_user
 
 
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    uinfo=Staff.query.filter(Staff.staff_id==g.user.get_id()).first()
+    uinfo = Staff.query.filter(Staff.staff_id == g.user.get_id()).first()
     print(uinfo.staff_id)
-    return render_template('index.html',uinfo=uinfo)
+    return render_template('index.html', uinfo=uinfo)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -68,9 +68,9 @@ def loginchk(source=None, usercode=None):
     form = WechatChkCode()
     if form.validate_on_submit():
         code = form.code.data
-        if usercode and code and len(code)==4:
+        if usercode and code and len(code) == 4:
             x = Staff.query.filter(and_(Staff.staff_id == usercode,
-                                        Staff.msg == code,Staff.msgexpdate>=now()))
+                                        Staff.msg == code, Staff.msgexpdate >= now()))
 
             w = x.first()
             if w:
@@ -80,7 +80,7 @@ def loginchk(source=None, usercode=None):
                     return redirect(url_for('login'))
 
                 session["user_code"] = staff.staff_id
-                session["chnl_id"]=staff.chnl_id
+                session["chnl_id"] = staff.chnl_id
                 remember_me = False
                 if 'remember_me' in session:
                     remember_me = session['remember_me']
@@ -108,11 +108,6 @@ def about():
     return render_template('about.html')
 
 
-
-
-
-
-
 @app.route('/bd/<source>', methods=['GET', 'POST'])
 def bd(source=None):
     """
@@ -128,7 +123,6 @@ def bd(source=None):
             login_user(staff, remember=True)
             flash('您已经绑定了' + w.usercode)
             return redirect(url_for('index'))
-
 
     form = WechatUserSendcode()
     if form.validate_on_submit():
@@ -191,14 +185,11 @@ def sendlogincode(usercode=None):
     xx = Staff.query.filter(Staff.staff_id == usercode)
     xx.update({
         Staff.msg: code,
-        Staff.msgexpdate:now(10)
+        Staff.msgexpdate: now(10)
     })
     db.session.commit()
 
-
     sendsmscode(user_code=usercode, code=code)
-
-
 
 
 @app.route('/cs/<tablename>')
@@ -217,22 +208,26 @@ def cs(tablename):
     return render_template('cs.html', list=entries, tablename=tablename)
 
 
-
-
 @app.route('/test/<int:page>/')
 @app.route('/test/')
 def test(page=1):
     pass
 
+
 @app.route('/excel/')
 def excel():
     return ""
     import tablib
+
     type = request.args.get('type')
-    if type=='checked':
-        sql='SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2,wlwz  ,ggxh,barcodelist.opdate FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode  FROM mission_barcode WHERE mission_barcode.missionid = 1 AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb.zcbqh order by barcodelist.opdate desc'
-        listdata=[]
-        data=AdoHelper().db().query(sql)
+    if type == 'checked':
+        sql = 'SELECT distinct  barcode ,zcbqh,user_code ,swmc,zrbmmc,ztbz,ztbz1,ztbz2,wlwz  ,ggxh,barcodelist.opdate ' \
+              '' \
+              'FROM zczb, barcodelist WHERE zczb.zcbqh IN(SELECT mission_barcode.barcode  FROM mission_barcode WHERE ' \
+              'mission_barcode.missionid = 1 AND mission_barcode.msgid IS NOT NULL) AND barcodelist.barcode = zczb' \
+              '.zcbqh order by barcodelist.opdate desc'
+        listdata = []
+        data = AdoHelper().db().query(sql)
         headers = ([x for x in data[0]])
         for d in data:
             listdata.append([d[x] for x in d])
@@ -266,7 +261,7 @@ def list(page=1):
 
 
 @app.route('/showsnlist/<int:page>', methods=['GET', 'POST'])
-@app.route('/showsnlist')
+@app.route('/showsnlist', methods=['GET', 'POST'])
 @login_required
 def showsnlist(page=1):
     """
@@ -283,16 +278,24 @@ def showsnlist(page=1):
     :return:
     """
 
-    form =SearchForm()
+    form = SearchForm()
     if form.validate_on_submit():
         startdate = form.startdate.data
-        enddate=form.enddate.data
-    else:
-        startdate=now(-60*24*900)
-        enddate=now()
+        enddate = form.enddate.data
+        return  redirect(url_for('showsnlist',s=startdate,e=enddate))
 
-    sql = "select * from DLS_SNLIST where develop_depart_id ='{0}' and open_date <='{1}' and open_date >='{2}' order by open_date desc"
-    sql = sql.format(session["chnl_id"],enddate,startdate)
+
+    if request.args.get('s') and request.args.get('e'):
+        startdate= request.args.get('s')
+        enddate= request.args.get('e')
+    else:
+        startdate = now(-60 * 24 * 30).split(' ')[0]
+        enddate = now().split(' ')[0]
+        return redirect(url_for('showsnlist', s=startdate, e=enddate))
+
+    sql = "select * from DLS_SNLIST where   open_date <='{1}' and open_date >='{2}' and develop_depart_id  in ( " \
+          "select chnl_id from dls_staff_chnl where staff_id='{0}') order by open_date desc"
+    sql = sql.format(g.user.get_id(), enddate, startdate)
     print(sql)
     pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
 
@@ -309,7 +312,6 @@ def showsnlist(page=1):
                 'F': '<span class="label label-danger">申请预销停机</span>'
     }
 
-
     return render_template('showsnlist.html', pagination=pagination,
                            fields=fields, fields_cn=fields_cn,
-                           specfile=specfile,form=form,action='showsnlist')
+                           specfile=specfile, form=form, action='showsnlist',startdate=startdate,enddate=enddate)
