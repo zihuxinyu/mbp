@@ -25,7 +25,7 @@ class MainHandler(tornado.web.RequestHandler):
         phone = self.get_argument("phone")
         sendstr = 'MSG#{0}#{1}'.format(phone, smscode)
         sendMail(sendstr,sendstr)
-        self.write(now)
+        self.write(now())
 
 
 def main(port):
