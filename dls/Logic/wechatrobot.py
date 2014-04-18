@@ -27,7 +27,7 @@ def echo(message, session):
 
 
 def process(message):
-    if message.content == '查询':
+    if message.content == '查询' or message.content=='1':
        return SendSnList(message)
     else:
         return SendGuid(message)

@@ -299,10 +299,12 @@ def showsnlist(page=1):
           "select chnl_id from dls_staff_chnl where staff_id='{0}') order by open_date desc"
     sql = sql.format(g.user.get_id(), enddate, startdate)
     #print(sql)
-    pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
-
-    fields = ['serial_number', 'open_date', 'user_state_codeset']
-    fields_cn = ['号码', '开户时间', '状态']
+    if request.args.get('t') == "list":
+        pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
+    else:
+        pagination=None
+    fields = ['serial_number',  'user_state_codeset', 'open_date']
+    fields_cn = ['号码',  '状态', '开户时间']
     specfile = {'0': '<span class="label label-success">开通</span>',
                 '1': '<span class="label label-warning">申请停机</span>',
                 '2': '<span class="label label-warning">挂失停机</span>',
@@ -314,12 +316,15 @@ def showsnlist(page=1):
                 'F': '<span class="label label-danger">申请预销停机</span>'
     }
 
+
     sql="SELECT state_name ,count(serial_number) as count FROM `dls_snlist` where   open_date <='{1}' and open_date >='{2}' and develop_depart_id  in ( " \
         "select chnl_id from dls_staff_chnl where staff_id='{0}') group by state_name order by count desc"
     sql = sql.format(g.user.get_id(), enddate, startdate)
     #print(sql)
-    groupdata=AdoHelper().paginate(1,sql=sql,per_page=20000)
-
+    if request.args.get('t') == "group":
+        groupdata=AdoHelper().paginate(1,sql=sql,per_page=20000)
+    else:
+        groupdata=None
     gfields = ['state_name', 'count']
     gfields_cn = ['状态', '数量']
     return render_template('showsnlist.html', pagination=pagination,
