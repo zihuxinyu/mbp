@@ -157,7 +157,7 @@ class Connection(object):
         cursor = self._cursor()
         try:
             self._execute(cursor, query, parameters, kwparameters)
-            return cursor.lastrowid
+
         finally:
             cursor.close()
 
@@ -185,7 +185,7 @@ class Connection(object):
         cursor = self._cursor()
         try:
             cursor.executemany(query, parameters)
-            return cursor.lastrowid
+
         finally:
             cursor.close()
 
