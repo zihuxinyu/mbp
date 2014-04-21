@@ -34,16 +34,16 @@
             <input type="hidden" id="enddate" name="enddate" value="{{request.args.get('e')}}"/><br/>
         </div>
 
-        <button type="submit" class="btn btn-success">应用</button>
+        <button type="submit" class="btn btn-success">查询</button>
     </form>
 </div>
         <br>
 <div class="container">
 <ul class="nav nav-tabs">
     <li
-    {%if request.args.get('t')=='list' %}class="active"{%endif%} ><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=list">列表</a></li>
+    {%if request.args.get('t')=='list' %}class="active"{%endif%} ><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=list">明细</a></li>
     <li
-    {%if request.args.get('t')=='group' %}class="active"{%endif%}><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=group">统计</a></li>
+    {%if request.args.get('t')=='group' %}class="active"{%endif%}><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=group">汇总</a></li>
 
 </ul>
 

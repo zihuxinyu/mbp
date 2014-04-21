@@ -35,7 +35,7 @@ def sendportal():
     selectsql = 'select rownum as guid, user_code, user_name, user_mobile, dpt_name, topdpt, manager, NULL as msg, ' \
                 'opdate as msgexpdate  from Ext_dpt_usr'
     #发送出去
-    host_database={'autodb':'134.44.36.190','zcgl':'119.187.191.82'}
+    host_database={'autodb':'134.44.36.190','zcgl':'119.187.191.82','dls':'119.187.191.82'}
     senddbzip(tablename=tablename,selectsql=selectsql, host_database=host_database)
 
 

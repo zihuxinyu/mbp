@@ -42,17 +42,21 @@ def send():
     selectsql = "SELECT t.* from hy_birthsms t where send=0"
     list = db().query(selectsql)
     #print(list)
-    phones = ['15605468613']
+    phones = ['15605468613'] if list else []
     for x in list:
         print(x.PHONE)
+
         phones.append(x.PHONE)
         pass
     data = {'senderid': senderid,
             'target': ','.join(phones),
             'content': smstmp
     }
-    r = requests.post(url, data=data)
-    print(r.text)
+    if phones:
+        r = requests.post(url, data=data)
+        print(phones,r.text)
+    else:
+        print('No need to send birthday sms')
 
     #更新发送状态,send=1,opdate=sysdate
 
@@ -62,6 +66,12 @@ def send():
     print('birth sms send over')
 
 if __name__ == "__main__":
+    print()
     while True:
-        send()
-        time.sleep(60*60*24)
+        h=int(now().split(' ')[1].split(':')[0])
+        if h>8 and h<18:
+            #规定发送时间
+            print(h)
+            send()
+            pass
+        time.sleep(60*60*3)
