@@ -32,8 +32,8 @@ def send():
 
     #插入当天生日的号码
     insertsql = '''
-        INSERT INTO hy_birthsms h (phone)
-    SELECT t.USER_MOBILE from HY_USER t WHERE to_char( t.USER_BIRTH,'MMdd')=to_char(sysdate,'MMdd')
+        INSERT INTO hy_birthsms h (phone,send)
+    SELECT t.USER_MOBILE ,'0' as send from HY_USER t WHERE to_char( t.USER_BIRTH,'MMdd')=to_char(sysdate,'MMdd')
     AND t.USER_MOBILE NOT IN (SELECT h.PHONE FROM hy_birthsms h)
         '''
     db().execute(insertsql)
