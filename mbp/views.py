@@ -282,7 +282,7 @@ def showzc(zcbh=None):
 
     from mbp.models import zczb
     from  forms import BarcodeListUpdate
-    from mbp.Logic.DateLogic import now
+    from Library.datehelper import  now
     if (not zcbh ) and request.args.get('zcbh'):
         zcbh = str(request.args.get('zcbh'))
     msgid = request.args.get('msgid')
