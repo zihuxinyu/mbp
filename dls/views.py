@@ -248,7 +248,10 @@ def newslist(page=1):
     :param page:
     :return:
     """
-    sql="select * from dls_news"
+    sql = "select * from dls_news where 1=1"
+
+    if request.args.get('type'):
+        sql=sql+" and type='{0}'".format(request.args.get('type'))
     pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
     fields = ['title',  'type', 'modifydate',]
     fields_cn = ['标题',  '分类', '更新时间']
