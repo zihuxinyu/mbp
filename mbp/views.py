@@ -413,8 +413,10 @@ def cs(tablename):
     :param tablename:
     :return:
     """
-    sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='DLS' AND " \
-          "table_name='" + tablename + "'"
+    from config import DB_DATEBASE
+
+    sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='{0}' AND " \
+          "table_name='{1}'".format(DB_DATEBASE, tablename)
     cur = db.engine.execute(sql)
     entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1], EXTRA=row[2]) for row in cur.fetchall()]
     for x in entries:

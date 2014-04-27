@@ -4,13 +4,21 @@
 {% block content %}
 <div class="jumbotron">
     <div class="container">
+        {%if uinfo%}
+
         <div class="row">
 
             欢迎您:{{uinfo.chnl_name}}<br>
             当前工号:{{uinfo.staff_id}}
          </div>
+        {%else%}
+        <div class="row">
 
+           您尚未登录.<a
+                href="{{ url_for('login') }}">点此登录</a>
         </div>
+        {%endif%}
+
     </div>
 </div>
 

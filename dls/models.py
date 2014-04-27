@@ -140,8 +140,24 @@ class WechatReceive(db.Model):
         self.recognition = recognition
 
 
+class dls_news(db.Model):
+    '''
+    政策新闻页面
+    '''
+    __tablename__ = 'dls_news'
+    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+    title = db.Column('title')
+    content = db.Column('content')
+    type = db.Column('type')
+    modifydate = db.Column('modifydate')
+    impdate = db.Column('impdate')
 
-
+    def __int__(self, title=None, content=None, type=None, modifydate=None, impdate=None):
+        self.title = title
+        self.content = content
+        self.type = type
+        self.modifydate = modifydate
+        self.impdate = impdate
 
 
 

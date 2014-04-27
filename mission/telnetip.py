@@ -43,4 +43,5 @@ if __name__ == "__main__":
 
         for li in iplist:
             noarp(li,iplist[li])
+            print(li, iplist[li])
         time.sleep(60*60)

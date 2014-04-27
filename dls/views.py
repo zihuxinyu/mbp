@@ -31,10 +31,8 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
     uinfo = Staff.query.filter(Staff.staff_id == g.user.get_id()).first()
-    print(uinfo.staff_id)
     return render_template('index.html', uinfo=uinfo)
 
 
@@ -199,8 +197,9 @@ def cs(tablename):
     :param tablename:
     :return:
     """
-    sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='DLS' AND " \
-          "table_name='" + tablename + "'"
+    from config import DB_DATEBASE
+    sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA` FROM information_schema.columns WHERE table_schema='{0}' AND " \
+          "table_name='{1}'".format(DB_DATEBASE,tablename)
     cur = db.engine.execute(sql)
     entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1], EXTRA=row[2]) for row in cur.fetchall()]
     for x in entries:
@@ -240,6 +239,24 @@ def excel():
         response.headers['Content-Disposition'] = 'attachment; filename=list.xls'
         return response
 
+
+@app.route('/newslist/<int:page>', methods=['GET', 'POST'])
+@app.route('/newslist')
+def newslist(page=1):
+    """
+    展示代理商政策
+    :param page:
+    :return:
+    """
+    sql="select * from dls_news"
+    pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
+    fields = ['title',  'type', 'modifydate',]
+    fields_cn = ['标题',  '分类', '更新时间']
+    specfile = {}
+    formater={'title','<a href="{0}">{0}</a>'}
+    return render_template('newslist.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn,
+                           specfile=specfile, formater=formater)
 
 @app.route('/list/<int:page>', methods=['GET', 'POST'])
 @app.route('/list')

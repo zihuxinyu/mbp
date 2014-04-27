@@ -55,6 +55,13 @@ def sendDLS():
         senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
         host_database = {'dls': '134.44.36.190'}
         senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+
+
+        selectsql="select t.title,t.content,t.type,t.MODIFYDATE ,sysdate as impdate  from EXT_DLS_NEWSLIST t"
+        tablename="dls_news"
+        host_database = {'dls': '119.187.191.82'}
+        senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
+
     except:
         print('sendDLS()Error')
         pass
@@ -98,7 +105,7 @@ def senddbzip(tablename, selectsql, host_database={}):
         #print(','.join([('\'{0}\'').format(str(x[c])) for c in columns]))
         l = len(list)
         _lines = _lines.rstrip(', \r\n') if (i == l) else _lines
-        man_file.writelines(_lines.format(','.join([('\'{0}\'').format(str(x[c])) for c in columns])))
+        man_file.writelines(_lines.format(','.join([('\'{0}\'').format(str(x[c]).replace("'", "''")) for c in columns])))
         i += 1
 
     man_file.close()
