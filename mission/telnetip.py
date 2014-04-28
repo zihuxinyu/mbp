@@ -13,7 +13,7 @@ def noarp(Host,ips):
 
     # 连接Telnet服务器
     tn = telnetlib.Telnet(Host)
-    #tn.set_debuglevel(2)
+    tn.set_debuglevel(2)
     # 输入登录用户名
     tn.read_until('Username: ')
     tn.write(username + '\n')
@@ -43,5 +43,5 @@ if __name__ == "__main__":
 
         for li in iplist:
             noarp(li,iplist[li])
-            print(li, iplist[li])
+            print(li,iplist[li])
         time.sleep(60*60)

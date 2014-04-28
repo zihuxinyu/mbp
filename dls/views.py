@@ -261,6 +261,15 @@ def newslist(page=1):
                            fields=fields, fields_cn=fields_cn,
                            specfile=specfile, formater=formater)
 
+
+@app.route('/newsdetail/<int:guid>', methods=['GET', 'POST'])
+def newsdetail(guid):
+    if not guid:
+        return 404;
+    sql="select * from dls_news where guid='{0}'".format(guid)
+    item=AdoHelper().db().get(sql)
+    return render_template('newsdetail.html',item=item)
+
 @app.route('/list/<int:page>', methods=['GET', 'POST'])
 @app.route('/list')
 @login_required

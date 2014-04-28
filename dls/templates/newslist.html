@@ -21,7 +21,7 @@
         {% for item in pagination.items %}
         <tr>
             <td>
-               <a href="shownews/{{item['guid']}}">{{item['title']}}</a>
+               <a href="{{url_for('newsdetail',guid=item['guid'])}}">{{item['title']}}</a>
             </td>
             <td>
                 <a href="?type={{item['type']}}">{{item['type']}}</a>
