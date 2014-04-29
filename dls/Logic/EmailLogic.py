@@ -13,8 +13,6 @@ def sendsmscode(user_code=None, code=None):
     xx = Staff.query.filter(Staff.staff_id == user_code).first()
     if xx:
         flash('接收短信手机尾号'+xx.linkman_phone[5:])
-        #sendstr = 'MSG#{0}#{1}'.format(xx.linkman_phone, code)
-        sendstr = 'MSG#{0}#{1}'.format('15605468613', code)
-        #sendMail_Nosync(sendstr,sendstr)
         data={'smscode':code,'phone':'15605468613'}
+        #data={'smscode':code,'phone': xx.linkman_phone}
         requests.post('http://127.0.0.1:6999',data=data)

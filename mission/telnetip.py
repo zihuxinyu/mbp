@@ -21,14 +21,19 @@ def noarp(Host,ips):
     # 输入登录密码
     tn.read_until('Password: ')
     tn.write(password + '\n')
+    tn.read_until('DY_FuQianJ_3750_134X>')
     tn.write( 'en\n')
     tn.read_until('Password: ')
     tn.write(password + '\n')
-    tn.write('config t \n')
+    tn.read_until('DY_FuQianJ_3750_134X#')
+    tn.write('config t\n')
+
 
     for ip in ips:
-        tn.write('no arp  {0} \n'.format(ip))
+        tn.read_until('DY_FuQianJ_3750_134X(config)#')
+        tn.write('no arp  {0}\n'.format(ip))
     tn.write('end\n')
+    tn.read_until('DY_FuQianJ_3750_134X#')
     tn.write('copy run start\n')
     tn.write('\n')
     tn.write('quit\n')
