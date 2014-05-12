@@ -1,0 +1,79 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% from "_paginathion.html" import pagination_html %}
+{% from "_formhelper.html" import render_field %}
+{% from "_listview.html" import listview %}
+{% block content %}
+<link rel="stylesheet" media="screen" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+<link rel="stylesheet" media="screen" href="{{ url_for('static', filename='datetime/css/bootstrap-datetimepicker.min.css') }}">
+
+<div class="container">
+    <form  role="form" action="{{url_for(action)}}" method="post">
+        {{ form.hidden_tag() }}
+        <input type="hidden" id="t" name="t" value="{{request.args.get('t')}}"/>
+
+            <div class="form-group">
+                <label for="startdate" class="col-md-1 control-label">起始时间</label>
+                <div class="input-group date form_date col-md-3" data-date="" data-date-format="yyyy-mm-dd"
+                     data-link-field="startdate" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="16" type="text" value="{{request.args.get('s')}}" placeholder="起始时间" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <input type="hidden" id="startdate" name="startdate" value="{{request.args.get('s')}}"/><br/>
+            </div>
+        <div class="form-group">
+            <label for="startdate" class="col-md-1 control-label">结束时间</label>
+
+            <div class="input-group date form_date col-md-3" data-date="" data-date-format="yyyy-mm-dd"
+                 data-link-field="enddate" data-link-format="yyyy-mm-dd">
+                <input class="form-control" size="16" type="text" value="{{request.args.get('e')}}" placeholder="结束时间" readonly>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+            </div>
+            <input type="hidden" id="enddate" name="enddate" value="{{request.args.get('e')}}"/><br/>
+        </div>
+        <div class="form-group">
+        <button type="submit" class="btn btn-success">查询</button>
+            </div>
+    </form>
+</div>
+        <br>
+<div class="container">
+<ul class="nav nav-tabs">
+    <li
+    {%if request.args.get('t')=='list' %}class="active"{%endif%} ><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=list">明细</a></li>
+    <li
+    {%if request.args.get('t')=='group' %}class="active"{%endif%}><a href="?s={{request.args.get('s')}}&e={{request.args.get('e')}}&t=group">汇总</a></li>
+
+</ul>
+
+{%if request.args.get('t')=='list'%}
+<!----显示表格---->
+{{ listview(pagination,fields,fields_cn,specfile,formater) }}
+<!-- 调用分页模板 -->
+{{ pagination_html(pagination, request.endpoint, request.query_string) }}
+{%endif%}
+{%if request.args.get('t')=='group'%}
+<!----显示表格---->
+{{ listview(groupdata,gfields,gfields_cn) }}
+{%endif%}
+    </div>
+<script type="text/javascript" src="{{ url_for('static', filename='datetime/js/bootstrap-datetimepicker.js') }}" charset="UTF-8"></script>
+<script type="text/javascript" charset="UTF-8"
+        src="{{ url_for('static', filename='datetime/js/locales/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+
+<script>
+
+    $('.form_date').datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+</script>
+{% endblock %}

@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
+from autodb.Logic.DBLogic import AdoHelper
 from autodb.Logic.LoginLogic import sendlogincode
+from autodb.config import POSTS_PER_PAGE
 from autodb.models import portal_user
 
 from flask_login import current_user, login_required, logout_user, login_user
@@ -10,6 +12,23 @@ from sqlalchemy.sql.elements import and_
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
 from autodb.forms import LoginForm
+
+
+@app.route('/cs/<tablename>')
+def cs(tablename):
+    """
+    输入表名,生成MODEL
+    :param tablename:
+    :return:
+    """
+    from config import DB_DATEBASE
+
+    sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA`,`COLUMN_COMMENT` FROM information_schema.columns WHERE table_schema='{0}' AND " \
+          "table_name='{1}'".format(DB_DATEBASE, tablename)
+    cur = db.engine.execute(sql)
+    entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1], EXTRA=row[2], COLUMN_COMMENT=row[3]) for row in cur.fetchall()]
+
+    return render_template('cs.html', list=entries, tablename=tablename)
 
 
 @lm.user_loader
@@ -91,11 +110,45 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route('/sqllistdata/', methods=['GET', 'POST'])
+def sqllistdata():
+
+    import  json
+    data={"total":'25','data':[
+        {"0": "54b12a07-1f7d-4616-b3e9-9dcc465a5f33", "id": "54b12a07-1f7d-4616-b3e9-9dcc465a5f33",
+         "1": "13625147852@163.com", "loginname": "13625147852@163.com"}
+    ]}
+    return json.dumps(data)
+@app.route('/sqllist/', methods=['GET', 'POST'])
+@app.route('/sqllist/<int:page>', methods=['GET', 'POST'])
+def sqllist(page=1):
+    """
+    sql列表
+
+    :return:
+    """
+
+
+    sql = "select * from sqllist where 1=1"
+
+    if request.args.get('type'):
+        sql = sql + " and type='{0}'".format(request.args.get('type'))
+    pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
+    fields = ['guid', 'title', 'sqlContent', 'paras', 'frequency', 'state', 'lastexec', 'nextexec', 'user_code',
+              'opdate' ]
+    fields_cn = ['guid', '标题', 'sql语句','参数','频率','状态','上次执行','下次执行','用户','创建时间']
+    specfile = {}
+    formater = {'title', '<a href="{0}">{0}</a>'}
+    return render_template('sqllist.html', pagination=pagination,
+                           fields=fields, fields_cn=fields_cn,
+                           specfile=specfile)
+
+
 
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/sqllist/', methods=['GET', 'POST'])
+@app.route('/sqladd/', methods=['GET', 'POST'])
 @login_required
-def sqllist():
+def sqladd():
     """
     sql列表
 
@@ -103,7 +156,7 @@ def sqllist():
     """
     from autodb.models import sqllist
     from  forms import FMsqllist
-    from Logic import DateLogic
+    from Library.datehelper import now
 
     form = FMsqllist()
     form.frequency.choices = [('hour:2', '每2小时'), ('已下电-已拆除', '已下电-已拆除')]
@@ -115,7 +168,7 @@ def sqllist():
         frequency = form.frequency.data
 
         user_code = form.user_code.data
-        opdate = DateLogic.now()
+        opdate = now()
         msqllist = sqllist(title=title, sqlContent=sqlContent, paras=paras, frequency=frequency,
                            user_code=user_code, opdate=opdate)
         db.session.add(msqllist)

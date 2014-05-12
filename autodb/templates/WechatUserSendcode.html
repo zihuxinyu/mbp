@@ -1,11 +1,15 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
+
+
 {% from "_formhelper.html" import render_field %}
+
 {% block content %}
 <div class="well well-large">
-    <form class="form-inline form-signin" role="form" action="{{url_for(action,**request.args)}}" method="post">
+    <form class="form-inline form-signin" role="form" action="" method="post">
         {{ form.hidden_tag() }}
-        <h2 class="form-signin-heading">登录系统 1/2</h2>
+        <h2 class="form-signin-heading">绑定工号 1/2</h2>
+
         <div class="form-group">
             <label class="sr-only" for="usercode">请输入营业工号</label>
             <input type="text" class="form-control" id="usercode" name="usercode" placeholder="请输入营业工号">
@@ -15,4 +19,7 @@
     <div class="alert alert-success">请输入营业工号, 验证码会发送到您的返档手机号
     </div>
 </div>
+
+
 {% endblock %}
+

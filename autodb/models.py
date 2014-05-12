@@ -18,7 +18,6 @@ class portal_user(db.Model):
     manager = db.Column('manager')
     msg = db.Column('msg')
     msgexpdate = db.Column('msgexpdate')
-
     def __int__(self, user_code=None, user_name=None, user_mobile=None, dpt_name=None, topdpt=None, manager=None,
                 msg=None,
                 msgexpdate=None):

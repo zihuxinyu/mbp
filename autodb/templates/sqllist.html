@@ -1,0 +1,71 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% from "_paginathion.html" import pagination_html %}
+{% block content %}
+
+<div id="datagrid1" class="mini-datagrid" style="width:800px;height:280px;" allowResize="true"
+     url="{{url_for('sqllistdata',a=1)}}" idField="id" multiSelect="true"
+        >
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div type="checkcolumn"></div>
+        <div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号</div>
+        <div field="name" width="120" headerAlign="center" allowSort="true">姓名</div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    mini.parse();
+
+    var grid = mini.get("datagrid1");
+    grid.load();
+    grid.sortBy("createtime", "desc");
+
+</script>
+<!----显示表格---->
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+            <td>guid</td>
+            <td>标题</td>
+            <td>sql语句</td>
+            <td>参数</td>
+            <td>频率</td>
+            <td>状态</td>
+            <td>上次执行</td>
+            <td>下次执行</td>
+            <td>用户</td>
+            <td>创建时间</td>
+        </tr>
+        </thead>
+
+        {% if pagination %}
+        {% for item in pagination.items %}
+        <tr>
+            <td>{{item.guid}}</td>
+            <td>{{item.title}}</td>
+            <td>{{item.sqlContent}}</td>
+            <td>{{item.paras}}</td>
+            <td>{{item.frequency}}</td>
+            <td>{{item.state}}</td>
+            <td>{{item.lastexec}}</td>
+            <td>{{item.nextexec}}</td>
+            <td>{{item.user_code}}</td>
+            <td>{{item.opdate}}</td>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="{{ fields|count }}">NO DATA</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+<!-- 调用分页模板 -->
+{{ pagination_html(pagination, request.endpoint, request.query_string) }}
+{% endblock %}

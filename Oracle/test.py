@@ -1,6 +1,7 @@
 # coding: utf-8
 import os
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from Library.DB import torndb
@@ -9,34 +10,28 @@ from Library.threadinghelper import asyncfun
 import cx_Oracle
 from Library.config import O_database, O_host, O_password, O_port, O_user
 from Library.DB import tornoracle
-from Library.datehelper import getOffsetDate, converDateTimeToStr, getLastMonth,now
+from Library.datehelper import getOffsetDate, converDateTimeToStr, getLastMonth, now
 
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.UTF8'
-
 
 
 def dbmysql():
     return torndb.Connection(DB_HOST, DB_DATEBASE, DB_USER, DB_PSW)
 
 
-
-
 def get():
-
-    sql = "select * from sqllist where state=0 and nextexec>='{0}' and nextexec<='{1}'"
-    sql = sql.format(now(minutes=-1),now())
+    sql = "select * from sqllist where guid=3"
     print(sql)
     all = dbmysql().query(sql)
     for x in all:
 
         #计算下次执行时间,更新状态为0:执行完成
         #更新执行时间,更新状态为1:正在执行
-        thdate= now()
+        thdate = now()
 
         nextdate = nextexec(x.frequency, thdate)
         sqlupdate = "update sqllist set  nextexec='{1}',state=1,lastexec='{2}' where guid={0}"
-        dbmysql().execute(sqlupdate.format(x.guid, nextdate,thdate))
-        #print(x.guid, x.sqlContent )
+        dbmysql().execute(sqlupdate.format(x.guid, nextdate, thdate))
         #执行sql内容
         execsql(guid=x.guid, sqlContent=x.sqlContent, paras=x.paras)
 
@@ -44,17 +39,14 @@ def get():
         dbmysql().execute(sqlupdate.format(x.guid, nextdate, thdate))
 
 
-
 @asyncfun
 def execsql(guid=None, sqlContent=None, paras=None):
     #执行语句,记录错误
-    errorMsglist = OracleExec(sqlContent=sqlContent,paras=paras)
+    errorMsglist = OracleExec(sqlContent=sqlContent, paras=paras)
     xx = [(guid, x.sql, x.success, x.message) for x in errorMsglist]
     sqlresult = "insert into `sqlresult` (`sguid`,`sqlContent`,`success`,`message`) values (%s,%s,%s,%s)"
     x = dbmysql().executemany_rowcount(sqlresult, xx)
     #print(xx)
-
-
 
 
 #########################################
@@ -124,21 +116,20 @@ def OracleExec(sqlContent=None, paras=None):
 
     errorMsglist = []
     sqllist = getFormatedSqllist(sqlcontent=sqlContent, paras=paras)
-    #print(sqllist)
-
-    for i, sql in enumerate(sqllist):
-        if sql.strip():
-            print(i,len(sqllist))
-            print(sql)
-            time.sleep(3)
-            try:
-                db().execute(sql)
-                errorMsg = ErrorMsg(sql=sql, success=True)
-                errorMsglist.append(errorMsg)
-            except cx_Oracle.DatabaseError as e:
-                errorMsg = ErrorMsg(sql=sql, success=False, message=e.message)
-                errorMsglist.append(errorMsg)
-                pass
+    sql= ("""
+            BEGIN
+                {0}
+            END;""".format(';'.join(sqllist))
+    )
+    print(sql)
+    try:
+        db().execute(sql)
+        errorMsg = ErrorMsg(sql=sql, success=True)
+        errorMsglist.append(errorMsg)
+    except cx_Oracle.DatabaseError as e:
+        errorMsg = ErrorMsg(sql=sql, success=False, message=e.message)
+        errorMsglist.append(errorMsg)
+        pass
 
     return errorMsglist
 
@@ -191,13 +182,15 @@ def replacepara(sql=None, paras=None):
     sql = sql.replace('$yyMM-1$', getLastMonth()[2:6])
     print(sql)
     return sql
+
 #########################################
 
 if __name__ == "__main__":
     while True:
         import time
 
-        time.sleep(1)
         get();
+        time.sleep(120)
+
 
 
