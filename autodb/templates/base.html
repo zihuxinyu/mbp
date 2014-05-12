@@ -19,7 +19,39 @@
 
 </head>
 <body>
+<ul id="menu2" class="mini-menubar" style="width:100%;">
+    <li>
+        <span><a href="{{url_for('sql_list.sqllist')}}" >任务列表</a></span>
+        <ul>
+            <li onclick="onItemClick">
+                <span>新建</span>
+                <ul>
+                    <li iconCls="icon-new" onclick="onItemClick">文件</li>
+                    <li onclick="onItemClick">项目</li>
+                    <li onclick="onItemClick">网站</li>
+                </ul>
+            </li>
+            <li class="separator"></li>
+            <li iconCls="icon-cut" onclick="onItemClick">Cut</li>
+            <li iconCls="icon-add" onclick="onItemClick">Add</li>
+            <li iconCls="icon-remove" onclick="onItemClick">Close</li>
+        </ul>
+    </li>
+    <li class="separator"></li>
+    <li>编辑(E)</li>
+    <li onclick="onItemClick">查看(V)</li>
+    <li iconCls="icon-help" onclick="onItemClick">帮助(H)</li>
+</ul>
 
+
+<script type="text/javascript">
+    mini.parse();
+    function onItemClick(e) {
+        var item = e.sender;
+        alert(item.getText());
+
+    }
+</script>
 
 
 {%include 'flash.html' %}

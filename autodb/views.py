@@ -43,7 +43,7 @@ def before_request():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return "dfsads"
+    return render_template("index.html")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -59,47 +59,26 @@ def loginchk():
     data = json.loads(data)
     usercode= data['username']
     pwd= data['pwd']
+    url="http://134.44.36.127:8080/sso/default.aspx?name={0}&psw={1}"
+    import requests
+    r=requests.get(url.format(usercode,pwd))
+    if r.text:
+        staff = portal_user.query.filter(portal_user.user_code == usercode).first()
+        if not staff:
+            flash('登录失败，查无此ID')
+            return "登录失败，查无此ID"
 
-    return usercode+pwd
+        remember_me = False
+        if 'remember_me' in session:
+            remember_me = session['remember_me']
+            session.pop('remember_me', None)
+        login_user(staff, remember=True)
+
+        return "登录成功"
+    return "登录失败"
 
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-
-
-
-
-@app.route('/sqladd/', methods=['GET', 'POST'])
-@login_required
-def sqladd():
-    """
-    sql列表
-
-    :return:
-    """
-    from autodb.models import sqllist
-    from  forms import FMsqllist
-    from Library.datehelper import now
-
-    form = FMsqllist()
-    form.frequency.choices = [('hour:2', '每2小时'), ('已下电-已拆除', '已下电-已拆除')]
-    if form.validate_on_submit():
-        #更新最新状态
-        title = form.title.data
-        sqlContent = form.sqlContent.data
-        paras = form.paras.data
-        frequency = form.frequency.data
-
-        user_code = form.user_code.data
-        opdate = now()
-        msqllist = sqllist(title=title, sqlContent=sqlContent, paras=paras, frequency=frequency,
-                           user_code=user_code, opdate=opdate)
-        db.session.add(msqllist)
-        db.session.commit()
-        flash('添加成功')
-
-    return render_template('showsqllist.html', form=form, action='sqllist')
-

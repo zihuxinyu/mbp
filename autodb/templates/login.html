@@ -46,7 +46,8 @@
             type: "post",
             data: { submitData: json },
             success: function (text) {
-                alert("提交成功，返回结果:" + text);
+                //alert("提交成功，返回结果:" + text);
+                location='{{url_for('index')}}';
             }
         });
     }
