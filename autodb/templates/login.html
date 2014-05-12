@@ -1,18 +1,92 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
-{% from "_formhelper.html" import render_field %}
 {% block content %}
-<div class="well well-large">
-    <form class="form-inline form-signin" role="form" action="{{url_for(action,**request.args)}}" method="post">
-        {{ form.hidden_tag() }}
-        <h2 class="form-signin-heading">登录系统 1/2</h2>
-        <div class="form-group">
-            <label class="sr-only" for="usercode">请输入营业工号</label>
-            <input type="text" class="form-control" id="usercode" name="usercode" placeholder="请输入营业工号">
-        </div>
-        <button type="submit" class="btn btn-success">获取验证码</button>
-    </form>
-    <div class="alert alert-success">请输入营业工号, 验证码会发送到您的返档手机号
-    </div>
+<div id="form1">
+    <table>
+        <tr>
+            <td><label for="username$text">帐号：</label></td>
+            <td>
+                <input name="username" onvalidation="onEnglishAndNumberValidation" class="mini-textbox" required="true" requiredErrorText="帐号不能为空"/>
+
+            </td>
+        </tr>
+        <tr>
+            <td><label for="pwd$text">密码：</label></td>
+            <td>
+                <input name="pwd" class="mini-password" vtype="minLength:5" required="true"
+                       minLengthErrorText="密码不能少于5个字符"/>
+
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input value="Login" type="button" onclick="submitForm()"/>
+            </td>
+        </tr>
+    </table>
 </div>
+
+
+<script type="text/javascript">
+    mini.parse();
+
+    function submitForm() {
+
+        var form = new mini.Form("#form1");
+
+        form.validate();
+        if (form.isValid() == false) return;
+
+        //提交数据
+        var data = form.getData();
+        var json = mini.encode(data);
+        $.ajax({
+            url: "{{url_for('loginchk')}}",
+            type: "post",
+            data: { submitData: json },
+            success: function (text) {
+                alert("提交成功，返回结果:" + text);
+            }
+        });
+    }
+    function onEnglishAndNumberValidation(e) {
+        if (e.isValid) {
+            if (isEnglishAndNumber(e.value) == false) {
+                e.errorText = "必须输入英文+数字";
+                e.isValid = false;
+            }
+        }
+    }
+    ////////////////////////////////////
+    /* 是否英文 */
+    function isEnglish(v) {
+        var re = new RegExp("^[a-zA-Z\_]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+
+    /* 是否英文+数字 */
+    function isEnglishAndNumber(v) {
+
+        var re = new RegExp("^[0-9a-zA-Z\_]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+
+    /* 是否汉字 */
+    function isChinese(v) {
+        var re = new RegExp("^[\u4e00-\u9fa5]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+
+    /*自定义vtype*/
+    mini.VTypes["englishErrorText"] = "请输入英文";
+    mini.VTypes["english"] = function (v) {
+        var re = new RegExp("^[a-zA-Z\_]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+</script>
 {% endblock %}

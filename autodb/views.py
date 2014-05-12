@@ -1,12 +1,7 @@
 # -*- coding: utf8 -*-
-from Library.jsonhelper import CJsonEncoder
-from autodb.Logic.DBLogic import AdoHelper
 from autodb.Logic.LoginLogic import sendlogincode
-from autodb.config import POSTS_PER_PAGE
 from autodb.models import portal_user
 
-from Library.minihelper import getData
-from Library.minihelper import getData
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
 from autodb import app,db,lm
@@ -44,67 +39,28 @@ def before_request():
     g.user = current_user
 
 
-
-
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
-    return redirect(url_for('sqllist'))
+    return "dfsads"
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    #    if g.user is not None and g.user.is_authenticated():
-    #        return redirect( url_for( 'index' ) )
-    form = LoginForm()
-    if form.validate_on_submit():
-        # session['remember_me'] = form.remember_me.data
-        #return after_login(form.staffid.data)
-        sendlogincode(usercode=form.usercode.data)
-        flash('验证码发送成功!')
-        return redirect(url_for('loginchk', usercode=form.usercode.data))
-    return render_template('login.html', action='login',
-                           title='登录', opname='登录系统',
-                           form=form)
+    return render_template('login.html')
 
 
-@app.route('/loginchk', methods=['GET', 'POST'])
-def loginchk(source=None, usercode=None):
-    """
-    验证绑定码是否匹配
-    :param source:
-    :param usercode:
-    :return:
-    """
-    from forms import LoginChkCode
+@app.route('/loginchk/', methods=['GET', 'POST'])
+def loginchk():
+    data=(request.form.get("submitData"))
+    import json
 
-    usercode = request.args.get('usercode')
-    form = LoginChkCode()
-    if form.validate_on_submit():
-        code = form.code.data
-        if usercode and code:
-            x = portal_user.query.filter(and_(portal_user.user_code == usercode,
-                                              portal_user.msg == code))
+    data = json.loads(data)
+    usercode= data['username']
+    pwd= data['pwd']
 
-            w = x.first()
-            if w:
-                staff = portal_user.query.filter(portal_user.user_code == usercode).first()
-                if not staff:
-                    flash('登录失败，查无此ID')
-                    return redirect(url_for('login'))
-
-                session["user_code"] = staff.user_code
-                remember_me = False
-                if 'remember_me' in session:
-                    remember_me = session['remember_me']
-                    session.pop('remember_me', None)
-                login_user(staff, remember=True)
-                flash('登录成功')
-                return redirect(url_for('index'))
-
-            else:
-                flash('验证失败,请重试')
-                return redirect(url_for('login'))
-    return render_template('checkcode.html', action='loginchk', opname='登录系统', form=form, title='请输入验证码')
+    return usercode+pwd
 
 
 @app.route('/logout')
@@ -113,59 +69,9 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/sqllistdata/', methods=['GET', 'POST'])
-def sqllistdata():
-    '''
-    获取sqllist数据
-    pageIndex	0
-pageSize	10
-sortField	createtime
-sortOrder	desc
-    '''
-
-    pageIndex = int(request.form["pageIndex"]) if request.form["pageIndex"] else 0;
-    pageSize = int(request.form["pageSize"]) if request.form["pageSize"] else 3;
-
-    sql = "select * from sqllist";
-    sqlwhere = " 1";
-
-    return getData(sql, sqlwhere, pageSize, pageIndex, AdoHelper().db())
 
 
 
-@app.route('/sqlresult/', methods=['GET', 'POST'])
-def sqlresult():
-    '''
-    获取sqlresult数据
-    '''
-
-    pageIndex = int(request.form["pageIndex"]) if request.form["pageIndex"] else 0;
-    pageSize = int(request.form["pageSize"]) if request.form["pageSize"] else 3;
-    sguid= request.form["sguid"]
-
-    sql = "select * from sqlresult";
-    if sguid:
-        sqlwhere = " sguid='{0}' order by guid desc".format(sguid);
-
-        return getData(sql, sqlwhere, pageSize, pageIndex, AdoHelper().db())
-
-
-@app.route('/sqllist/', methods=['GET', 'POST'])
-@app.route('/sqllist/<int:page>', methods=['GET', 'POST'])
-def sqllist(page=1):
-    """
-    sql列表
-
-    :return:
-    """
-
-
-
-    return render_template('sqllist.html')
-
-
-
-@app.route('/', methods=['GET', 'POST'])
 @app.route('/sqladd/', methods=['GET', 'POST'])
 @login_required
 def sqladd():
@@ -196,3 +102,4 @@ def sqladd():
         flash('添加成功')
 
     return render_template('showsqllist.html', form=form, action='sqllist')
+

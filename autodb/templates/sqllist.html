@@ -1,9 +1,8 @@
-<!-- extend base layout -->
 {% extends "base.html" %}
-{% from "_paginathion.html" import pagination_html %}
 {% block content %}
 
-<div id="datagrid1" class="mini-datagrid" allowResize="true"     url="{{url_for('sqllistdata',a=23)}}" idField="guid"     allowAlternating="true" selectOnLoad="true"    onselectionchanged="onSelectionChanged"
+<div id="datagrid1" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.sqllistdata',a=23)}}" idField="guid"     allowAlternating="true" selectOnLoad="true"    onselectionchanged="onSelectionChanged"
         >
     <div property="columns">
         <div type="indexcolumn"></div>
@@ -16,21 +15,23 @@
     </div>
 </div>
 <br>
-<div id="panel1" class="mini-panel" title="日志信息" iconCls="icon-add" style="width:100%"
-     showToolbar="false" showCollapseButton="true" showFooter="true" allowResize="true" collapseOnTitleClick="true"
->
+
     <div id="dataresult" class="mini-datagrid" allowResize="true"
-         url="{{url_for('sqlresult',a=23)}}" idField="guid" multiSelect="true" >
+         url="{{url_for('.sqlresult',a=23)}}" idField="guid" multiSelect="true" >
         <div property="columns">
             <div type="indexcolumn"></div>
             <div type="checkcolumn"></div>
             <div field="sqlContent" headerAlign="center">语句</div>
-            <div field="success" headerAlign="center">执行结果</div>
-            <div field="message" headerAlign="center">消息</div>
-            <div field="opdate" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">执行时间</div>
-        </div>
+            <div header="执行信息" headerAlign="center">
+                <div property="columns">
+                    <div field="success" renderer="onGenderRenderer" headerAlign="center">执行结果</div>
+                    <div field="message" headerAlign="center">消息</div>
+                    <div field="opdate" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">执行时间</div>
+                </div>
+            </div>
+         </div>
     </div>
-</div>
+
 
 
 <script type="text/javascript">
@@ -47,6 +48,17 @@
         if (record) {
             dataresult.load({ sguid: record.guid });
         }
+    }
+    var Genders = [
+        { id: 1, text: '成功' },
+        { id: 0, text: '失败'}
+    ];
+    function onGenderRenderer(e) {
+        for (var i = 0, l = Genders.length; i < l; i++) {
+            var g = Genders[i];
+            if (g.id == e.value) return g.text;
+        }
+        return "";
     }
 </script>
 
