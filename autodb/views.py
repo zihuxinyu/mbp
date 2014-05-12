@@ -1,9 +1,12 @@
 # -*- coding: utf8 -*-
+from Library.jsonhelper import CJsonEncoder
 from autodb.Logic.DBLogic import AdoHelper
 from autodb.Logic.LoginLogic import sendlogincode
 from autodb.config import POSTS_PER_PAGE
 from autodb.models import portal_user
 
+from Library.minihelper import getData
+from Library.minihelper import getData
 from flask_login import current_user, login_required, logout_user, login_user
 from flask.globals import g, request, session
 from autodb import app,db,lm
@@ -112,13 +115,41 @@ def logout():
 
 @app.route('/sqllistdata/', methods=['GET', 'POST'])
 def sqllistdata():
+    '''
+    获取sqllist数据
+    pageIndex	0
+pageSize	10
+sortField	createtime
+sortOrder	desc
+    '''
 
-    import  json
-    data={"total":'25','data':[
-        {"0": "54b12a07-1f7d-4616-b3e9-9dcc465a5f33", "id": "54b12a07-1f7d-4616-b3e9-9dcc465a5f33",
-         "1": "13625147852@163.com", "loginname": "13625147852@163.com"}
-    ]}
-    return json.dumps(data)
+    pageIndex = int(request.form["pageIndex"]) if request.form["pageIndex"] else 0;
+    pageSize = int(request.form["pageSize"]) if request.form["pageSize"] else 3;
+
+    sql = "select * from sqllist";
+    sqlwhere = " 1";
+
+    return getData(sql, sqlwhere, pageSize, pageIndex, AdoHelper().db())
+
+
+
+@app.route('/sqlresult/', methods=['GET', 'POST'])
+def sqlresult():
+    '''
+    获取sqlresult数据
+    '''
+
+    pageIndex = int(request.form["pageIndex"]) if request.form["pageIndex"] else 0;
+    pageSize = int(request.form["pageSize"]) if request.form["pageSize"] else 3;
+    sguid= request.form["sguid"]
+
+    sql = "select * from sqlresult";
+    if sguid:
+        sqlwhere = " sguid='{0}' order by guid desc".format(sguid);
+
+        return getData(sql, sqlwhere, pageSize, pageIndex, AdoHelper().db())
+
+
 @app.route('/sqllist/', methods=['GET', 'POST'])
 @app.route('/sqllist/<int:page>', methods=['GET', 'POST'])
 def sqllist(page=1):
@@ -129,19 +160,8 @@ def sqllist(page=1):
     """
 
 
-    sql = "select * from sqllist where 1=1"
 
-    if request.args.get('type'):
-        sql = sql + " and type='{0}'".format(request.args.get('type'))
-    pagination = AdoHelper().paginate(page, sql=sql, per_page=POSTS_PER_PAGE)
-    fields = ['guid', 'title', 'sqlContent', 'paras', 'frequency', 'state', 'lastexec', 'nextexec', 'user_code',
-              'opdate' ]
-    fields_cn = ['guid', '标题', 'sql语句','参数','频率','状态','上次执行','下次执行','用户','创建时间']
-    specfile = {}
-    formater = {'title', '<a href="{0}">{0}</a>'}
-    return render_template('sqllist.html', pagination=pagination,
-                           fields=fields, fields_cn=fields_cn,
-                           specfile=specfile)
+    return render_template('sqllist.html')
 
 
 

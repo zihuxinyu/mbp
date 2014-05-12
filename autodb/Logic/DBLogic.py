@@ -1,7 +1,7 @@
 # coding: utf-8
 from math import ceil
 
-from mbp.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
+from autodb.config import DB_USER, DB_PSW, DB_HOST, DB_DATEBASE
 from Library.DB import torndb
 from werkzeug.exceptions import abort
 
