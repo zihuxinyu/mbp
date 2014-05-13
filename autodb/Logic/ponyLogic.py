@@ -40,14 +40,11 @@ with db_session:
 
 @db_session
 def EXT_SMSLOGManager():
-
-    db.insert("EXT_SMSLOG",GUID=str(uuid.uuid4()), CONTENT='22', CREATORID='weibh', CREATEDATE=datetime.now())
-    db.commit()
+    ##新增
+    ss = EXT_SMSLOG(content="ssss", guid=str(uuid.uuid4()), creatorid="weibh")
+    print(ss)
 
 
 EXT_SMSLOGManager();
-print('dddddddddddd')
-with db_session:
-    ##新增了
-    ss=EXT_SMSLOG(content="ssss",guid=str(uuid.uuid4()), creatorid="weibh")
-    print(ss)
+
+
