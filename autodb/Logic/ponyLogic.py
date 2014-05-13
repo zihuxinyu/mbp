@@ -1,10 +1,9 @@
 # coding: utf-8
-from Library.datehelper import now
 from pony.orm import *
 import cx_Oracle
 from Library.config import O_host,O_port,O_database,O_user,O_password
 from datetime import  datetime
-
+import uuid
 
 dsn = cx_Oracle.makedsn(O_host, O_port, O_database)
 
@@ -41,10 +40,14 @@ with db_session:
 
 @db_session
 def EXT_SMSLOGManager():
-    import uuid
 
     db.insert("EXT_SMSLOG",GUID=str(uuid.uuid4()), CONTENT='22', CREATORID='weibh', CREATEDATE=datetime.now())
     db.commit()
 
 
-EXT_SMSLOGManager()
+EXT_SMSLOGManager();
+print('dddddddddddd')
+with db_session:
+    ##新增了
+    ss=EXT_SMSLOG(content="ssss",guid="ssdss", creatorid="sdsd", createdate=datetime.now())
+    print(ss)
