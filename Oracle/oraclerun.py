@@ -49,8 +49,8 @@ def get():
 def execsql(guid=None, sqlContent=None, paras=None):
     #执行语句,记录错误
     errorMsglist = OracleExec(sqlContent=sqlContent,paras=paras)
-    xx = [(guid, x.sql, x.success, x.message) for x in errorMsglist]
-    sqlresult = "insert into `sqlresult` (`sguid`,`sqlContent`,`success`,`message`) values (%s,%s,%s,%s)"
+    xx = [(guid, x.sql, x.success, x.message,now()) for x in errorMsglist]
+    sqlresult = "insert into `sqlresult` (`sguid`,`sqlContent`,`success`,`message`,`opdate`) values (%s,%s,%s,%s,%s)"
     x = dbmysql().executemany_rowcount(sqlresult, xx)
     #print(xx)
 

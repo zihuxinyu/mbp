@@ -85,7 +85,7 @@ class Connection(object):
     def reconnect(self):
         """Closes the existing database connection and re-opens it."""
         self.close()
-        self._db = cx_Oracle.connect(self.user, self.password, self.dsn, threaded=True)
+        self._db = cx_Oracle.connect( self.user, self.password, self.dsn, threaded=True)
         self._db.autocommit = True
 
     def iter(self, query, *parameters, **kwparameters):
