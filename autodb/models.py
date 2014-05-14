@@ -67,16 +67,33 @@ class sqllist(db.Model):
         self.opdate = opdate
 
 
-class sqlresult(db.Model):
-    __tablename__ = 'sqlresult'
-    guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
-    sguid = db.Column('sguid')
-    sqlContent = db.Column('sqlContent')
-    success = db.Column('success')
-    message = db.Column('message')
+# class sqlresult(db.Model):
+#     __tablename__ = 'sqlresult'
+#     guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+#     sguid = db.Column('sguid')
+#     sqlContent = db.Column('sqlContent')
+#     success = db.Column('success')
+#     message = db.Column('message')
+#
+#     def __int__(self, sguid=None, sqlContent=None, success=None, message=None):
+#         self.sguid = sguid
+#         self.sqlContent = sqlContent
+#         self.success = success
+#         self.message = messageclass
+#         sqlresult(db.Model):
+#         __tablename__ = 'sqlresult'
+#         guid = db.Column(Integer, unique=True, primary_key=True, autoincrement=True)
+#         sguid = db.Column('sguid')
+#         sqlContent = db.Column('sqlContent')
+#         success = db.Column('success')
+#         message = db.Column('message')
+#
+#         def __int__(self, sguid=None, sqlContent=None, success=None, message=None):
+#             self.sguid = sguid
+#             self.sqlContent = sqlContent
+#             self.success = success
+#             self.message = message
 
-    def __int__(self, sguid=None, sqlContent=None, success=None, message=None):
-        self.sguid = sguid
-        self.sqlContent = sqlContent
-        self.success = success
-        self.message = message
+
+
+

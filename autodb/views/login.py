@@ -10,7 +10,7 @@ from flask.globals import request, session
 from flask.templating import render_template
 from autodb.models import portal_user
 import requests
-
+from flask import jsonify
 user = Blueprint("user", __name__
 )
 
@@ -24,7 +24,6 @@ def login():
 def loginchk():
     data = (request.form.get("submitData"))
     import json
-
     data = json.loads(data)
     usercode = data['username']
     pwd = data['pwd']
