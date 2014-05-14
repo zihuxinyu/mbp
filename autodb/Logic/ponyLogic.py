@@ -14,7 +14,7 @@ db = Database('oracle', O_user, O_password, dsn)
 class EXT_SMSLOG(db.Entity):
     guid = PrimaryKey(unicode, default=str(uuid4()))
     content=Required(unicode)
-    creatorid=Required(unicode)
+    creatorid=Optional(unicode)
     createdate = Optional(datetime,default=datetime.now())
 
 class EXT_DPT_USR(db.Entity):

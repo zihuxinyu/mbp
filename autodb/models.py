@@ -1,5 +1,4 @@
 # -*- coding: utf8 -*-
-import time
 
 from autodb import db
 from sqlalchemy import Integer

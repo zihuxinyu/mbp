@@ -42,7 +42,7 @@
         var data = form.getData();
         var json = mini.encode(data);
         $.ajax({
-            url: "{{url_for('loginchk')}}",
+            url: "{{url_for('user.loginchk')}}",
             type: "post",
             data: { submitData: json },
             success: function (text) {

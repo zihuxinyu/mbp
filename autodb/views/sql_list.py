@@ -1,15 +1,15 @@
-# coding: utf-8
+  # coding: utf-8
 
 from autodb.Logic.DBLogic import AdoHelper
 from Library.minihelper import getData
 from flask import Blueprint
-from flask.globals import g, request, session
+from flask.globals import request
 
 from flask.templating import render_template
 
-sql_list=Blueprint("sql_list", __name__,
-                   template_folder='templates'
+sql_list = Blueprint("sql_list", __name__
 )
+
 
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 def sqllistdata():
