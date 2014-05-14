@@ -8,7 +8,7 @@ from flask.helpers import url_for, flash
 from flask import Blueprint
 from flask.globals import request, session
 from flask.templating import render_template
-from autodb.models import portal_user
+from autodb.modelx import portal_user
 import requests
 from flask import jsonify
 user = Blueprint("user", __name__

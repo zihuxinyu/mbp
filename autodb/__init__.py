@@ -20,7 +20,10 @@ lm.login_message = unicode('请先登录', 'utf-8')
 
 db = SQLAlchemy(app)
 
-from views import reg
+#加载model,生成maping
+import models
+#加载views,注册blueprint
+import views
 
 
 
