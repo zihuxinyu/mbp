@@ -8,11 +8,10 @@ from flask.helpers import url_for, flash
 from flask import Blueprint
 from flask.globals import request, session
 from flask.templating import render_template
-from autodb.modelx import portal_user
+from autodb.models.portal import portal_user
 import requests
-from flask import jsonify
-user = Blueprint("user", __name__
-)
+from pony.orm import *
+user = Blueprint("user", __name__)
 
 
 @user.route('/login', methods=['GET', 'POST'])
@@ -31,22 +30,25 @@ def loginchk():
 
     r = requests.get(url.format(usercode, pwd))
     if r.text:
-        staff = portal_user.query.filter(portal_user.user_code == usercode).first()
-        if not staff:
-            flash('登录失败，查无此ID')
-            return "登录失败，查无此ID"
+        with db_session:
+            staff = select(p for p in portal_user if p.user_code == usercode).first()
+            if not staff:
+                flash('登录失败，查无此ID')
+                return "登录失败，查无此ID"
+            remember_me = False
+            if 'remember_me' in session:
+                remember_me = session['remember_me']
+                session.pop('remember_me', None)
+            from autodb.models.portal import users
+            lu=users(staff.user_code)
+            login_user(lu, remember=True)
 
-        remember_me = False
-        if 'remember_me' in session:
-            remember_me = session['remember_me']
-            session.pop('remember_me', None)
-        login_user(staff, remember=True)
-
-        return "登录成功"
+            return "登录成功"
     return "登录失败"
 
 
 @user.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    session['username']=None
+    return redirect(url_for('root.index'))

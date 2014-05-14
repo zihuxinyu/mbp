@@ -15,7 +15,7 @@ app.config.from_object(config)
 app.debug = False
 lm = LoginManager()
 lm.init_app(app)
-lm.login_view = 'login'
+lm.login_view = 'user.login'
 lm.login_message = unicode('请先登录', 'utf-8')
 
 db = SQLAlchemy(app)

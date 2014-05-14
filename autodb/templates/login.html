@@ -21,7 +21,7 @@
         <tr>
             <td></td>
             <td>
-                <input value="Login" type="button" onclick="submitForm()"/>
+                <input value="Login" type="submit" onclick="submitForm()"/>
             </td>
         </tr>
     </table>
@@ -47,7 +47,7 @@
             data: { submitData: json },
             success: function (text) {
                 //alert("提交成功，返回结果:" + text);
-                location='{{url_for('index')}}';
+                location="{{url_for('root.index')}}";
             }
         });
     }

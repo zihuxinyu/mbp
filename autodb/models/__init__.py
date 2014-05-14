@@ -8,8 +8,10 @@ from pony.orm import sql_debug
 from autodb.Logic.Mysqldb import db
 
 #注册model
-from autodb.models.sqlresult import sqlresult
-from autodb.models.sqllist import sqllist
 
-sql_debug(True)
+import portal, sqllist, sqlresult
+
+
+#开启调试模式
+# sql_debug(True)
 db.generate_mapping()

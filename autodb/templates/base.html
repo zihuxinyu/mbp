@@ -38,9 +38,13 @@
         </ul>
     </li>
     <li class="separator"></li>
-    <li>编辑(E)</li>
-    <li onclick="onItemClick">查看(V)</li>
-    <li iconCls="icon-help" onclick="onItemClick">帮助(H)</li>
+    {%if g.user.get_id()%}
+    <li><a href="{{url_for('user.logout')}}">退出</a></li>
+    {%else%}
+    <li><a href="{{url_for('user.login')}}">登录</a> </li>
+    {%endif%}
+
+
 </ul>
 
 
