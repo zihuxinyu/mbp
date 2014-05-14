@@ -39,7 +39,7 @@ def sqlresult():
     from autodb.models.sqlresult import sqlresult
 
     total=select(count(p.guid) for p in sqlresult if p.sguid == sguid).first()
-    data=select(p for p in sqlresult if p.sguid==sguid).limit(pageSize,pageSize*pageIndex)
+    data=select(p for p in sqlresult if p.sguid==sguid).order_by(desc(sqlresult.opdate)).limit(pageSize,pageSize*pageIndex)
     return getGridData(sqlresult,total,data)
 
 
