@@ -10,18 +10,20 @@ from  login import user
 from root import root
 from  autodb import lm
 from flask_login import current_user
-from autodb.models.portal import  portal_user
+
+from autodb import  cache
 app.register_blueprint(root)
 app.register_blueprint(sql_list, url_prefix='/sql')
 app.register_blueprint(user, url_prefix='/user')
 from pony.orm import *
 
+
 @lm.user_loader
 @db_session
+@cache.memoize()
 def load_user(id):
     from autodb.models.portal import  users
     return users(id)
-    return select(p for p in portal_user if p.user_code==id).first()
 
 
 @app.before_request

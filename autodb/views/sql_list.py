@@ -1,8 +1,7 @@
 # coding: utf-8
 from Library.flaskhelper import getargs
-
-from Library.minihelper import getData,getGridData
-from autodb.Logic.DBLogic import AdoHelper
+from autodb import cache
+from Library.minihelper import getGridData
 from flask import Blueprint
 from flask.ext.login import login_required
 from flask.templating import render_template

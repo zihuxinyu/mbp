@@ -5,7 +5,7 @@ miniui相关用法
 import json
 
 from Library.jsonhelper import CJsonEncoder
-
+from autodb import  cache
 
 def getData(sql,sqlwhere, pageSize, pageIndex,db):
     '''
@@ -26,6 +26,8 @@ def getData(sql,sqlwhere, pageSize, pageIndex,db):
 
     return json.dumps(data, cls=CJsonEncoder)
 
+
+@cache.memoize(20)
 def getGridData(entity,total=999,data=None):
     _columns_ = entity.__dict__['_columns_']
     data = [{x: getattr(row, x) for x in _columns_} for row in data]
