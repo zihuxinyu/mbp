@@ -9,7 +9,6 @@ from Library.minihelper import getGridData
 from pony.orm import *
 from  autodb.config import DB_DATEBASE,DB_HOST,DB_PSW,DB_USER
 db = Database('mysql', host=DB_HOST, user=DB_USER, passwd=DB_PSW, db=DB_DATEBASE)
-
 @cache.memoize(60)
 def getData(entity, total=999, data=None):
     return getGridData(entity,total,data)
