@@ -30,6 +30,7 @@ def loginchk():
 
     r = requests.get(url.format(usercode, pwd))
     if r.text:
+
         with db_session:
             staff = select(p for p in portal_user if p.user_code == usercode).first()
             if not staff:

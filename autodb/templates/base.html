@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-cn" data-lang="zh-cn" data-template="simple" class="lang-zh-cn">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
     <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% if title %}
     <title>{{ title }} - 数据库任务系统</title>
     {% else %}
@@ -22,20 +22,7 @@
 <ul id="menu2" class="mini-menubar" style="width:100%;">
     <li>
         <span><a href="{{url_for('sql_list.sqllist')}}" >任务列表</a></span>
-        <ul>
-            <li onclick="onItemClick">
-                <span>新建</span>
-                <ul>
-                    <li iconCls="icon-new" onclick="onItemClick">文件</li>
-                    <li onclick="onItemClick">项目</li>
-                    <li onclick="onItemClick">网站</li>
-                </ul>
-            </li>
-            <li class="separator"></li>
-            <li iconCls="icon-cut" onclick="onItemClick">Cut</li>
-            <li iconCls="icon-add" onclick="onItemClick">Add</li>
-            <li iconCls="icon-remove" onclick="onItemClick">Close</li>
-        </ul>
+
     </li>
     <li class="separator"></li>
     {%if g.user.get_id()%}
@@ -50,11 +37,6 @@
 
 <script type="text/javascript">
     mini.parse();
-    function onItemClick(e) {
-        var item = e.sender;
-        alert(item.getText());
-
-    }
 </script>
 
 

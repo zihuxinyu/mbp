@@ -7,7 +7,7 @@ from autodb import app
 from flask import g, render_template
 from sql_list import sql_list
 from  login import user
-from index import root
+from root import root
 from  autodb import lm
 from flask_login import current_user
 from autodb.models.portal import  portal_user

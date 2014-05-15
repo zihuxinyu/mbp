@@ -2,6 +2,7 @@
 '''
 文件作用:根目录下得基本文件
 '''
+from autodb import cache
 from flask import Blueprint,session
 
 from flask_login import login_required
@@ -10,6 +11,7 @@ from pony.orm import *
 root = Blueprint("root", __name__)
 
 
+@cache.cached(timeout=50)
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
 def index():
@@ -32,3 +34,8 @@ def cs(tablename):
                cur.fetchall()]
 
     return render_template('cs.html', list=entries, tablename=tablename)
+
+
+@root.route('/daohang')
+def daohang():
+    return  render_template("daohang.html")
