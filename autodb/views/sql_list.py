@@ -1,6 +1,6 @@
 # coding: utf-8
 from Library.flaskhelper import getargs
-from autodb.Logic.Mysqldb import getData
+from Library.minihelper import getGridData
 from flask import Blueprint
 from flask.ext.login import login_required
 from flask.templating import render_template
@@ -20,7 +20,7 @@ def sqllistdata():
 
     total = select(count(p.guid) for p in sqllist).first()
     data = select(p for p in sqllist).limit(pageSize, pageSize * pageIndex)
-    return getData(sqllist, total, data)
+    return getGridData(sqllist, total, data)
 
 
 @sql_list.route('/sqlresult/', methods=['GET', 'POST'])
@@ -38,7 +38,7 @@ def sqlresult():
 
     total=select(count(p.guid) for p in sqlresult if p.sguid == sguid).first()
     data=select(p for p in sqlresult if p.sguid==sguid).order_by(desc(sqlresult.opdate)).limit(pageSize,pageSize*pageIndex)
-    return getData(sqlresult,total,data)
+    return getGridData(sqlresult,total,data)
 
 
 

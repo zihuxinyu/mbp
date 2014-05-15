@@ -13,5 +13,5 @@ import portal, sqllist, sqlresult
 
 
 #开启调试模式
-# sql_debug(True)
+sql_debug(True)
 db.generate_mapping()
