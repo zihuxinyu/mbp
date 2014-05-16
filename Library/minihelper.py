@@ -35,12 +35,11 @@ def saveData(entity,data):
         d = Row(d)
         _columns_ = entity.__dict__['_columns_']
         _pk_columns_ = entity.__dict__['_pk_columns_']
-        print(type(_pk_columns_))
+
         if d._state == 'modified':  #修改
             guid = {c: d[c] for c in _pk_columns_}
             changed = {c: d[c] for c in _columns_ if c in d and c not in _pk_columns_}
             entity.get(**guid).set(**changed)
-
         elif d._state == 'added':
             changed = {c: d[c] for c in _columns_ if c in d and c not in _pk_columns_}
             entity(**changed)

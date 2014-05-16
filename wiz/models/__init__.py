@@ -13,5 +13,5 @@ import portal,wiz_user,invite_list
 
 
 #开启调试模式
-#sql_debug(True)
+sql_debug(False)
 db.generate_mapping()

@@ -12,7 +12,7 @@ sys.setdefaultencoding('utf-8')  #解决utf8编码问题
 app = Flask(__name__)
 app.config.from_object(config)
 
-app.debug = True
+app.debug = False
 
 lm = LoginManager()
 lm.init_app(app)
