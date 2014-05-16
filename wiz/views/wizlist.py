@@ -26,6 +26,15 @@ def wizlistdata():
     return getGridData(invite_list, total, data)
 
 
+@wizlist.route('/wizdata/', methods=['GET', 'POST'])
+@db_session
+@login_required
+def wizdata():
+    invite_code=flaskhelper.getargs('invite_code')
+    total =1
+    data = select(p for p in wiz_user if p.regcode== invite_code)
+    return getGridData(wiz_user, total, data)
+
 @wizlist.route('/wizresult/', methods=['GET', 'POST'])
 @db_session
 @login_required

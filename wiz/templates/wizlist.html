@@ -20,13 +20,14 @@
 </div>
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
      url="{{url_for('.wizlistdata',a=23)}}" idField="guid" allowAlternating="true" selectOnLoad="true"
-     onselectionchanged="onSelectionChanged"
+     onselectionchanged="onSelectionChanged" onshowrowdetail="onShowRowDetail"
      allowCellEdit="true" allowCellSelect="true"
      editNextOnEnterKey="true" editNextRowCell="true"
         >
     <div property="columns">
         <div type="indexcolumn"></div>
         <div type="checkcolumn"></div>
+        <div type="expandcolumn"></div>
         <div field="invite_code" headerAlign="center">邀请码
             <input property="editor" class="mini-textbox" style="width:100%;"/>
         </div>
@@ -82,7 +83,23 @@
             dataresult.load({ invite_code: record.invite_code });
         }
     }
+    function onShowRowDetail(e) {
+        var grid = e.sender;
+        var row = e.record;
+        var td = grid.getRowDetailCellEl(row);
+        $.ajax({
+            url: "{{url_for('wizlist.wizdata')}}",
+            type: "post",
+            data: { 'invite_code': row.invite_code },
+            success: function (text) {
+                var o = mini.decode(text).data[0];
+                //生成详细信息html
+                 td.innerHTML = o.reguser+':'+ o.regpsw;
 
+            }
+        });
+
+    }
     ///提示时间
     function onGenderRenderer(e) {
         var m = e.value * 620 / 1000
@@ -169,6 +186,9 @@
             grid.addRow(row);
         }
     });
+
+
+
 </script>
 
 {% endblock %}
