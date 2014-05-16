@@ -17,7 +17,7 @@ class Row(dict):
             raise AttributeError(name)
 
 
-def getGridData(entity,total=999,data=None):
+def getGridData(entity, total=999, data=None):
     '''
     获得miniui显示需要的表格json
     '''
@@ -27,7 +27,8 @@ def getGridData(entity,total=999,data=None):
 
     return json.dumps(data, cls=CJsonEncoder)
 
-def saveData(entity,data):
+
+def saveData(entity, data):
     '''
     保存json格式的数据,_state:表明CURD状态
     '''
@@ -35,7 +36,6 @@ def saveData(entity,data):
         d = Row(d)
         _columns_ = entity.__dict__['_columns_']
         _pk_columns_ = entity.__dict__['_pk_columns_']
-
         if d._state == 'modified':  #修改
             guid = {c: d[c] for c in _pk_columns_}
             changed = {c: d[c] for c in _columns_ if c in d and c not in _pk_columns_}
