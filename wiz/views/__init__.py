@@ -6,15 +6,17 @@
 from wiz import app
 from flask import g, render_template
 from  wiz.views.wizlist import wizlist
+from wiz.views.proxy import proxylist
 from  login import user
 from root import root
 from  wiz import lm
 from flask_login import current_user
+from pony.orm import *
 
 app.register_blueprint(root)
 app.register_blueprint(wizlist, url_prefix='/wiz')
 app.register_blueprint(user, url_prefix='/user')
-from pony.orm import *
+app.register_blueprint(proxylist, url_prefix='/proxy')
 
 
 @lm.user_loader

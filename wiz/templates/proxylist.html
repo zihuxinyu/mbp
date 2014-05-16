@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+
+                     
+                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow()" plain="true">删除选中</a>
+                    <span class="separator"></span>
+                    <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
+                </td>
+                <td style="white-space:nowrap;">
+                    <a class="mini-button" iconCls="icon-tip" href="http://www.youdaili.cn/Daili/guonei/"
+                       target="_blank"></a>
+                    <input id="key" class="mini-textbox" emptyText="输入数字" style="width:50px;"
+                           onenter="onKeyEnter"/>.html
+                    <a class="mini-button" iconCls="icon-download" onclick="addRow()" plain="true" tooltip="获取代理">获取</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="datagrid1" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.proxyresult',a=23)}}" idField="guid" allowAlternating="true" selectOnLoad="true"
+     pagesize="20" multiSelect="true"
+        >
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div type="checkcolumn"></div>
+        <div field="proxy" headerAlign="center">代理</div>
+        <div field="state" headerAlign="center">状态</div>
+        <div field="opdate" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">时间</div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    mini.parse();
+
+    var grid = mini.get("datagrid1");
+    grid.load();
+    function removeRow() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+    function saveData() {
+
+        var data = grid.getChanges(null, true);
+        var json = mini.encode(data);
+
+        grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "{{url_for('proxylist.save')}}",
+            data: { data: json },
+            type: "post",
+            success: function (text) {
+                grid.reload();
+                mini.showTips({
+                    content: "<b>成功</b> <br/>" + text,
+                    state: "success",
+                    x: "center",
+                    y: "top",
+                    timeout: 3000
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+    function addRow() {
+
+
+        var key = mini.get("key").getValue();
+
+        $.ajax({
+            url: "{{url_for('proxylist.getproxy')}}",
+            data: { key: key },
+            type: "post",
+            success: function (text) {
+                mini.showTips({
+                    content: "<b>成功</b> <br/>" + text,
+                    state: "success",
+                    x: "center",
+                    y: "top",
+                    timeout: 3000
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+
+
+</script>
+
+{% endblock %}

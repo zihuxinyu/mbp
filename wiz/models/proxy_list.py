@@ -15,6 +15,6 @@ class proxy_list(db.Entity):
     '''
     guid = PrimaryKey(int, auto=True)
     proxy= Optional(unicode)
-
+    state = Optional(unicode,default='1')
     opdate=Optional(datetime, default=datetime.now())
     

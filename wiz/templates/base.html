@@ -15,20 +15,19 @@
     <script src="{{ url_for('static', filename='miniui/boot.js') }}" type="text/javascript"></script>
 
 
-
-
 </head>
 <body>
 <ul id="menu2" class="mini-menubar" style="width:100%;">
     <li>
-        <span><a href="{{url_for('wizlist.list')}}" >任务列表</a></span>
+        <span><a href="{{url_for('wizlist.list')}}">任务列表</a></span>
 
     </li>
+    <li><span><a href="{{url_for('proxylist.list')}}">代理管理</a></span></li>
     <li class="separator"></li>
     {%if g.user.get_id()%}
     <li><a href="{{url_for('user.logout')}}">退出</a></li>
     {%else%}
-    <li><a href="{{url_for('user.login')}}">登录</a> </li>
+    <li><a href="{{url_for('user.login')}}">登录</a></li>
     {%endif%}
 
 

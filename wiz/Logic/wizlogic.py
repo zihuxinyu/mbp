@@ -105,7 +105,7 @@ def do(user_id, invite_code, proxies, transport):
                                    use_datetime=False)
     result = server.accounts.clientLogin({'api_version': '3',
                                           'client_type': 'WIN',
-                                          'client_version': '4.1.17.1',
+                                          'client_version': '4.1.17.2',
                                           'password': 'md5.' + psw_md5,
                                           'program_type': 'normal',
                                           'protocol': 'http',
@@ -135,7 +135,7 @@ def startmain(invite_code, numbers=40):
             email=select(p for p in xiaomi ).random(1)[0].email
             name=email.split('@')
             id = '{0}{1}@{2}'.format(name[0], random.randint(0, 9999), name[1])
-            print(id)
+
 
             proxies = getproxies()
             transport = HTTPProxyTransport(proxies)

@@ -60,7 +60,7 @@ class ProxyCheckerThread(threading.Thread):
 
                     if self.mutex.acquire(1):
                         with db_session:
-                            proxy_list(proxy=proxyitem)
+                            proxy_list(proxy=proxyitem,state='1')
 
 
                         self.mutex.release()
