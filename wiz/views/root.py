@@ -12,13 +12,9 @@ root = Blueprint("root", __name__)
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
 def index():
-    # from wiz.Logic.wizlogic import startmain
-    #
-    # invite_code = 'e42ad138'  #zihu
-    # counts=10
-    # startmain(invite_code, counts)
-    from  wiz.models.invite_list import invite_list
-    print(invite_list.__dict__)
+    from wiz.models.proxy_list import proxy_list
+    with db_session:
+        select(p for p in proxy_list if "ddsf" not in  p.proxy).limit(1).show()
     return render_template("index.html")
 
 

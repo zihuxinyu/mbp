@@ -9,7 +9,7 @@ from wiz.Logic.Mysqldb import db
 
 #注册model
 
-import portal,wiz_user,invite_list
+import portal,wiz_user,invite_list,proxy_list,xiaomi
 
 
 #开启调试模式

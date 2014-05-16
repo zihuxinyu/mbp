@@ -85,8 +85,10 @@
 
     ///提示时间
     function onGenderRenderer(e) {
-        var m = e.value * 600 / 1000
+        var m = e.value * 620 / 1000
+        m= parseFloat(m.toFixed(2));
         var y = m / 12
+        y= parseFloat(y.toFixed(2));
         return e.value + "次,=" + m + "月,=" + y + "年" ;
     }
     ///补差

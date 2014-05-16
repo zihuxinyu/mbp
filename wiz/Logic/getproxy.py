@@ -12,10 +12,10 @@ import os
 from wiz import app
 sys.path.append(os.getcwd() + "\\Library")
 import requests
-
+from wiz.models.proxy_list import proxy_list
 import re
-
-
+from pony.orm import *
+from Library.threadinghelper import asyncfun
 class ProxyChecker:
     "代理服务器检测类，内部使用多线程方式用来检测指定的代理服务器列表中的代理服务器是否可用"
 
@@ -59,9 +59,9 @@ class ProxyCheckerThread(threading.Thread):
                 if r.status_code == 200:
 
                     if self.mutex.acquire(1):
-                        fileop = open(os.getcwd() + "/wiz/ip.txt", 'a+')
-                        fileop.write(proxyitem + '\n')
-                        fileop.close()
+                        with db_session:
+                            proxy_list(proxy=proxyitem)
+
 
                         self.mutex.release()
                 else:
@@ -73,7 +73,7 @@ class ProxyCheckerThread(threading.Thread):
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
 
-
+@asyncfun
 def getPageList(url='http://www.youdaili.cn/Daili/guonei/', file='2120.html'):
     """
     获取关联的代理页面

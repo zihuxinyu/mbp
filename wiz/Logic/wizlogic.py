@@ -6,15 +6,18 @@ Created by weibaohui on 14-5-16.
 '''
 
 import threading
-from pony.orm import db_session
-import requests
 import random
-import time
 from random import choice
 import urllib2
 import xmlrpclib
+import time
+import requests
 from wiz.models.wiz_user import wiz_user
 from wiz.models.invite_list import invite_list
+from wiz.models.proxy_list import proxy_list
+from  wiz.models.xiaomi import xiaomi
+from pony.orm import *
+from Library.threadinghelper import asyncfun
 
 class Urllib2Transport(xmlrpclib.Transport):
     def __init__(self, opener=None, https=False, use_datetime=0):
@@ -37,14 +40,8 @@ class HTTPProxyTransport(Urllib2Transport):
 
 
 def getproxies():
-    from wiz import app
-
-    with app.open_resource("ip.txt") as fp:
-        count = len(fp.readlines())  #获取行数
-
-        hellonum = random.randrange(1, count, 1)  #生成随机行数
-    with app.open_resource("ip.txt") as fp:
-        proxys = {"http": "http://" + fp.readlines()[hellonum].replace('\n', '')}
+    with db_session:
+        proxys = {"http": "http://" + select(p for p in proxy_list).random(1)[0].proxy}
         return proxys
 
 
@@ -62,8 +59,9 @@ class DoerThread(threading.Thread):
             #LogHelper.Debug(self.threadName)
             do(self.user_id, self.invite_code, self.proxies, self.transport)
         except Exception, e:
-            print(self.threadName,e.message)
+            print(self.threadName, e.message)
             pass
+
 
 @db_session
 def do(user_id, invite_code, proxies, transport):
@@ -123,32 +121,24 @@ def do(user_id, invite_code, proxies, transport):
                                                 'user_id': user_id
     })
 
+    wiz_user(invite_code=invite_code, proxy=proxies['http'], reguser=user_id, regcode=result['invite_code'], regpsw=psw)
+    invite_list.get(invite_code=invite_code).realcount += 1
 
-    wiz_user(invite_code= invite_code, proxy= proxies['http'], reguser= user_id, regcode=result['invite_code'], regpsw=psw)
-    invite_list.get(invite_code=invite_code).realcount+=1
-
-
+@asyncfun
 def startmain(invite_code, numbers=40):
-    from wiz import app
+
 
     i = numbers
 
     for x in range(int(i)):
-        with app.open_resource("1.txt") as fp:
-            realmail = fp.readlines()[random.randint(0, 1048549)].strip("\r\n")
-            email = ['139.cn', 'sohu.com', 'gmail.com', 'hotmail.com', '189.cn', '163.com', 'qq.com', '126.com',
-                     'yahoo.com', 'sina.com', '21cn.com', '51admin.com', 'baidu.com', 'live.com', '163.com', 'qq.com',
-                     '126.com', 'yeah.net', 'wo.com.cn', '263.com', 'tom.com', '360.cn', '51.com', '5d6d.cn',
-                     'ysy.edu.cn',
-                     'agri.gov.cn', 'ahut.edu.cn', 'ccec.edu.cn', '163.com', 'qq.com', '126.com', 'aisino.com',
-                     'alg.com',
-                     'bnu.edu.cn', 'ccidnet.com', 'chinaren.com', 'xsyu.edu.cn', '163.com', 'qq.com', '126.com',
-                     '163.com',
-                     'qq.com', '126.com']
-            id = '{0}{1}@{2}'.format(realmail, random.randint(0, 9999), choice(email))
+        with db_session:
+            email=select(p for p in xiaomi ).random(1)[0].email
+            name=email.split('@')
+            id = '{0}{1}@{2}'.format(name[0], random.randint(0, 9999), name[1])
             print(id)
+
             proxies = getproxies()
             transport = HTTPProxyTransport(proxies)
-            print(transport)
+
             t = DoerThread('T' + str(x), id, invite_code=invite_code, proxies=proxies, transport=transport)
             t.start()
