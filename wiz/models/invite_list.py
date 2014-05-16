@@ -13,8 +13,8 @@ class invite_list(db.Entity):
     邀请用户列表,为这些用户注册
     '''
     guid = PrimaryKey(int, auto=True)
-    invite_code= Optional(unicode)
-    type = Optional(unicode)
-    askcount = Optional(int)
-    realcount = Optional(int)
+    invite_code= Optional(unicode,default='')
+    type = Optional(unicode,default='')
+    askcount = Optional(int,default=0)
+    realcount = Optional(int,default=0)
     opdate=Optional(datetime, default=datetime.now())

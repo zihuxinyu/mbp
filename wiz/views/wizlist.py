@@ -1,7 +1,7 @@
 # coding: utf-8
 from Library import flaskhelper
 from Library.flaskhelper import getargs
-from Library.minihelper import getGridData,Row
+from Library.minihelper import getGridData,saveData
 from flask import Blueprint
 from flask.ext.login import login_required
 from flask.templating import render_template
@@ -9,6 +9,7 @@ from pony.orm import *
 from wiz.models.wiz_user import wiz_user
 from wiz.models.invite_list import invite_list
 from wiz.Logic.wizlogic import startmain
+import json
 
 wizlist = Blueprint("wizlist", __name__)
 
@@ -73,32 +74,9 @@ def list(page=1):
 
 @wizlist.route('/saveinvite/', methods=['GET', 'POST'])
 @login_required
+@db_session
 def saveinvite():
     data = flaskhelper.getargs("data")
-    import json
-
     data = json.loads(data)
-    for d in data:
-        d=Row(d)
-
-        entity=invite_list
-        _columns_ = entity.__dict__['_columns_']
-        _pk_columns_=entity.__dict__['_pk_columns_']
-        print(type(_pk_columns_))
-        if d._state=='modified' :
-            for pk in _pk_columns_:
-                if pk in d:
-                    break
-            for c in _columns_:
-                if c in d:
-                    print('{0}={1}'.format(c,d[c]))
-
-            print('xiugai')
-        elif d._state == 'added' :
-            
-            print(d.invite_code)
-            print('add')
-        elif d._state=='removed':
-            print('delete')
-
+    saveData(invite_list,data)
     return "ok"
