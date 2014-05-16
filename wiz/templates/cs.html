@@ -1,0 +1,83 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% from "_paginathion.html" import pagination_html %}
+{% block content %}
+
+
+models.py定义类<br>
+
+<pre>
+    class {{tablename}}(db.Model):
+        __tablename__='{{tablename}}'
+    {% for x in list %}{%if x.EXTRA=='auto_increment'%}    {{x.COLUMN_NAME}}=db.Column(Integer, unique=True, primary_key=True, autoincrement=True){%else%}    {{x.COLUMN_NAME}}=db.Column('{{x.COLUMN_NAME}}'){%endif%}
+    {%endfor%}
+        def __int__(self,
+    {%for x in list if x.EXTRA not in ['auto_increment'] %}{{x.COLUMN_NAME}}=None{%if not loop.last%},{%endif%}{%endfor%}):
+    {% for x in list %}{%if x.EXTRA!='auto_increment' %}           self.{{x.COLUMN_NAME}}={{x.COLUMN_NAME}}{%endif%}
+    {%endfor%}
+
+</pre>
+
+定义forms.py<br>
+<pre>
+class FM{{tablename}}(BaseForm):{% for x in list %}{%if x.EXTRA!='auto_increment'%}    {{x.COLUMN_NAME}}=TextField('{{x.COLUMN_NAME}}'){%endif%}
+{%endfor%}
+</pre>
+
+
+定义views.py<br>
+<pre>
+{% for x in list %}{%if x.EXTRA!='auto_increment'%}{{x.COLUMN_NAME}}=form.{{x.COLUMN_NAME}}.data{%endif%}
+{%endfor%}
+m{{tablename}}={{tablename}}({%for x in list if x.EXTRA not in ['auto_increment'] %}{{x.COLUMN_NAME}}={{x.COLUMN_NAME}}{%if not loop.last%},{%endif%}{%endfor%})
+db.session.add(m{{tablename}})
+db.session.commit()
+</pre>
+
+定义模板<br>
+<pre>
+{%for x in list if x.EXTRA not in ['auto_increment'] %}{{ '{{' }}render_field(form.{{x.COLUMN_NAME}}){{ '}}' }}
+{%endfor%}
+</pre>
+
+
+
+显示{{tablename}}list.html文件<br>
+<pre>
+{{'<!-- extend base layout -->'}}
+{{'{'}}% extends "base.html" %{{'}'}}
+{{'{'}}% from "_paginathion.html" import pagination_html %{{'}'}}
+{{'{'}}% block content %{{'}'}}
+{{'<!----显示表格---->'}}
+
+&lt;div class="table-responsive"&gt;
+    &lt;table class="table table-hover table-bordered table-striped"&gt;
+        &lt;thead&gt;
+        &lt;tr&gt;
+        {%for x in list%}        &lt;td&gt;{{x.COLUMN_COMMENT}}&lt;/td&gt;
+        {%endfor%}
+        &lt;/tr&gt;
+        &lt;/thead&gt;
+
+        {{'{%'}} if pagination {{'%}'}}
+        {{'{%'}} for item in pagination.items {{'%}'}}
+        &lt;tr&gt;
+        {%for x in list %}        &lt;td&gt;item.{{x.COLUMN_NAME}}&lt;/td&gt;
+        {%endfor%}
+        &lt;/tr&gt;
+        {{'{%'}} endfor {{'%}'}}
+        {{'{%'}} else {{'%}'}}
+        &lt;tr&gt;
+            &lt;td colspan="{{ fields|count }}"&gt;NO DATA&lt;/td&gt;
+        &lt;/tr&gt;
+        {{'{%'}} endif {{'%}'}}
+    &lt;/table&gt;
+&lt;/div&gt;
+
+{{'<!-- 调用分页模板 -->'}}
+{{ '{{' }} pagination_html(pagination, request.endpoint, request.query_string) {{ '}}' }}
+{{ '{' }}% endblock %{{'}'}}
+
+</pre>
+
+{% endblock %}

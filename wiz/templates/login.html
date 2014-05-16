@@ -1,0 +1,93 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% block content %}
+<div id="form1">
+    <table>
+        <tr>
+            <td><label for="username$text">帐号：</label></td>
+            <td>
+                <input name="username" onvalidation="onEnglishAndNumberValidation" class="mini-textbox" required="true" requiredErrorText="帐号不能为空"/>
+
+            </td>
+        </tr>
+        <tr>
+            <td><label for="pwd$text">密码：</label></td>
+            <td>
+                <input name="pwd" class="mini-password" vtype="minLength:5" required="true"
+                       minLengthErrorText="密码不能少于5个字符"/>
+
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input value="Login" type="submit" onclick="submitForm()"/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+    mini.parse();
+
+    function submitForm() {
+
+        var form = new mini.Form("#form1");
+
+        form.validate();
+        if (form.isValid() == false) return;
+
+        //提交数据
+        var data = form.getData();
+        var json = mini.encode(data);
+        $.ajax({
+            url: "{{url_for('user.loginchk')}}",
+            type: "post",
+            data: { submitData: json },
+            success: function (text) {
+                //alert("提交成功，返回结果:" + text);
+                location="{{url_for('root.index')}}";
+            }
+        });
+    }
+    function onEnglishAndNumberValidation(e) {
+        if (e.isValid) {
+            if (isEnglishAndNumber(e.value) == false) {
+                e.errorText = "必须输入英文+数字";
+                e.isValid = false;
+            }
+        }
+    }
+    ////////////////////////////////////
+    /* 是否英文 */
+    function isEnglish(v) {
+        var re = new RegExp("^[a-zA-Z\_]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+
+    /* 是否英文+数字 */
+    function isEnglishAndNumber(v) {
+
+        var re = new RegExp("^[0-9a-zA-Z\_]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+
+    /* 是否汉字 */
+    function isChinese(v) {
+        var re = new RegExp("^[\u4e00-\u9fa5]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+
+    /*自定义vtype*/
+    mini.VTypes["englishErrorText"] = "请输入英文";
+    mini.VTypes["english"] = function (v) {
+        var re = new RegExp("^[a-zA-Z\_]+$");
+        if (re.test(v)) return true;
+        return false;
+    }
+</script>
+{% endblock %}

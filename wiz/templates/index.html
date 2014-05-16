@@ -1,0 +1,25 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        {%if g.user%}
+
+        <div class="row">
+
+            欢迎您{{g.user.get_id()}}
+         </div>
+        {%else%}
+        <div class="row">
+
+           您尚未登录.<a
+                href="{{ url_for('user.login') }}">点此登录</a>
+        </div>
+        {%endif%}
+
+    </div>
+</div>
+
+
+{% endblock %}

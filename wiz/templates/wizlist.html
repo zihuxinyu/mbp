@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+                    <a class="mini-button" iconCls="icon-add" onclick="addRow()" plain="true" tooltip="增加...">增加</a>
+                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow()" plain="true">删除</a>
+                    <span class="separator"></span>
+                    <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
+                </td>
+                <td style="white-space:nowrap;">
+                    <input id="key" class="mini-textbox" emptyText="请输入姓名" style="width:150px;" onenter="onKeyEnter"/>
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="datagrid1" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.wizlistdata',a=23)}}" idField="guid" allowAlternating="true" selectOnLoad="true"
+     onselectionchanged="onSelectionChanged"
+     allowCellEdit="true" allowCellSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true"
+        >
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div type="checkcolumn"></div>
+        <div field="invite_code" headerAlign="center">邀请码
+            <input property="editor" class="mini-textbox" style="width:100%;"/>
+        </div>
+        <div type="comboboxcolumn" field="type" headerAlign="center" autoShowPopup="true">类型
+            <input property="editor" class="mini-combobox" style="width:100%;" data="Genders"/>
+        </div>
+        <div field="askcount" headerAlign="center" renderer="onGenderRenderer">次数
+            <input property="editor" class="mini-textbox" style="width:100%;"/>
+        </div>
+        <div field="realcount" headerAlign="center" renderer="onGenderRenderer">实际次数</div>
+        <div field="askcount-realcount" headerAlign="center" renderer="onRedoRenderer">补差值</div>
+        <div field="opdate" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">订单时间</div>
+
+    </div>
+</div>
+
+<br>
+
+<div id="dataresult" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.wizresult',a=23)}}" idField="guid" multiSelect="true">
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div type="checkcolumn"></div>
+        <div field="invite_code" headerAlign="center">邀请码
+
+        </div>
+        <div field="proxy" headerAlign="center">代理</div>
+        <div field="regcode" headerAlign="center">注册码</div>
+        <div field="reguser" headerAlign="center">用户名</div>
+        <div field="regpsw" headerAlign="center">密码</div>
+        <div field="opdate" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">注册时间</div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    mini.parse();
+    var Genders = [
+        { id: 1, text: '定制' },
+        { id: 2, text: '自动'}
+    ];
+    var grid = mini.get("datagrid1");
+    grid.load();
+
+    var dataresult = mini.get("dataresult")
+
+    function onSelectionChanged(e) {
+
+        var grid = e.sender;
+        var record = grid.getSelected();
+        if (record) {
+            dataresult.load({ invite_code: record.invite_code });
+        }
+    }
+
+    ///提示时间
+    function onGenderRenderer(e) {
+        var m = e.value * 600 / 1000
+        var y = m / 12
+        return e.value + "次,=" + m + "月,=" + y + "年" ;
+    }
+    ///补差
+    function onRedoRenderer(e) {
+        var m = e.record.askcount - e.record.realcount;
+        if (m > 0) {
+            var html = " <a href='#" + m + "' onclick=reorder('" + e.record.invite_code + "','" + m + "') >补差</a>";
+            return html;
+        }
+    }
+    function reorder(invite_code, counts) {
+
+        $.ajax({
+            url: "{{url_for('wizlist.wizstart')}}",
+            type: "post",
+            data: { 'invite_code': invite_code, 'counts': counts },
+            success: function (text) {
+                mini.showTips({
+                    content: "<b>成功</b> <br/>" + text,
+                    state: "success",
+                    x: "center",
+                    y: "top",
+                    timeout: 3000
+                });
+
+            }
+        });
+    }
+
+    //////////////////////////////////////////////////////
+
+    function search() {
+        var key = mini.get("key").getValue();
+
+        grid.load({ key: key });
+    }
+
+    function onKeyEnter(e) {
+        search();
+    }
+
+    function addRow() {
+        var newRow = { name: "New Row" };
+        grid.addRow(newRow, 0);
+
+        grid.beginEditCell(newRow, "LoginName");
+    }
+    function removeRow() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+    function saveData() {
+
+        var data = grid.getChanges(null,true);
+        var json = mini.encode(data);
+
+        grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "{{url_for('wizlist.saveinvite')}}",
+            data: { data: json },
+            type: "post",
+            success: function (text) {
+                grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+
+
+    grid.on("celleditenter", function (e) {
+        var index = grid.indexOf(e.record);
+        if (index == grid.getData().length - 1) {
+            var row = {};
+            grid.addRow(row);
+        }
+    });
+</script>
+
+{% endblock %}

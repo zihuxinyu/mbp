@@ -3,14 +3,14 @@
 import  random
 import string
 
-def generate_code():
+def generate_code(length=4):
     """
     产生随机字数字字符
 
     :return:
     """
     passwd = []
-    while (len(passwd) < 4):
+    while (len(passwd) < length):
         passwd.append(random.choice(string.digits))
     return ''.join(passwd)
 
