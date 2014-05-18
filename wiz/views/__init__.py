@@ -12,6 +12,7 @@ from root import root
 from  wiz import lm
 from flask_login import current_user
 from pony.orm import *
+from wiz.models.portal import users
 
 app.register_blueprint(root)
 app.register_blueprint(wizlist, url_prefix='/wiz')
@@ -22,7 +23,6 @@ app.register_blueprint(proxylist, url_prefix='/proxy')
 @lm.user_loader
 @db_session
 def load_user(id):
-    from autodb.models.portal import  users
     return users(id)
 
 

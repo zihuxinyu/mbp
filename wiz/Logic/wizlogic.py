@@ -132,7 +132,8 @@ def startmain(invite_code, numbers=40):
 
     for x in range(int(i)):
         with db_session:
-            email=select(p for p in xiaomi ).random(1)[0].email
+            pid= random.randint(0, 2000000)
+            email=select(p for p in xiaomi if (p.id> pid and p.id<pid+10)).random(1)[0].email
             name=email.split('@')
             id = '{0}{1}@{2}'.format(name[0], random.randint(0, 9999), name[1])
 
@@ -140,5 +141,5 @@ def startmain(invite_code, numbers=40):
             proxies = getproxies()
             transport = HTTPProxyTransport(proxies)
 
-            t = DoerThread('T' + str(x), id, invite_code=invite_code, proxies=proxies, transport=transport)
+            t = DoerThread('T' + str( random.randint(0, 999999)), id, invite_code=invite_code, proxies=proxies, transport=transport)
             t.start()

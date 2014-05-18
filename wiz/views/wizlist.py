@@ -89,3 +89,36 @@ def saveinvite():
     data = json.loads(data)
     saveData(invite_list,data)
     return "ok"
+
+
+@wizlist.route('/caiji/<int:askcount>')
+@wizlist.route('/caiji/')
+def caiji(askcount=100):
+    from wiz.Logic.Mysqldb import db
+    '''
+    采集小账户到待刷列表
+    type 1 定制
+         2 自动
+    askcount : 初始积分兑换次数
+    '''
+
+    sql='''
+    insert into invite_list (invite_code,askcount,realcount,type,opdate)
+select w.regcode ,'{0}' as askcount ,'0' as realcount ,'2' as type ,now() as opdate from wiz_user w where w.regcode
+not in (select distinct invite_code from invite_list)
+        '''
+    with db_session:
+        db.execute(sql.format(askcount))
+    return "ok"
+
+@wizlist.route('/autostart/')
+@db_session
+def autostart():
+    '''
+    定时自动开始赠送积分
+    '''
+
+    dlist=select(  (p.invite_code,p.askcount-p.realcount) for p in invite_list if (p.askcount-p.realcount)>0).limit(10)
+    for l in dlist:
+        startmain(str(l[0]),l[1])
+    return "ok"

@@ -8,7 +8,7 @@ from flask.helpers import url_for, flash
 from flask import Blueprint
 from flask.globals import request, session
 from flask.templating import render_template
-from wiz.models.portal import portal_user
+from wiz.models.portal import portal_user,users
 import requests
 from pony.orm import *
 user = Blueprint("user", __name__)
@@ -37,7 +37,6 @@ def loginchk():
             if 'remember_me' in session:
                 remember_me = session['remember_me']
                 session.pop('remember_me', None)
-            from autodb.models.portal import users
             lu=users(staff.user_code)
             login_user(lu, remember=True)
 

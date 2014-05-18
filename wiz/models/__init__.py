@@ -13,5 +13,5 @@ import portal,wiz_user,invite_list,proxy_list,xiaomi
 
 
 #开启调试模式
-sql_debug(False)
+sql_debug(True)
 db.generate_mapping()
