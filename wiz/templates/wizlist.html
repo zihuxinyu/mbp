@@ -9,6 +9,11 @@
                     <a class="mini-button" iconCls="icon-remove" onclick="removeRow()" plain="true">删除</a>
                     <span class="separator"></span>
                     <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
+                    <span class="separator"></span>
+                    <input id="price" class="mini-textbox" emptyText="输入价格" style="width:50px;"
+                           />
+                    <a class="mini-button" iconCls="icon-save" onclick="wizsell()" plain="true">销售</a>
+
                 </td>
                 <td style="white-space:nowrap;">
                     <input id="key" class="mini-textbox" emptyText="请输入姓名" style="width:150px;" onenter="onKeyEnter"/>
@@ -136,7 +141,24 @@
     }
 
     //////////////////////////////////////////////////////
+    function wizsell(){
+        grid.loading("销售中，请稍后......");
+        var price = mini.get("price").getValue();
+        var rows = grid.getSelecteds();
+        var json = mini.encode(rows);
+         $.ajax({
+            url: "{{url_for('wizlist.sell')}}",
+            data: { data: json ,price:price},
+            type: "post",
+            success: function (text) {
+                grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
 
+    }
     function search() {
         var key = mini.get("key").getValue();
 

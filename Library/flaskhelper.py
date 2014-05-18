@@ -4,6 +4,16 @@ description:扩展flask常用功能
 Created by weibaohui on 14-5-14.
 
 '''
+
+import json
+
+def getargs2json(data):
+    '''
+    转换args为json
+    '''
+    return json.loads(getargs(data))
+
+
 def getargs(args,default=None,method=None):
 
     """
