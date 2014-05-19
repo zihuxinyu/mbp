@@ -79,13 +79,7 @@ def list(page=1):
 
     :return:
     """
-    with db_session:
-        data=select((p.invite_code,x.reguser) for p in invite_list for x in wiz_user if x.invite_code==p
-        .invite_code ).limit(10)
 
-        data = getGridData(total=1,data=data)
-
-        print(data)
     return render_template('wizlist.html')
 
 
