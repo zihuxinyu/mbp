@@ -23,11 +23,11 @@ def getGridData(entity=None, total=999, data=None):
     获得miniui显示需要的表格json
     '''
     if entity:
-        #是orm得单体entity
+        #single entity
         _columns_ = entity.__dict__['_columns_']
         data = [{x: getattr(row, x) for x in _columns_} for row in data]
     else:
-        #多表联合
+        #muiltpe table
         data = [Row(itertools.izip([x.split('.')[1] for x in data._col_names], row)) for row in data]
     data = {"total": total, 'data': data}
 

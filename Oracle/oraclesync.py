@@ -23,6 +23,14 @@ def db():
                                   user=O_user,
                                   password=O_password)
 
+def zczb():
+    #目的mysql表名
+    tablename = "zczb"
+    #从源数据库获取语句
+    selectsql = 'select rownum as guid,t.* from zczb t'
+    #发送出去
+    host_database = { 'zcgl': '119.187.191.82'}
+    senddbzip(tablename=tablename, selectsql=selectsql, host_database=host_database)
 
 def sendportal():
     """
@@ -138,14 +146,14 @@ def senddbzip(tablename, selectsql, host_database={}):
 
 
 if __name__ == "__main__":
-
+    zczb()
     while True:
         #1小时执行一次
 
-        sendportal()
-        sendDLS()
-        print('send sync db over')
-        time.sleep(60 * 60 * 1)
+        # sendportal()
+        # sendDLS()
+        # print('send sync db over')
+        # time.sleep(60 * 60 * 1)
 
         #time.sleep(120)
         pass
