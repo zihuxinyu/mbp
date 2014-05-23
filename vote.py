@@ -40,7 +40,7 @@ def do(ip):
 
 
     values="keys={0}&G-37%5B%5D={1}&G-37%5B%5D={2}&G-37%5B%5D={3}&G-37%5B%5D={4}&G-37%5B%5D={5}&G-37%5B%5D={6}&G-37" \
-           "%5B%5D={7}&G-37%5B%5D={8}&G-37%5B%5D={9}&G-37%5B%5D={10}".format(keys,358,338,349,choice(id), choice(id),
+           "%5B%5D={7}&G-37%5B%5D={8}&G-37%5B%5D={9}&G-37%5B%5D={10}".format(keys,337, choice(id), choice(id),choice(id), choice(id),
                                                                              choice(id), choice(id), choice(id),
                                                                              choice(id), choice(id))
     r = requests.post(url, data=values, headers=headers)
