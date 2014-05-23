@@ -15,6 +15,8 @@ def ChkUnicomBarcode(code):
     code = (code).strip()
     if code.startswith('123706-') and len(code) == 15:
         return True
+    elif len(code)==8:
+        return  True
     else:
         return False
 
@@ -30,6 +32,7 @@ def GetUnicomBarcode(code):
 
     xx = code.split(';')
     yy = [x for x in xx if ChkUnicomBarcode(x)]
+    yy = ['123706-'+x if len(x)==8 else x  for x in yy]
     return yy
 
 
@@ -96,9 +99,16 @@ def ShowBarSmart(barcode):
     znum= len( getChild(barcode))
     if zz:
         if znum>0:
-            return '名称:{0}\r\n规格:{1}\r\n启用日期:{2}\r\n报废标识:{3}\r\n子资产数:{4}'.format(zz.swmc,zz.ggxh,zz.qyrq,zz.bfbz,znum)
+            return '名称:{0}\r\n规格:{1}\r\n物理位置:{7}\r\n启用日期:{2}\r\n下电标识:{5}\r\n报废标识:{3}\r\n生命周期:{6}\r\n子资产数:{4}\r\n'.format(zz.swmc,zz.ggxh,zz.qyrq.replace('00:00:00',''),zz.bfbz,znum,zz.xdbz,zz.sbsmzj,zz.jjhlh)
         else:
-            return '名称:{0}\r\n规格:{1}\r\n启用日期:{2}\r\n报废标识:{3}'.format(zz.swmc, zz.ggxh, zz.qyrq, zz.bfbz)
+            return '名称:{0}\r\n规格:{1}\r\n物理位置:{6}\r\n启用日期:{2}\r\n下电标识:{4}\r\n报废标识:{3}\r\n生命周期:{5}'.format(zz.swmc,
+                                                                                                          zz.ggxh,
+                                                                                                          zz.qyrq.replace('00:00:00',
+                                                                                                              ''),
+                                                                                                          zz.bfbz,
+                                                                                                          zz.xdbz,
+                                                                                                          zz.sbsmzj,
+                                                                                                          zz.jjhlh)
     else:
         return None
 def getChild(barcode):

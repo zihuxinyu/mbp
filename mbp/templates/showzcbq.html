@@ -4,13 +4,41 @@
 {% block content %}
 
 
+<table class="table table-condensed table-hover table-bordered table-striped">
+<tr>
+    <td>资产标签号</td>
+    <td>{{entry.zcbqh}}</td>
+</tr>
 
-{%if barcodeinfo.ztbz %}
-<span class="label label-info">下电标识:{{barcodeinfo.ztbz}}</span>
-<span class="label label-success">报废标识:{{barcodeinfo.ztbz1}}</span>
-<span class="label label-warning">设备生命周期:{{barcodeinfo.ztbz2}}</span>
-<span class="label label-info">物理位置:{{barcodeinfo.wlwz}}</span>
-{%endif%}
+<tr>
+    <td>实物名称</td>
+    <td>{{entry.swmc}}</td>
+</tr>
+    <tr>
+        <td>机架行列号</td>
+        <td>{{entry.jjhlh}}</td>
+    </tr>
+<tr>
+    <td>规格型号</td>
+    <td>{{entry.ggxh}}</td>
+</tr>
+<tr>
+    <td>下电标识</td>
+    <td>{{entry.xdbz}}</td>
+</tr>
+<tr>
+    <td>报废标识</td>
+    <td>{{entry.bfbz}}</td>
+</tr>
+<tr>
+    <td>设备生命周期</td>
+    <td>{{entry.sbsmzj}}</td>
+</tr>
+<tr>
+    <td height="20px"></td>
+    <td></td>
+</tr>
+</table>
 
 {%if msgid%}
 
