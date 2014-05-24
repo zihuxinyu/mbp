@@ -11,7 +11,7 @@ sql_list = Blueprint("sql_list", __name__)
 
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 @db_session
-@login_required
+#@login_required
 def sqllistdata():
     from autodb.models.sqllist import sqllist
 
@@ -25,7 +25,7 @@ def sqllistdata():
 
 @sql_list.route('/sqlresult/', methods=['GET', 'POST'])
 @db_session
-@login_required
+#@login_required
 def sqlresult():
     '''
     获取sqlresult数据
@@ -45,7 +45,7 @@ def sqlresult():
 
 @sql_list.route('/sqllist/', methods=['GET', 'POST'])
 @sql_list.route('/sqllist/<int:page>', methods=['GET', 'POST'])
-@login_required
+#@login_required
 def sqllist(page=1):
     """
     sql列表

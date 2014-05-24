@@ -1,25 +1,172 @@
-<!-- extend base layout -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="jumbotron">
-    <div class="container">
-        {%if g.user%}
+<script src="{{ url_for('static', filename='miniui/core.js') }}" type="text/javascript"></script>
 
-        <div class="row">
+<style type="text/css">
+    html, body {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
 
-            欢迎您{{g.user.get_id()}}
-         </div>
-        {%else%}
-        <div class="row">
+    .header {
+        background: url(header.gif) repeat-x;
+    }
 
-           您尚未登录.<a
-                href="{{ url_for('user.login') }}">点此登录</a>
+    .header div {
+        font-family: 'Trebuchet MS', Arial, sans-serif;
+        font-size: 25px;
+        line-height: 60px;
+        padding-left: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+
+    .mini-layout-region-south img {
+        vertical-align: top;
+    }
+</style>
+
+
+
+
+<div class="mini-layout" style="width:100%;height:100%;">
+    <div title="north" region="north" class="header" bodyStyle="overflow:hidden;" height="60" showHeader="false"
+         showSplit="true">
+        <div>数据库任务系统</div>
+
+
+
+        <div style="position:absolute;right:12px;bottom:10px;font-size:12px;line-height:25px;font-weight:normal;">
+            <span style="color:Red;font-family:Tahoma">（推荐Blue）</span>选择皮肤：
+            <select id="selectSkin" onchange="onSkinChange(this.value)" style="width:100px;">
+                <option value="">Default</option>
+                <option value="blue">Blue</option>
+                <option value="gray">Gray</option>
+                <option value="olive2003">Olive2003</option>
+                <option value="blue2003">Blue2003</option>
+                <option value="blue2010">Blue2010</option>
+            </select>
         </div>
-        {%endif%}
-
     </div>
+    <div showHeader="false" region="south" style="border:0;text-align:center;" height="25" showSplit="false">
+        Copyright © 数据库自动任务
+    </div>
+    <div region="west" title="导航菜单" showHeader="true" bodyStyle="padding-left:1px;" showSplitIcon="true" width="230"
+         minWidth="100" maxWidth="350">
+        <!--OutlookTree-->
+        <div id="leftTree" class="mini-outlooktree" url="{{url_for('root.menutree')}}" onnodeclick="onNodeSelect"
+             textField="text" idField="id" parentField="pid"
+                >
+        </div>
+    </div>
+    <div title="center" region="center" style="border:0;">
+        <!--Tabs-->
+        <div id="mainTabs" class="mini-tabs" activeIndex="2" style="width:100%;height:100%;"
+             plain="false" contextMenu="#tabsMenu"
+             onactivechanged="onTabsActiveChanged"
+                >
+            <div title="首页" name="first">
+            </div>
+
+        </div>
+
+        <ul id="tabsMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
+            <li iconCls="icon-close" onclick="closeTab">关闭标签页</li>
+            <li iconCls="icon-split" onclick="closeAllBut">关闭其他标签页</li>
+            <li iconCls="icon-remove" onclick="closeAll">关闭所有标签页</li>
+            <li iconCls="icon-reload" onclick="reload">重新加载</li>
+            <li iconCls="icon-folderopen" onclick="openblank">新窗口打开</li>
+        </ul>
+    </div>
+
+
 </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    mini.parse();
+
+    var tree = mini.get("leftTree");
+
+    function showTab(node) {
+        var tabs = mini.get("mainTabs");
+
+        var id = "tab$" + node.id;
+        var tab = tabs.getTab(id);
+        if (!tab) {
+            tab = {};
+            tab._nodeid = node.id;
+            tab.name = id;
+            tab.title = node.text;
+            tab.showCloseButton = true;
+
+            tab.url = node.url;
+
+            tabs.addTab(tab);
+        }
+        tabs.activeTab(tab);
+    }
+
+    function onNodeSelect(e) {
+        var node = e.node;
+        var isLeaf = e.isLeaf;
+
+        if (isLeaf) {
+            showTab(node);
+        }
+    }
 
 
+
+
+    function onTabsActiveChanged(e) {
+        var tabs = e.sender;
+        var tab = tabs.getActiveTab();
+        if (tab && tab._nodeid) {
+
+            var node = tree.getNode(tab._nodeid);
+            if (node && !tree.isSelectedNode(node)) {
+                tree.selectNode(node);
+            }
+        }
+    }
+
+    var tabs = mini.get("mainTabs");
+    var currentTab = null;
+
+    function onBeforeOpen(e) {
+        currentTab = tabs.getTabByEvent(e.htmlEvent);
+        if (!currentTab) {
+            e.cancel = true;
+        }
+    }
+
+    ///////////////////////////
+    function closeTab() {
+        tabs.removeTab(currentTab);
+    }
+    function closeAllBut() {
+        tabs.removeAll(currentTab);
+    }
+    function closeAll() {
+        tabs.removeAll();
+    }
+    function reload()
+    {
+
+        tabs.reloadTab(currentTab);
+    }
+    function openblank()
+    {
+        window.open(currentTab.url, "_blank");
+
+    }
+</script>
 {% endblock %}
