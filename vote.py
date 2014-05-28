@@ -4,8 +4,7 @@ import random
 import time
 import re
 from random import choice
-
-
+import Image,ImageEnhance,ImageFile
 def do(ip):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Maxthon/4.1.0.1600 Chrome/26.0.1410.43 Safari/537.1",
@@ -44,7 +43,7 @@ def do(ip):
                                                                              choice(id), choice(id), choice(id),
                                                                              choice(id), choice(id))
     r = requests.post(url, data=values, headers=headers)
-    print( '谢谢您的参与' in  r.text)
+    print(  r.text)
 
 
 
@@ -58,5 +57,10 @@ if __name__ == "__main__":
            162, 216, 14, 74, 235, 2, 58, 173, 156, 201, 115, 121, 122, 179, 223, 133, 3, 98, 59, 110, 136, 102, 22, 93]
         ip = '{0}.{1}.{2}.{3}'.format(choice(ip1), choice(ip2), random.randint(0, 255), random.randint(0, 255))
         print(ip)
-        do(ip)
-        time.sleep(1)
+        #do(ip)
+        #time.sleep(1)
+        picurl='http://vote.dongyingnews.cn/api.php?action=captcha'
+        r=requests.get(picurl)
+        from PIL import Image
+        from StringIO import StringIO
+        im = Image.open(StringIO(r.content))

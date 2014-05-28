@@ -1,6 +1,8 @@
 # coding: utf-8
 import os
 import sys
+from pony.orm import *
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from Library.DB import torndb
@@ -46,6 +48,7 @@ def get():
 
 
 @asyncfun
+
 def execsql(guid=None, sqlContent=None, paras=None):
     #执行语句,记录错误
     errorMsglist = OracleExec(sqlContent=sqlContent,paras=paras)
@@ -106,6 +109,10 @@ def db():
 
     :return:
     """
+    # dsn = cx_Oracle.makedsn(O_host, O_port, O_database)
+    #
+    # db = Database('oracle', O_user, O_password, dsn)
+    #return db
     return tornoracle.Connection(host=O_host,
                                  port=O_port,
                                  database=O_database,
@@ -113,6 +120,7 @@ def db():
                                  password=O_password)
 
 
+@db_session
 def OracleExec(sqlContent=None, paras=None):
     """
     执行SQL语句,并将结果返回
