@@ -1,22 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+                    <a class="mini-button" iconCls="icon-add" onclick="addRow()" plain="true" tooltip="增加...">增加</a>
+                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow()" plain="true">删除</a>
+                    <span class="separator"></span>
+                    <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
+
+                </td>
+                <td style="white-space:nowrap;">
+                    <input id="key" class="mini-textbox" emptyText="请输入姓名" style="width:150px;" onenter="onKeyEnter"/>
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
 
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.sqllistdata',a=23)}}" idField="guid"     allowAlternating="true" selectOnLoad="true"    onselectionchanged="onSelectionChanged"
-        >
+     url="{{url_for('.sqllistdata',a=23)}}" idField="guid"
+     allowAlternating="true" selectOnLoad="true"
+     onselectionchanged="onSelectionChanged"
+     allowCellEdit="true" allowCellSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true"   >
     <div property="columns">
         <div type="indexcolumn"></div>
         <div type="checkcolumn"></div>
-        <div field="title"  headerAlign="center">标题</div>
+        <div field="title"  headerAlign="center">标题
+            <input property="editor" class="mini-textbox" style="width:100%;"/>
+        </div>
         <div field="sqlcontent" headerAlign="center">sql</div>
-        <div field="nextexec" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">下次执行</div>
+        <div field="nextexec" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">下次执行
+            <input property="editor"  class="mini-datepicker" showTime="true" style="width:100%;"/>
+        </div>
         <div field="lastexec" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">上次执行</div>
         <div field="frequency" headerAlign="center">频率</div>
     </div>
 </div>
 <br>
 
-    <div id="dataresult" class="mini-datagrid" allowResize="true"
+<div id="dataresult" class="mini-datagrid" allowResize="true"
          url="{{url_for('.sqlresult',a=23)}}" idField="guid" multiSelect="true" >
         <div property="columns">
             <div type="indexcolumn"></div>
@@ -41,7 +67,10 @@
     var grid = mini.get("datagrid1");
     grid.load();
     var dataresult=mini.get("dataresult")
+    function saveData() {
 
+         saveGrid(grid, "{{url_for('.save')}}")
+    }
     function onSelectionChanged(e) {
 
         var grid = e.sender;

@@ -1,10 +1,14 @@
 # coding: utf-8
+from Library import flaskhelper
 from Library.flaskhelper import getargs
-from Library.minihelper import getGridData
+from Library.minihelper import getGridData, saveData
+
 from flask import Blueprint
 from flask.ext.login import login_required
 from flask.templating import render_template
 from pony.orm import *
+
+
 
 sql_list = Blueprint("sql_list", __name__)
 
@@ -14,7 +18,6 @@ sql_list = Blueprint("sql_list", __name__)
 #@login_required
 def sqllistdata():
     from autodb.models.sqllist import sqllist
-
     pageIndex = int(getargs("pageIndex", 0))
     pageSize = int(getargs("pageSize", 0))
 
@@ -34,6 +37,7 @@ def sqlresult():
     pageIndex =int( getargs( "pageIndex", 0))
     pageSize =int( getargs( "pageSize", 0))
     sguid=getargs("sguid")
+
     from autodb.models.sqlresult import sqlresult
 
     total=select(count(p.guid) for p in sqlresult if p.sguid == sguid).first()
@@ -55,3 +59,13 @@ def sqllist(page=1):
     """
 
     return render_template('sqllist.html')
+
+
+@sql_list.route('/save/', methods=['GET', 'POST'])
+@db_session
+def save():
+    from autodb.models.sqllist import sqllist
+
+    data = flaskhelper.getargs2json("data")
+    saveData(sqllist, data)
+    return "ok"

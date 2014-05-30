@@ -40,5 +40,24 @@ function AddCSSLink(id, url, doc) {
     doc.documentElement.appendChild(link);
     }
 
+/***********grid op start***********/
 
+function saveGrid(grid,posturl) {
 
+    var data = grid.getChanges(null, true);
+    var json = mini.encode(data);
+
+    grid.loading("保存中，请稍后......");
+    $.ajax({
+        url: posturl,
+        data: { data: json },
+        type: "post",
+        success: function (text) {
+            grid.reload();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert(jqXHR.responseText);
+        }
+    });
+}
+/***********grid op end***********/
