@@ -22,14 +22,13 @@ def sqllistdata():
     from autodb.models.sqllist import sqllist
     from autodb.models.sqlresult import sqlresult
 
-    data= select((p.title,x.sguid,p.guid,p.nextexec,p.lastexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
 
 
-    #data = select( p for p in sqllist  if p.user_code== g.user.user_code)
+    data = select( p for p in sqllist  if p.user_code== g.user.user_code)
 
 
 
-    return getGridData( data=data)
+    return getGridData(entity=sqllist, data=data)
 
 
 @sql_list.route('/sqlresult/', methods=['GET', 'POST'])
@@ -47,8 +46,7 @@ def sqlresult():
 
 
     data=select(p for p in sqlresult if p.sguid==sguid )
-    total=select(count(p.guid) for p in sqlresult if p.sguid==sguid).first()
-    return getGridData(sqlresult,data=data,total=total)
+    return getGridData(sqlresult,data=data)
 
 
 

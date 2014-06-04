@@ -39,6 +39,15 @@ function AddCSSLink(id, url, doc) {
     else
     doc.documentElement.appendChild(link);
     }
+function alert(str){
+    mini.showTips({
+        content: "<b>"+str+"</b> " ,
+        state: "warning",
+        x: "center",
+        y: "top",
+        timeout: 1000
+    });
+}
 
 /***********grid op start***********/
 

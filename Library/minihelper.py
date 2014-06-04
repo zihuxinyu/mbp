@@ -20,15 +20,18 @@ class Row(dict):
             raise AttributeError(name)
 
 
-def getGridData(entity=None, total=None, data=None):
+def getGridData(entity=None, total=0, data=None):
     '''
     获得miniui显示需要的表格json,自动获取排序,分页信息
     多表联合查询时必须要把排序放在方法外实现
     entity单表时可以不指定total,方法自动count(*)计算
+    多表联合必须指定total,目前使用len(data)后就不能正确执行分页,不知道原因
+    e.g     data= select((p.title,x.sguid,p.guid,p.nextexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
+     total = select(count(
+        p.guid) for p in sqllist for x in sqlresult if p.guid == x.sguid).first()
     :param entity: pony实体
     :param total:总数
     :param data:数据集
-    data= select((p.title,x.sguid,p.guid,p.nextexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
     '''
     pageIndex = int(getargs("pageIndex", 0))
     pageSize = int(getargs("pageSize", 0))
@@ -59,20 +62,19 @@ def getGridData(entity=None, total=None, data=None):
 
         # 带排序字段,多表形式用order by 1,2 排序
         #此处必须使用深度copy copy.deepcopy(data),避免操作原对象
-        tmpdata= copy.deepcopy(data)
-        tmpdata.show()
+        #
         if sortField:
-            sortindex = [x.split('.')[1] for x in tmpdata._col_names].index(sortField)+1
+            sortindex = [x.split('.')[1] for x in  copy.deepcopy(data)._col_names].index(sortField)+1
             if str(sortOrder).lower() == "asc":
                 data = data.order_by(sortindex)
             else:
                 data = data.order_by(desc(sortindex))
+
         #带分页
         if pageIndex or pageSize:
             # 转换为QueryObject 获得_col_names
             data = data.limit(pageSize, pageSize * pageIndex)
 
-        total = len(tmpdata) if not total else total
         data = [Row(itertools.izip([x.split('.')[1] for x in data._col_names], row)) for row in data]
 
 

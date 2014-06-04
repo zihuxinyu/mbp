@@ -46,7 +46,8 @@
             选择皮肤：
             <select id="selectSkin" onchange="onSkinChange(this.value)" style="width:100px;">
 
-                <option value="blue" default>Blue</option>
+                <option value="" >default</option>
+                <option value="blue" >Blue</option>
                 <option value="gray">Gray</option>
                 <option value="olive2003">Olive2003</option>
                 <option value="blue2003">Blue2003</option>
@@ -70,11 +71,12 @@
         <div id="mainTabs" class="mini-tabs" activeIndex="2" style="width:100%;height:100%;"
              plain="false" contextMenu="#tabsMenu"
              onactivechanged="onTabsActiveChanged"
-                >
+            >
             <div title="首页" name="first">
             </div>
 
         </div>
+
 
         <ul id="tabsMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
             <li iconCls="icon-close" onclick="closeTab">关闭标签页</li>

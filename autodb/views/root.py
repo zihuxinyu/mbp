@@ -4,7 +4,7 @@
 '''
 from autodb import  cache
 from flask import Blueprint,session
-
+from flask_login import  login_required
 from flask.templating import render_template
 from pony.orm import *
 root = Blueprint("root", __name__)
@@ -13,6 +13,7 @@ root = Blueprint("root", __name__)
 @cache.memoize(10)
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
     return render_template("index.html")
 
