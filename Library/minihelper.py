@@ -2,6 +2,7 @@
 '''
 miniui相关用法
 '''
+import copy
 import json
 import itertools
 from Library.flaskhelper import getargs
@@ -19,7 +20,7 @@ class Row(dict):
             raise AttributeError(name)
 
 
-def getGridData(entity=None, total=0, data=None):
+def getGridData(entity=None, total=None, data=None):
     '''
     获得miniui显示需要的表格json,自动获取排序,分页信息
     多表联合查询时必须要把排序放在方法外实现
@@ -54,11 +55,24 @@ def getGridData(entity=None, total=0, data=None):
 
     else:
         #muiltpe table
+
+
+        # 带排序字段,多表形式用order by 1,2 排序
+        #此处必须使用深度copy copy.deepcopy(data),避免操作原对象
+        tmpdata= copy.deepcopy(data)
+        tmpdata.show()
+        if sortField:
+            sortindex = [x.split('.')[1] for x in tmpdata._col_names].index(sortField)+1
+            if str(sortOrder).lower() == "asc":
+                data = data.order_by(sortindex)
+            else:
+                data = data.order_by(desc(sortindex))
         #带分页
         if pageIndex or pageSize:
             # 转换为QueryObject 获得_col_names
             data = data.limit(pageSize, pageSize * pageIndex)
 
+        total = len(tmpdata) if not total else total
         data = [Row(itertools.izip([x.split('.')[1] for x in data._col_names], row)) for row in data]
 
 

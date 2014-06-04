@@ -1,4 +1,5 @@
 # coding: utf-8
+import copy
 from Library import flaskhelper
 from Library.flaskhelper import getargs
 from Library.minihelper import getGridData, saveData
@@ -21,13 +22,14 @@ def sqllistdata():
     from autodb.models.sqllist import sqllist
     from autodb.models.sqlresult import sqlresult
 
-    data= select((p.title,x.sguid,p.guid,p.nextexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
+    data= select((p.title,x.sguid,p.guid,p.nextexec,p.lastexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
+
 
     #data = select( p for p in sqllist  if p.user_code== g.user.user_code)
 
 
 
-    return getGridData( data=data,total=7)
+    return getGridData( data=data)
 
 
 @sql_list.route('/sqlresult/', methods=['GET', 'POST'])
