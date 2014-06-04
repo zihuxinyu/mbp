@@ -22,9 +22,12 @@ class Row(dict):
 def getGridData(entity=None, total=0, data=None):
     '''
     获得miniui显示需要的表格json,自动获取排序,分页信息
+    多表联合查询时必须要把排序放在方法外实现
+    entity单表时可以不指定total,方法自动count(*)计算
     :param entity: pony实体
     :param total:总数
     :param data:数据集
+    data= select((p.title,x.sguid,p.guid,p.nextexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
     '''
     pageIndex = int(getargs("pageIndex", 0))
     pageSize = int(getargs("pageSize", 0))
@@ -34,7 +37,7 @@ def getGridData(entity=None, total=0, data=None):
         #single entity
         #取主键count 性能更好,如果没有指定就count(*)
         total=data.count() if not total else total
-        
+
         #带排序字段
         if sortField:
             if str(sortOrder).lower() == "asc":
