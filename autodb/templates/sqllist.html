@@ -25,7 +25,7 @@
      allowAlternating="true" selectOnLoad="true"
      onselectionchanged="onSelectionChanged"
      allowCellEdit="true" allowCellSelect="true"
-     editNextOnEnterKey="true" editNextRowCell="true" sizeList="[2,3,4]"   >
+     editNextOnEnterKey="true" editNextRowCell="true" >
     <div property="columns">
         <div type="indexcolumn"></div>
         <div type="checkcolumn"></div>
@@ -42,7 +42,9 @@
                    style="width:100%;"/>
         </div>
         <div field="lastexec" allowSort="true" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">上次执行</div>
-        <div field="frequency" headerAlign="center">频率</div>
+        <div field="frequency" headerAlign="center">频率
+            <input property="editor" class="mini-textbox" style="width:100%;"/>
+        </div>
     </div>
 </div>
 <br>

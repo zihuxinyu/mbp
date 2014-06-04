@@ -15,6 +15,13 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    from autodb import  app
+    print([  x.split(' ') for x in   str(app.__dict__['url_map'])
+          .replace('Map([','').replace('])','')
+          .replace('<', '').replace('>', '')
+          .replace(',', '')
+          .split('\n')])
+
     return render_template("index.html")
 
 
