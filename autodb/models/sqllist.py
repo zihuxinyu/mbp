@@ -14,7 +14,7 @@ class sqllist(db.Entity):
 
     guid = PrimaryKey(int, auto=True)
     title = Optional(unicode)
-    sqlcontent = Optional(str)
+    sqlcontent = Optional(LongUnicode)
     paras = Optional(unicode)
     frequency = Optional(unicode)
     lastexec = Optional(datetime)

@@ -25,20 +25,23 @@
      allowAlternating="true" selectOnLoad="true"
      onselectionchanged="onSelectionChanged"
      allowCellEdit="true" allowCellSelect="true"
-     editNextOnEnterKey="true" editNextRowCell="true"   >
+     editNextOnEnterKey="true" editNextRowCell="true" sizeList="[2,3,4]"   >
     <div property="columns">
         <div type="indexcolumn"></div>
         <div type="checkcolumn"></div>
         <div field="title"  headerAlign="center">标题
             <input property="editor" class="mini-textbox" style="width:100%;"/>
         </div>
-        <div field="sqlcontent" headerAlign="center">sql
+        <div field="sqlcontent" allowSort="true" headerAlign="center">sql
         <input property="editor" class="mini-textarea" style="width:100%;height:100px;" minWidth="200" minHeight="100">
         </div>
-        <div field="nextexec" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">下次执行
-            <input property="editor"  class="mini-datepicker" data-date-format="yyyy-dd-mm HH:MM:ss" showTime="true" style="width:100%;"/>
+        <div field="nextexec" allowSort="true" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center" >下次执行
+            <input property="editor"  class="mini-datepicker"
+                   format="yyyy-MM-dd H:mm:ss" timeFormat="H:mm:ss" showTime="true" showOkButton="true"
+                   showClearButton="false"
+                   style="width:100%;"/>
         </div>
-        <div field="lastexec" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">上次执行</div>
+        <div field="lastexec" allowSort="true" dateFormat="yyyy-MM-dd HH:mm:ss" headerAlign="center">上次执行</div>
         <div field="frequency" headerAlign="center">频率</div>
     </div>
 </div>

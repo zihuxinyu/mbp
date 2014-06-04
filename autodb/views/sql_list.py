@@ -20,9 +20,20 @@ def sqllistdata():
     from autodb.models.sqllist import sqllist
     pageIndex = int(getargs("pageIndex", 0))
     pageSize = int(getargs("pageSize", 0))
+    sortField=getargs('sortField')
+    sortOrder = getargs('sortOrder')
+
+
+    data = select(p for p in sqllist)
+    if sortField:
+        if str(sortOrder).lower()=="asc":
+            data=data.order_by(getattr(sqllist, sortField))
+        else:
+            data=data.order_by(desc(getattr(sqllist, sortField)))
+
+    data=data.limit(pageSize, pageSize * pageIndex)
 
     total = select(count(p.guid) for p in sqllist).first()
-    data = select(p for p in sqllist).limit(pageSize, pageSize * pageIndex)
     return getGridData(sqllist, total, data)
 
 
