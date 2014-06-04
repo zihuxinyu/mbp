@@ -3,7 +3,7 @@ from Library import flaskhelper
 from Library.flaskhelper import getargs
 from Library.minihelper import getGridData, saveData
 
-from flask import Blueprint
+from flask import Blueprint,g
 from flask.ext.login import login_required
 from flask.templating import render_template
 from pony.orm import *
@@ -15,53 +15,45 @@ sql_list = Blueprint("sql_list", __name__)
 
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 @db_session
-#@login_required
+@login_required
 def sqllistdata():
+
     from autodb.models.sqllist import sqllist
-    pageIndex = int(getargs("pageIndex", 0))
-    pageSize = int(getargs("pageSize", 0))
-    sortField=getargs('sortField')
-    sortOrder = getargs('sortOrder')
+    from autodb.models.sqlresult import sqlresult
+
+    data= select((p.title,x.sguid,p.guid,p.nextexec) for p in sqllist for x in sqlresult if  p.guid==x.sguid)
+
+    #data = select( p for p in sqllist  if p.user_code== g.user.user_code)
 
 
-    data = select(p for p in sqllist)
-    if sortField:
-        if str(sortOrder).lower()=="asc":
-            data=data.order_by(getattr(sqllist, sortField))
-        else:
-            data=data.order_by(desc(getattr(sqllist, sortField)))
 
-    data=data.limit(pageSize, pageSize * pageIndex)
-
-    total = select(count(p.guid) for p in sqllist).first()
-    return getGridData(sqllist, total, data)
+    return getGridData( data=data,total=7)
 
 
 @sql_list.route('/sqlresult/', methods=['GET', 'POST'])
 @db_session
-#@login_required
+@login_required
 def sqlresult():
     '''
     获取sqlresult数据
     '''
 
-    pageIndex =int( getargs( "pageIndex", 0))
-    pageSize =int( getargs( "pageSize", 0))
+
     sguid=getargs("sguid")
 
     from autodb.models.sqlresult import sqlresult
 
-    total=select(count(p.guid) for p in sqlresult if p.sguid == sguid).first()
 
-    data=select('p for p in sqlresult if p.sguid==sguid ' ).order_by(desc(sqlresult.opdate)).limit(pageSize,pageSize*pageIndex)
-    return getGridData(sqlresult,total,data)
+    data=select(p for p in sqlresult if p.sguid==sguid )
+    total=select(count(p.guid) for p in sqlresult if p.sguid==sguid).first()
+    return getGridData(sqlresult,data=data,total=total)
 
 
 
 
 @sql_list.route('/sqllist/', methods=['GET', 'POST'])
 @sql_list.route('/sqllist/<int:page>', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def sqllist(page=1):
     """
     sql列表
@@ -74,6 +66,7 @@ def sqllist(page=1):
 
 @sql_list.route('/save/', methods=['GET', 'POST'])
 @db_session
+@login_required
 def save():
     from autodb.models.sqllist import sqllist
 

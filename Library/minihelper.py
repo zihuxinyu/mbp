@@ -4,7 +4,8 @@ miniui相关用法
 '''
 import json
 import itertools
-
+from Library.flaskhelper import getargs
+from pony.orm import *
 from Library.jsonhelper import CJsonEncoder
 
 
@@ -18,22 +19,69 @@ class Row(dict):
             raise AttributeError(name)
 
 
-def getGridData(entity=None, total=999, data=None):
+def getGridData(entity=None, total=0, data=None):
     '''
-    获得miniui显示需要的表格json
+    获得miniui显示需要的表格json,自动获取排序,分页信息
+    :param entity: pony实体
+    :param total:总数
+    :param data:数据集
     '''
+    pageIndex = int(getargs("pageIndex", 0))
+    pageSize = int(getargs("pageSize", 0))
+    sortField = getargs('sortField')
+    sortOrder = getargs('sortOrder')
     if entity:
         #single entity
+        #取主键count 性能更好,如果没有指定就count(*)
+        total=data.count() if not total else total
+        
+        #带排序字段
+        if sortField:
+            if str(sortOrder).lower() == "asc":
+                data = data.order_by(getattr(entity, sortField))
+            else:
+                data = data.order_by(desc(getattr(entity, sortField)))
+        #带分页
+        if pageIndex or pageSize:
+            data = data.limit(pageSize, pageSize * pageIndex)
+
         _columns_ = entity.__dict__['_columns_']
         data = [{x: getattr(row, x) for x in _columns_} for row in data]
+
+
     else:
         #muiltpe table
-        data = [Row(itertools.izip([x.split('.')[1] for x in data._col_names], row)) for row in data]
-    data = {"total": total, 'data': data}
+        #带分页
+        if pageIndex or pageSize:
+            # 转换为QueryObject 获得_col_names
+            data = data.limit(pageSize, pageSize * pageIndex)
 
+        data = [Row(itertools.izip([x.split('.')[1] for x in data._col_names], row)) for row in data]
+
+
+    data = {"total": total, 'data': data}
     return json.dumps(data, cls=CJsonEncoder)
 
 
+def getGridDataOnly(entity=None, total=999, data=None):
+    '''
+    只对传入的Data进行组装,适合自行控制分页,排序的情况,多表情况必须先执行data.limit(n),转换为queryobject
+    :param entity: pony实体
+    :param total:总数
+    :param data:数据集
+    '''
+    if entity:
+        # single entity
+        _columns_ = entity.__dict__['_columns_']
+        data = [{x: getattr(row, x) for x in _columns_} for row in data]
+
+    else:
+        # muiltpe table
+        data = [Row(itertools.izip([x.split('.')[1] for x in data._col_names], row)) for row in data]
+
+    data = {"total": total, 'data': data}
+
+    return json.dumps(data, cls=CJsonEncoder)
 
 def saveData(entity, data):
     '''
