@@ -8,6 +8,7 @@ import itertools
 from Library.flaskhelper import getargs
 from pony.orm import *
 from Library.jsonhelper import CJsonEncoder
+from Library.datehelper import now
 
 
 class Row(dict):
@@ -102,7 +103,7 @@ def getGridDataOnly(entity=None, total=999, data=None):
 
     return json.dumps(data, cls=CJsonEncoder)
 
-def saveData(entity, data):
+def saveData(entity, data, operator =None):
     '''
     保存json格式的数据,_state:表明CURD状态
     '''
@@ -113,10 +114,30 @@ def saveData(entity, data):
         if d._state == 'modified':  #修改
             guid = {c: d[c] for c in _pk_columns_}
             changed = {c: d[c] for c in _columns_ if c in d and c not in _pk_columns_}
+            autoformat(entity,changed,operator,d._state)
             entity.get(**guid).set(**changed)
         elif d._state == 'added':
             changed = {c: d[c] for c in _columns_ if c in d and c not in _pk_columns_}
+            autoformat(entity, changed, operator, d._state)
             entity(**changed)
         elif d._state == 'removed':
             guid = {c: d[c] for c in _pk_columns_}
             entity.get(**guid).delete()
+
+def autoformat(entity,changes, operator,_state):
+    """
+    为模型自动添加创建人创建时间修改人修改时间等属性
+    :param changes:
+    """
+    columns_ = entity.__dict__['_columns_']
+    if _state == 'modified':  #修改
+        if "modifierid" in columns_:
+            changes["modifierid"]= operator
+        if "modifydate" in columns_:
+            changes["modifydate"]=now()
+    elif _state == 'added':#创建
+        if "creatorid" in columns_:
+            changes["creatorid"] = operator
+        if "createdate" in columns_:
+            changes["createdate"] = now()
+

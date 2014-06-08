@@ -7,6 +7,8 @@ from flask import Blueprint,session
 from flask_login import  login_required
 from flask.templating import render_template
 from pony.orm import *
+
+from autodb.Logic.PermissionLogic import Loglevel,log
 root = Blueprint("root", __name__)
 
 
@@ -14,18 +16,17 @@ root = Blueprint("root", __name__)
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
 @login_required
+@db_session
+@log
 def index():
     from autodb import  app
-    print([  x.split(' ') for x in   str(app.__dict__['url_map'])
-          .replace('Map([','').replace('])','')
-          .replace('<', '').replace('>', '')
-          .replace(',', '')
-          .split('\n')])
 
+    from autodb.models.EXT_DPT_USR import EXT_DPT_USR
     return render_template("index.html")
 
-
+@log
 @root.route('/cs/<tablename>')
+
 def cs(tablename):
     """
     输入表名,生成MODEL

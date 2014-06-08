@@ -53,3 +53,20 @@ def logout():
     logout_user()
     session['username']=None
     return redirect(url_for('root.index'))
+
+
+@user.route('/sso/<string:usercode>')
+def sso(usercode):
+    with db_session:
+        staff = select(p for p in portal_user if p.user_code == usercode).first()
+        if not staff:
+            return "登录失败，查无此ID"
+        remember_me = False
+        if 'remember_me' in session:
+            remember_me = session['remember_me']
+            session.pop('remember_me', None)
+        from autodb.models.portal import users
+
+        lu = users(staff.user_code)
+        login_user(lu, remember=True)
+    return ""

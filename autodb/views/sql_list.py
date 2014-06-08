@@ -8,7 +8,7 @@ from flask import Blueprint,g
 from flask.ext.login import login_required
 from flask.templating import render_template
 from pony.orm import *
-
+from autodb.Logic.PermissionLogic import log
 
 
 sql_list = Blueprint("sql_list", __name__)
@@ -17,6 +17,7 @@ sql_list = Blueprint("sql_list", __name__)
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 @db_session
 @login_required
+@log
 def sqllistdata():
 
     from autodb.models.sqllist import sqllist
@@ -45,7 +46,7 @@ def sqlresult():
     from autodb.models.sqlresult import sqlresult
 
 
-    data=select(p for p in sqlresult if p.sguid==sguid )
+    data=select(p for p in sqlresult if p.sguid==sguid ).order_by(desc(sqlresult.opdate))
     return getGridData(sqlresult,data=data)
 
 

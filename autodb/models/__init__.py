@@ -6,12 +6,13 @@ Created by weibaohui on 14-5-14.
 '''
 from pony.orm import sql_debug
 from autodb.Logic.Mysqldb import db
-
+from autodb.Logic.Oracledb import db as odb
 #注册model
 
-import portal, sqllist, sqlresult
+import portal, sqllist, sqlresult,EXT_DPT_USR
 
 
 #开启调试模式
 sql_debug(False)
 db.generate_mapping()
+odb.generate_mapping()
