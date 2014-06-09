@@ -89,3 +89,27 @@ def menutree():
     '''
 
     return s
+
+
+@root.route('/shouru')
+@db_session
+def shouru():
+    from autodb.models.GUWANG import TMP_SHOURU_GUWANG as gw
+    from autodb.Logic.ponyLogic import  db
+    tmp="insert into   EXT_CHART_GW_MXSR t (ZHANGQI,AREA_NAME,DATATYPE,SHOURU ) values ('{0}','{1}','{2}','{3}' ) ";
+
+    data=select(p for p in gw)
+    for d in data:
+        if d.sjly:
+            datas = select(x for x in gw if x.sjly == d.sjly)
+            for ds in datas:
+                for y in ["kfq","dyq","sb","sn"]:
+                    x=tmp.format("201405",y,d.sjly,str(getattr(ds,y)).replace("None","0"))
+                    print(x)
+                    db.execute(x)
+
+
+
+
+
+    return  ""

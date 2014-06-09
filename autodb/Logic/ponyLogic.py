@@ -47,6 +47,6 @@ def EXT_SMSLOGManager():
     ##print(ss)
 
 
-EXT_SMSLOGManager();
+#EXT_SMSLOGManager();
 
 
