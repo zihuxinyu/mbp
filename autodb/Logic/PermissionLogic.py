@@ -34,7 +34,7 @@ def log(fun):
         print(getRouters()[pname])
         #for x in dir(fun):
         #    print(x,getattr(fun,x))
-        if  len(pname)<3:
+        if  1:
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
             return retVal
