@@ -46,7 +46,7 @@ def sqlresult():
     from autodb.models.sqlresult import sqlresult
 
 
-    data=select(p for p in sqlresult if p.sguid==sguid ).order_by(desc(sqlresult.opdate))
+    data=select(p for p in sqlresult if p.sguid==sguid ).order_by(desc(sqlresult.guid))
     return getGridData(sqlresult,data=data)
 
 
