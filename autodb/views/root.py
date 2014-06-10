@@ -94,17 +94,26 @@ def menutree():
 @root.route('/shouru')
 @db_session
 def shouru():
+    """
+    固网收入格式整理，导入TMP_SHOURU_GUWANG
+
+    :return:
+    """
     from autodb.models.GUWANG import TMP_SHOURU_GUWANG as gw
     from autodb.Logic.ponyLogic import  db
     tmp="insert into   EXT_CHART_GW_MXSR t (ZHANGQI,AREA_NAME,DATATYPE,SHOURU ) values ('{0}','{1}','{2}','{3}' ) ";
+    xf={"KFQ": "开发区", "DYQ": "东营区", "GR": "广饶县", "KL": "垦利县", "LJ": "利津县", "HKQ": "河口区", "SZ": "胜中分公司", "SN": "胜南分公司",
+        "SB": "胜北分公司", "SD": "胜东分公司", "XH": "仙河分公司", "BZ": "胜利滨州分公司", "CL": "纯梁分公司", "GD": "孤岛分公司", "SLHK": "胜利河口分公司", "LP": "临盘分公司",
+        "XYFWZX": "校园服务中心", "JKYB": "集客客户一部", "JKEB": "集客客户二部", "DCQD": "东城渠道服务中心", "XCQD": "西城渠道服务中心", "SBB": "东营市分公司"}
 
+    db.execute("delete from EXT_CHART_GW_MXSR t where t.zhangqi='201405'")
     data=select(p for p in gw)
     for d in data:
         if d.sjly:
             datas = select(x for x in gw if x.sjly == d.sjly)
             for ds in datas:
-                for y in ["kfq","dyq","sb","sn"]:
-                    x=tmp.format("201405",y,d.sjly,str(getattr(ds,y)).replace("None","0"))
+                for y in xf:
+                    x=tmp.format("201405",str(xf[y]),d.sjly,str(getattr(ds,str(y).lower())).replace("None","0"))
                     print(x)
                     db.execute(x)
 
