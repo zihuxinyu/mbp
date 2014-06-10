@@ -17,6 +17,8 @@ class EXT_CHART_GW_MXSR(db.Entity):
     SHOURU=Optional(unicode)
 
 class TMP_SHOURU_GUWANG(db.Entity):
+    orders = Optional(unicode)
+
     sjly = Optional(unicode)
     kfq = Optional(Decimal)
     dyq = Optional(Decimal)
