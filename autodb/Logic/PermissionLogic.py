@@ -10,7 +10,7 @@ from autodb import app, cache
 from pony.orm import *
 from autodb.models.portal import group_module as gm
 from autodb.models.portal import modulelist
-
+from autodb.models.OracleUser import EXT_USER_GROUP
 
 
 
@@ -21,11 +21,8 @@ def log(fun):
         print 'before.' + str(args)
 
         pname = "{0}.{1}".format(fun.__module__, fun.__name__).replace("autodb.views.", "")
-        # print(pname)
-        # print(getRouters()[pname])
-        print(g.user.user_code,g.user.get_groupdid())
-        print(pname,checkRights(pname, 2))
-        if checkRights(pname, 1):
+
+        if checkRights(pname):
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
             return retVal
@@ -34,9 +31,11 @@ def log(fun):
 
     return wrapped
 
-@cache.memoize()
-@db_session
-def checkRights(modulename, groupid):
+
+
+
+
+def checkRights(modulename):
     """
     检查用户角色是否有模块访问权限
     :param module:
@@ -46,15 +45,42 @@ def checkRights(modulename, groupid):
     moduleid = getModuleidByname(modulename)
     if moduleid:
         #存在此模块权限定义
-        data = gm.get(moduleid=moduleid, groupid=groupid)
-        if data:
-            #存在此模块与角色对应赋权
-            return True
-        else:
-            return False
+        groupid=getGroupidByUsercode(g.user.get_id())
+        return getRelation(groupid, moduleid)
     else:
         #不存在此模块权限定义
         return False
+
+
+@cache.memoize()
+@db_session
+def getRelation(groupid, moduleid):
+    """
+    通过角色id，模块ID查找对应关系
+    有此ID角色可以访问此ID模块，没有说明未授权
+    :param groupid:
+    :param moduleid:
+    :return:
+    """
+    data = select(p for p in gm if p.moduleid == moduleid and p.groupid in groupid)
+    if data:
+        # 存在此模块与角色对应赋权，可以做进一步的功能控制，或者切入按钮级的控制
+        return True
+    else:
+        return False
+
+@cache.memoize()
+@db_session
+def getGroupidByUsercode(user_code):
+    """
+    通过User_code获取角色ID
+    :param user_code:
+    :return:
+    """
+    data=select(p for p in EXT_USER_GROUP if p.user_code==user_code)
+
+
+    return  [d.groupid for d in data] if data else False
 
 
 @db_session

@@ -27,6 +27,7 @@ class users():
     def get_id(self):
         return unicode(self.user_code)
     def get_groupdid(self):
+
         return "ddsdfdsfdsfa"
 
 

@@ -9,7 +9,7 @@ from autodb.Logic.Mysqldb import db
 from autodb.Logic.Oracledb import db as odb
 #注册model
 
-import portal, sqllist, sqlresult,EXT_DPT_USR,GUWANG
+import portal, sqllist, sqlresult,OracleUser,GUWANG
 
 
 #开启调试模式
