@@ -14,6 +14,7 @@ from autodb.Logic.PermissionLogic import log
 sql_list = Blueprint("sql_list", __name__)
 
 
+
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 @db_session
 @login_required
@@ -55,6 +56,7 @@ def sqlresult():
 @sql_list.route('/sqllist/', methods=['GET', 'POST'])
 @sql_list.route('/sqllist/<int:page>', methods=['GET', 'POST'])
 @login_required
+@log
 def sqllist(page=1):
     """
     sql列表

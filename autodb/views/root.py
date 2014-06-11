@@ -8,7 +8,7 @@ from flask_login import  login_required
 from flask.templating import render_template
 from pony.orm import *
 
-from autodb.Logic.PermissionLogic import Loglevel,log
+from autodb.Logic.PermissionLogic import log
 root = Blueprint("root", __name__)
 
 
@@ -17,11 +17,7 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @login_required
 @db_session
-@log
 def index():
-    from autodb import  app
-
-    from autodb.models.EXT_DPT_USR import EXT_DPT_USR
     return render_template("index.html")
 
 @log
@@ -34,15 +30,15 @@ def cs(tablename):
     :return:
     """
     from autodb.config import DB_DATEBASE
-    from autodb import  db
+
     sql = "SELECT `COLUMN_NAME`,`DATA_TYPE`,`EXTRA`,`COLUMN_COMMENT` FROM information_schema.columns WHERE table_schema='{0}' AND " \
           "table_name='{1}'".format(DB_DATEBASE, tablename)
-    cur = db.engine.execute(sql)
-    entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1], EXTRA=row[2], COLUMN_COMMENT=row[3]) for row in
-               cur.fetchall()]
+    # cur = db.engine.execute(sql)
+    # entries = [dict(COLUMN_NAME=row[0], DATA_TYPE=row[1], EXTRA=row[2], COLUMN_COMMENT=row[3]) for row in
+    #            cur.fetchall()]
 
-    return render_template('cs.html', list=entries, tablename=tablename)
-
+    # return render_template('cs.html', list=entries, tablename=tablename)
+    #return ok
 @cache.memoize(10)
 @root.route('/daohang')
 def daohang():
@@ -91,6 +87,10 @@ def menutree():
     return s
 
 
+
+
+
+
 @root.route('/shouru')
 @db_session
 def shouru():
@@ -124,3 +124,24 @@ def shouru():
 
 
     return  ""
+
+
+@root.route('/regmenu')
+@db_session
+def regmenu():
+    """
+    自动注册所有菜单
+
+    :return:
+    """
+    from autodb.Logic.PermissionLogic import getRouters
+    from autodb.models.portal import modulelist
+    rus=getRouters()
+    for x in rus:
+        single=modulelist.get(module=x)
+        if single:
+            modulelist.get(module=x).set( url=rus[x])
+        else:
+            modulelist(module=x, url=rus[x])
+    return ""
+

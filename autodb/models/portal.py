@@ -1,18 +1,19 @@
 # coding: utf-8
 '''
-description:云门户用户
+description:用户信息、角色信息、权限信息、模块信息
 Created by weibaohui on 14-5-14.
 
 '''
 from autodb.Logic.Mysqldb import db
-from pony.orm import PrimaryKey, Optional
+from pony.orm import *
 from datetime import datetime
 
 
 class users():
-    user_code=None;
+    user_code=None
     def __init__(self,user_code):
         self.user_code=user_code
+
 
     def is_authenticated(self):
         return True
@@ -25,7 +26,8 @@ class users():
 
     def get_id(self):
         return unicode(self.user_code)
-
+    def get_groupdid(self):
+        return "ddsdfdsfdsfa"
 
 
 class portal_user(db.Entity):
@@ -39,4 +41,27 @@ class portal_user(db.Entity):
     msg = Optional(unicode)
     msgexpdate = Optional(datetime,default=datetime.now())
 
+class modulelist(db.Entity):
+    '''
+    模块列表，包含访问url信息,模块描述信息
+    '''
+    guid=PrimaryKey(int,auto=True)
+    url=Optional(LongUnicode)
+    module=Optional(unicode)
+    modifierid=Optional(unicode)
+    modifydate=Optional(datetime,default=datetime.now())
+    creatorid=Optional(unicode)
+    createdate=Optional(datetime, default=datetime.now())
 
+
+class group_module(db.Entity):
+    '''
+    用户角色、模块对应关系表
+    '''
+    guid = PrimaryKey(int, auto=True)
+    groupid = Required(int)
+    moduleid = Required(int)
+    modifierid = Optional(unicode)
+    modifydate = Optional(datetime, default=datetime.now())
+    creatorid = Optional(unicode)
+    createdate = Optional(datetime, default=datetime.now())
