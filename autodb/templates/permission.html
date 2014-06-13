@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+                    <a class="mini-button" iconCls="icon-add" onclick="addRow()" plain="true" tooltip="增加...">增加</a>
+                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow()" plain="true">删除</a>
+                    <span class="separator"></span>
+                    <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
+
+                </td>
+                <td style="white-space:nowrap;">
+                    <input id="key" class="mini-textbox" emptyText="请输入关键字" style="width:150px;" onenter="onKeyEnter"/>
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="datagrid1" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.get',getdata=1)}}" idField="guid"
+     allowAlternating="true" selectOnLoad="true"
+
+     allowCellEdit="true" allowCellSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true" >
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div type="checkcolumn"></div>
+        <div field="title" headerAlign="center">标题
+            <input property="editor" class="mini-textbox" style="width:100%;"/>
+        </div>
+
+    </div>
+</div>
+<br>
+
+
+
+
+<script type="text/javascript">
+    mini.parse();
+
+    var grid = mini.get("datagrid1");
+    grid.load();
+
+    function saveData() {
+
+         saveGrid(grid, "{{url_for('.save')}}")
+    }
+
+
+</script>
+
+{% endblock %}

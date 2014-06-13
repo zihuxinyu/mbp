@@ -13,8 +13,6 @@ from autodb.models.portal import modulelist
 from autodb.models.OracleUser import EXT_USER_GROUP
 
 
-
-
 def log(fun):
     @functools.wraps(fun)
     def wrapped(*args, **kws):
@@ -33,8 +31,6 @@ def log(fun):
 
 
 
-
-
 def checkRights(modulename):
     """
     检查用户角色是否有模块访问权限
@@ -48,8 +44,8 @@ def checkRights(modulename):
         groupid=getGroupidByUsercode(g.user.get_id())
         return getRelation(groupid, moduleid)
     else:
-        #不存在此模块权限定义
-        return False
+        #不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
+        return True
 
 
 @cache.memoize()

@@ -5,16 +5,19 @@
 '''
 from autodb import app
 from flask import g, render_template
+from permission import permission
 from sql_list import sql_list
 from  login import user
 from root import root
 from  autodb import lm
 from flask_login import current_user
+from autodb.models.portal import users
 
 from autodb import  cache
 app.register_blueprint(root)
 app.register_blueprint(sql_list, url_prefix='/sql')
 app.register_blueprint(user, url_prefix='/user')
+app.register_blueprint(permission, url_prefix='/p')
 from pony.orm import *
 
 
@@ -22,7 +25,6 @@ from pony.orm import *
 @db_session
 @cache.memoize()
 def load_user(id):
-    from autodb.models.portal import  users
     return users(id)
 
 
