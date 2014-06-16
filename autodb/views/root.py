@@ -8,7 +8,7 @@ from flask_login import  login_required
 from flask.templating import render_template
 from pony.orm import *
 
-from autodb.Logic.PermissionLogic import log
+from autodb.Logic.PermissionLogic import power
 root = Blueprint("root", __name__)
 
 
@@ -17,9 +17,11 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @db_session
 def index():
+
+
     return render_template("index.html")
 
-@log
+
 @root.route('/cs/<tablename>')
 
 def cs(tablename):

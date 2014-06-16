@@ -8,7 +8,7 @@ from flask import Blueprint,g
 from flask.ext.login import login_required
 from flask.templating import render_template
 from pony.orm import *
-from autodb.Logic.PermissionLogic import log
+from autodb.Logic.PermissionLogic import power
 
 
 sql_list = Blueprint("sql_list", __name__)
@@ -18,7 +18,7 @@ sql_list = Blueprint("sql_list", __name__)
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 @db_session
 @login_required
-@log
+@power
 def sqllistdata():
 
     from autodb.models.sqllist import sqllist
@@ -56,7 +56,7 @@ def sqlresult():
 @sql_list.route('/sqllist/', methods=['GET', 'POST'])
 @sql_list.route('/sqllist/<int:page>', methods=['GET', 'POST'])
 @login_required
-@log
+@power
 def sqllist(page=1):
     """
     sql列表

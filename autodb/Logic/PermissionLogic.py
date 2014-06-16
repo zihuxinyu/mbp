@@ -13,7 +13,7 @@ from autodb.models.portal import modulelist
 from autodb.models.OracleUser import EXT_USER_GROUP
 
 
-def log(fun):
+def power(fun):
     @functools.wraps(fun)
     def wrapped(*args, **kws):
         print 'before.' + str(args)
@@ -25,7 +25,7 @@ def log(fun):
             print 'after. ' + str(args)
             return retVal
         else:
-            return "No permission"
+            return "No permission"+g.user.get_id()
 
     return wrapped
 
@@ -48,12 +48,12 @@ def checkRights(modulename):
         return True
 
 
-@cache.memoize()
 @db_session
 def getRelation(groupid, moduleid):
     """
     通过角色id，模块ID查找对应关系
     有此ID角色可以访问此ID模块，没有说明未授权
+    写入modulelist中得都会进行权限认证，没有写进去的不会被控制
     :param groupid:
     :param moduleid:
     :return:
@@ -65,7 +65,6 @@ def getRelation(groupid, moduleid):
     else:
         return False
 
-@cache.memoize()
 @db_session
 def getGroupidByUsercode(user_code):
     """
@@ -80,7 +79,6 @@ def getGroupidByUsercode(user_code):
 
 
 @db_session
-@cache.memoize()
 def getModuleidByname(modulename):
     """
     通过模块名称获取模块ID
