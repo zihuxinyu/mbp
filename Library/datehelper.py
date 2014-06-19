@@ -24,6 +24,7 @@ def getOffsetDate(days=0):
     """
     now = datetime.now()
     aday = timedelta(days=days)
+
     return now + aday
 
 
@@ -148,3 +149,9 @@ print '时间:%s' % (converStrToDateTime('2009-04-30 23:59:59'))
 #9.获得本月有多少天
 print getTheMonthDays(curdate.year,curdate.month)
 """
+
+if __name__=='__main__':
+    d=int(converDateTimeToStr(getOffsetDate(), format='%d'))
+    y= converDateTimeToStr(getOffsetDate(-d), format='%y%m')
+    print(y)
+    print( getLastMonth()[2:6]    )

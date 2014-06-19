@@ -12,13 +12,11 @@ from autodb.Logic.PermissionLogic import power
 root = Blueprint("root", __name__)
 
 
-@cache.memoize(10)
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
 @db_session
 def index():
-
-
+    return "dfdsafdsfds"
     return render_template("index.html")
 
 

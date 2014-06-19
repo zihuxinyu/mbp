@@ -3,6 +3,7 @@ import copy
 from Library import flaskhelper
 from Library.flaskhelper import getargs
 from Library.minihelper import getGridData, saveData
+from autodb import cache
 
 from flask import Blueprint,g
 from flask.ext.login import login_required
@@ -18,7 +19,7 @@ sql_list = Blueprint("sql_list", __name__)
 @sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
 @db_session
 @login_required
-@power
+@cache.memoize(2)
 def sqllistdata():
 
     from autodb.models.sqllist import sqllist
@@ -36,6 +37,7 @@ def sqllistdata():
 @sql_list.route('/sqlresult/', methods=['GET', 'POST'])
 @db_session
 @login_required
+@cache.memoize(2)
 def sqlresult():
     '''
     获取sqlresult数据

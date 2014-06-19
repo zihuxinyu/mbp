@@ -217,7 +217,12 @@ paras = "corn=33,defx='sdsdsds'"
     sql = sql.replace('$yyyyMM$', converDateTimeToStr(getOffsetDate(), format='%Y%m'))
     sql = sql.replace('$yyyy-MM$', converDateTimeToStr(getOffsetDate(), format='%Y-%m'))
     sql = sql.replace('$yy-MM$', converDateTimeToStr(getOffsetDate(), format='%y-%m'))
-    sql = sql.replace('$yyMM-1$', getLastMonth()[2:6])
+    sql = sql.replace('$yyyy$', converDateTimeToStr(getOffsetDate(), format='%Y'))
+
+    days = int(converDateTimeToStr(getOffsetDate(), format='%d'))
+
+    sql = sql.replace('$yyMM-1$', converDateTimeToStr(getOffsetDate(-days), format='%y%m'))
+    sql = sql.replace('$yyyyMM-1$', converDateTimeToStr(getOffsetDate(-days), format='%Y%m'))
     print(sql)
     return sql
 
