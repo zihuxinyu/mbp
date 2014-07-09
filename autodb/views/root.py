@@ -16,7 +16,7 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @db_session
 def index():
-    return "dfdsafdsfds"
+
     return render_template("index.html")
 
 
@@ -100,7 +100,7 @@ def shouru():
     """
     from autodb.models.GUWANG import TMP_SHOURU_GUWANG as gw
     from autodb.Logic.ponyLogic import  db
-    zhangqi='201405'
+    zhangqi='201406'
     tmp="insert into   EXT_CHART_GW_MXSR t (ZHANGQI,AREA_NAME,DATATYPE,SHOURU ,orders) values ('{0}','{1}','{2}','{3}','{4}' ) ";
     xf={"KFQ": "开发区", "DYQ": "东营区", "GR": "广饶县", "KL": "垦利县", "LJ": "利津县", "HKQ": "河口区", "SZ": "胜中分公司", "SN": "胜南分公司",
         "SB": "胜北分公司", "SD": "胜东分公司", "XH": "仙河分公司", "BZ": "胜利滨州分公司", "CL": "纯梁分公司", "GD": "孤岛分公司", "SLHK": "胜利河口分公司", "LP": "临盘分公司",
@@ -122,7 +122,7 @@ def shouru():
 
 
 
-    return  ""
+    return  "ok"
 
 
 @root.route('/regmenu')
