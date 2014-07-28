@@ -76,5 +76,8 @@ def save():
     from autodb.models.sqllist import sqllist
 
     data = flaskhelper.getargs2json("data")
+    uinfo={"test":"testcontent","test1":"test1content"}
+    data[0].update(uinfo)
+    print(data,type(data[0]))
     saveData(sqllist, data)
     return "ok"
