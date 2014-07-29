@@ -23,6 +23,7 @@ class sqllist(db.Entity):
     nextexec = Optional(datetime)
     user_code = Optional(unicode)
     opdate = Optional(datetime, default=datetime.now())
-    #modifierid=Optional(unicode)
-    #modifydate=Optional(datetime,default=datetime.now())
+    m33 = Optional(unicode)
+    modifierid = Optional(unicode)
+    modifydate=Optional(datetime,default=datetime.now())
 

@@ -107,6 +107,7 @@ def saveData(entity, data, operator =None):
     '''
     保存json格式的数据,_state:表明CURD状态
     '''
+
     for d in data:
         d = Row(d)
         _columns_ = entity.__dict__['_columns_']

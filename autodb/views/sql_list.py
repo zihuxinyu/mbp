@@ -22,6 +22,8 @@ sql_list = Blueprint("sql_list", __name__)
 @cache.memoize(2)
 def sqllistdata():
 
+    print(g.user.user_code)
+
     from autodb.models.sqllist import sqllist
     from autodb.models.sqlresult import sqlresult
 
@@ -76,8 +78,10 @@ def save():
     from autodb.models.sqllist import sqllist
 
     data = flaskhelper.getargs2json("data")
-    uinfo={"test":"testcontent","test1":"test1content"}
-    data[0].update(uinfo)
-    print(data,type(data[0]))
-    saveData(sqllist, data)
+
+    uinfo={"m33":"343434","test1":"test1content"}
+    if data :
+        data[0].update(uinfo)
+
+    saveData(sqllist, data,operator=g.user.user_code)
     return "ok"
