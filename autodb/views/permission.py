@@ -12,6 +12,7 @@ from flask.templating import render_template
 from Library.flaskhelper import getargs
 from Library.minihelper import getGridData
 from pony.orm import *
+from sqlalchemy import update, delete
 
 permission = Blueprint("permission", __name__)
 
@@ -28,17 +29,21 @@ def reg():
     from autodb.models.portal import modulelist
 
     rus = geturlmap()
-
+    data = select(p for p in modulelist)
+    for d in data:
+        modulelist.get(module=d.module).set(state="no")
     for x in rus:
         print(type(rus[x]['doc']))
         doc = rus[x]['doc'].decode("utf8").split(':return:')[0] if rus[x]['doc'] else ""
         url = ';'.join(rus[x]['rule'])
         single = modulelist.get(module=x)
         if single:
-            modulelist.get(module=x).set(url=url, doc=doc)
+            modulelist.get(module=x).set(url=url, doc=doc, state='ok')
         else:
-            modulelist(module=x, url=url, doc=doc)
-
+            modulelist(module=x, url=url, doc=doc, state='ok')
+    data = select(p for p in modulelist if p.state == "no")
+    for d in data:
+        modulelist.get(module=d.module).delete()
     return "注册完成"
 
 

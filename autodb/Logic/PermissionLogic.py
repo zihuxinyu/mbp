@@ -96,7 +96,11 @@ def getModuleidByname(modulename):
 
 @cache.memoize(10)
 def geturlmap():
-    '''return a dict'''
+    '''
+    获取路由表
+    :return:dict
+    '''
+
     per = {}
     for i in app.url_map._rules:
 
