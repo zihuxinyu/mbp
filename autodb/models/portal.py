@@ -48,7 +48,7 @@ class modulelist(db.Entity):
     '''
     guid=PrimaryKey(int,auto=True)
     url=Optional(LongUnicode)
-    module=Optional(unicode)
+    modulename=Optional(unicode)
     doc= Optional(unicode)
     state=Optional(unicode,default='ok')
     modifierid=Optional(unicode)
@@ -63,7 +63,7 @@ class group_module(db.Entity):
     '''
     guid = PrimaryKey(int, auto=True)
     groupid = Required(int)
-    moduleid = Required(int)
+    modulename = Required(unicode)
     modifierid = Optional(unicode)
     modifydate = Optional(datetime, default=datetime.now())
     creatorid = Optional(unicode)

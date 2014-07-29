@@ -3,24 +3,18 @@
 
 
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.modulelist',getdata=1)}}" idField="guid"
+     url="{{url_for('.index',getdata=1)}}" idField="guid"
      allowAlternating="true" selectOnLoad="true"
+     showColumnsMenu="true"
      onselectionchanged="onSelectionChanged"
      allowCellEdit="true" allowCellSelect="true"
      editNextOnEnterKey="true" editNextRowCell="true">
     <div property="columns">
         <div type="indexcolumn"></div>
-        <div field="guid" headerAlign="center">moduleid</div>
-        <div field="state" headerAlign="center">状态</div>
-        <div field="url" headerAlign="center">访问路径
+        <div field="modulename" headerAlign="center">模块名称</div>
 
-        </div>
-        <div field="module" headerAlign="center">模块名称
-
-        </div>
-        <div field="doc" headerAlign="center">描述
-
-        </div>
+        <div field="url" headerAlign="center">访问路径</div>
+        <div field="doc" headerAlign="center">描述</div>
     </div>
 </div>
 <br>
@@ -42,12 +36,20 @@
     </div>
 </div>
 <div id="datagm" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.group_module',getdata=1)}}" idField="guid" multiSelect="true">
+     url="{{url_for('.group_module',getdata=1)}}" idField="guid"
+     allowCellEdit="true" allowCellSelect="true" multiSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true"
+        >
     <div property="columns">
         <div type="indexcolumn"></div>
         <div type="checkcolumn"></div>
-        <div field="moduleid" headerAlign="center">moduleid</div>
-        <div field="groupid" headerAlign="center">groupid</div>
+        <div field="modulename" headerAlign="center">modulename
+            <input property="editor" class="mini-textbox" width="100%"/>
+
+        </div>
+        <div field="groupid" headerAlign="center">groupid
+            <input property="editor" class="mini-textbox" />
+        </div>
 
     </div>
 </div>
@@ -61,17 +63,23 @@
     var datagm = mini.get("datagm")
     function saveData() {
 
-        saveGrid(grid, "{{url_for('.save_g_m')}}")
+        saveGrid(datagm, "{{url_for('.save_g_m')}}")
     }
     function onSelectionChanged(e) {
 
         var grid = e.sender;
         var record = grid.getSelected();
         if (record) {
-            datagm.load({ mguid: record.guid });
+            datagm.load({ modulename: record.modulename });
         }
     }
-
+    function addRow(htmlguidid) {
+        alert('its me');
+        var htmlguid = mini.get(htmlguidid);
+        var newRow = { modulename: grid.getSelected().modulename};
+        htmlguid.addRow(newRow, 0);
+        htmlguid.beginEditCell({}, 0);
+    }
 </script>
 
 {% endblock %}

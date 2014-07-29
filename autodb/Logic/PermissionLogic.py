@@ -19,13 +19,13 @@ def power(fun):
         print 'before.' + str(args)
 
         pname = "{0}.{1}".format(fun.__module__, fun.__name__).replace("autodb.views.", "")
-        print( fun.__module__+fun.__name__,'modulename')
+        #print( fun.__module__+fun.__name__,'modulename')
         if checkRights(pname):
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
             return retVal
         else:
-            return "No permission"+g.user.get_id()
+            return g.user.get_id()+ "没有权限访问此功能"
 
     return wrapped
 
@@ -44,14 +44,14 @@ def checkRights(modulename):
         #存在此模块权限定义
         groupid=getGroupidByUsercode(g.user.get_id())
         #print(groupid,"groupid")
-        return getRelation(groupid, moduleid)
+        return getRelation(groupid, modulename)
     else:
         #不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
         return True
 
 
 @db_session
-def getRelation(groupid, moduleid):
+def getRelation(groupid, modulename):
     """
     通过角色id，模块ID查找对应关系
     有此ID角色可以访问此ID模块，没有说明未授权
@@ -60,7 +60,7 @@ def getRelation(groupid, moduleid):
     :param moduleid:
     :return:
     """
-    data = select(p for p in gm if p.moduleid == moduleid and p.groupid in groupid)
+    data = select(p for p in gm if p.modulename == modulename and p.groupid in groupid)
     if data:
         # 存在此模块与角色对应赋权，可以做进一步的功能控制，或者切入按钮级的控制
         return True
@@ -87,7 +87,7 @@ def getModuleidByname(modulename):
     :param modulename:
     """
 
-    data= modulelist.get(module=modulename)
+    data= modulelist.get(modulename=modulename)
     if data:
         return data.guid
     else:

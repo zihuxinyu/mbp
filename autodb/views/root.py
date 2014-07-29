@@ -57,7 +57,7 @@ def menutree():
 
 	{ id: "right", text: "权限管理"},
 
-	{id: "modulegroup", text: "角色模块对应关系",  pid: "right" ,url:'/p/modulelist'},
+	{id: "modulegroup", text: "角色模块对应关系",  pid: "right" ,url:'/p/index'},
 	{id: "regmenu", text: "自动注册模块",  pid: "right" ,url:'/p/reg'},
 
 
