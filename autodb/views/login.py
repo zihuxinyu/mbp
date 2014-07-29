@@ -5,7 +5,7 @@
 from flask_login import logout_user, login_user
 from werkzeug.utils import redirect
 from flask.helpers import url_for, flash
-from flask import Blueprint
+from flask import Blueprint,g
 from flask.globals import request, session
 from flask.templating import render_template
 from autodb.models.portal import portal_user
@@ -31,6 +31,7 @@ def loginchk():
     r = requests.get(url.format(usercode, pwd))
     if r.text:
 
+
         with db_session:
             staff = select(p for p in portal_user if p.user_code == usercode).first()
             if not staff:
@@ -41,9 +42,11 @@ def loginchk():
                 remember_me = session['remember_me']
                 session.pop('remember_me', None)
             from autodb.models.portal import users
-            lu=users(staff.user_code)
-            login_user(lu, remember=True)
+            lu=users(staff.user_code,)
 
+            login_user(lu, remember=True)
+            print(lu.groupid)
+            g.user=lu
             return "登录成功"
     return "登录失败"
 

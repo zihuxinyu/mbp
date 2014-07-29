@@ -1,5 +1,4 @@
 # coding: utf-8
-# coding: utf-8
 '''
 文件作用:注册route,注册全局方法
 '''
@@ -31,6 +30,7 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
+
 
 
 @app.errorhandler(404)

@@ -11,6 +11,7 @@ from datetime import datetime
 
 class users():
     user_code=None
+    groupid=None
     def __init__(self,user_code):
         self.user_code=user_code
 
@@ -26,9 +27,8 @@ class users():
 
     def get_id(self):
         return unicode(self.user_code)
-    def get_groupdid(self):
 
-        return "ddsdfdsfdsfa"
+
 
 
 class portal_user(db.Entity):
@@ -49,6 +49,8 @@ class modulelist(db.Entity):
     guid=PrimaryKey(int,auto=True)
     url=Optional(LongUnicode)
     module=Optional(unicode)
+    doc= Optional(unicode)
+    state=Optional(unicode,default='ok')
     modifierid=Optional(unicode)
     modifydate=Optional(datetime,default=datetime.now())
     creatorid=Optional(unicode)

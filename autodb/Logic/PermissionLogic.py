@@ -19,7 +19,7 @@ def power(fun):
         print 'before.' + str(args)
 
         pname = "{0}.{1}".format(fun.__module__, fun.__name__).replace("autodb.views.", "")
-
+        print( fun.__module__+fun.__name__,'modulename')
         if checkRights(pname):
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
@@ -39,9 +39,11 @@ def checkRights(modulename):
     """
 
     moduleid = getModuleidByname(modulename)
+    #print(moduleid, "moduleid")
     if moduleid:
         #存在此模块权限定义
         groupid=getGroupidByUsercode(g.user.get_id())
+        #print(groupid,"groupid")
         return getRelation(groupid, moduleid)
     else:
         #不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
@@ -92,24 +94,19 @@ def getModuleidByname(modulename):
         return False
 
 
-
 @cache.memoize(10)
-def getRouters():
-    """
-    获取当前app注册的所有route信息，得到具体的route对应module关系
+def geturlmap():
+    '''return a dict'''
+    per = {}
+    for i in app.url_map._rules:
 
-    :return:
-    """
-    list = [x.split('->') for x in str(app.__dict__['url_map'])
-        .replace('Map([', '').replace('])', '')
-        .replace('<Rule', '')
-        .replace(',', '').replace("'", '').replace("  ", "")
-        .replace("HEAD", "").replace("POST", "").replace("OPTIONS", "").replace("GET", "")
-        .replace(',', '').replace("'", '').replace("  ", "")
-        .replace("()", "")
-        .replace("( )", "")
-        .strip(' ')
-        .split('\n')]
+        if (not i.endpoint.find('static') > -1) and (not i.endpoint.startswith('admin')):
+            if per.get(i.endpoint):
 
-    routers = {x[1].rstrip('>').strip(' '): x[0].strip(' ') for x in list}
-    return routers
+                per[i.endpoint]['rule'].append(i.rule)
+            else:
+                per[i.endpoint] = {}
+                per[i.endpoint]['doc'] = app.view_functions[i.endpoint].__doc__
+                per[i.endpoint]['rule'] = [i.rule]
+    return per
+

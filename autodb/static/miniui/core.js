@@ -51,6 +51,18 @@ function alert(str){
 
 /***********grid op start***********/
 
+function addRow(htmlguidid) {
+    var grid = mini.get(htmlguidid);
+    grid.addRow({}, 0);
+    grid.beginEditCell({}, 0);
+}
+function removeRow(htmlguidid) {
+    var grid = mini.get(htmlguidid);
+    var rows = grid.getSelecteds();
+    if (rows.length > 0) {
+        grid.removeRows(rows, true);
+    }
+}
 function saveGrid(grid,posturl) {
 
     var data = grid.getChanges(null, true);
