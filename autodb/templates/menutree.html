@@ -8,11 +8,12 @@
 <input type="button" value="保存" onclick="saveData()" style="margin-left:30px;font-weight:bold;"/>
 <br/>
 <input type="button" value="编辑节点" onclick="onEditNode()"/>
-<input type="button" value="编辑节点(弹出面板)" onclick="onEditNode2()"/>
 <input type="button" value="删除节点" onclick="onRemoveNode()"/>
 <ul id="tree1" class="mini-tree" url="{{url_for('permission.getMenu')}}" style="width:200px;padding:5px;"
-    showTreeIcon="true" textField="text" idField="id" parentField="pid" resultAsTree="false"
+    showTreeIcon="true" textField="text" idField="id"
+    parentField="pid" resultAsTree="false"
     allowDrag="true" allowDrop="true"
+    onnodeselect="onNodeSelect"
         >
 </ul>
 
@@ -21,16 +22,19 @@
 
         <tr>
             <td>
-                <label>任务名称：</label>
+                <label>模块：</label>
             </td>
             <td>
-                <input id="textbox1" name="modulename" class="mini-textbox" />
+                <input id="textbox1" name="modulename" class="mini-textbox"/>
             </td>
             <td>
-                <label>大小：</label>
+                <label>url：</label>
             </td>
             <td>
-                <input id="text1" name="url" class="mini-textbox" />
+                <input id="text1" name="url" class="mini-textbox"/>
+            </td>
+            <td>
+                <input id="txb2" name="pid" class="mini-textbox"/>
             </td>
         </tr>
     </table>
@@ -39,7 +43,7 @@
 
 
 <script type="text/javascript">
-
+    mini.parse();
 
     function onAddBefore(e) {
         var tree = mini.get("tree1");
@@ -68,24 +72,21 @@
 
         tree.beginEdit(node);
     }
-    function onEditNode2(e) {
-        var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
-
+    function onNodeSelect(e) {
         var form = new mini.Form("form1");
 
-        form.setData(node);
-//        mini.open({
-//            url: bootPATH + "../demo/tree/taskPanel/taskPanel.html",
-//            title: "任务面板", width: 500, height: 300,
-//            onload: function () {
-//                var iframe = this.getIFrameEl();
-//                iframe.contentWindow.SetData(node);
-//            }
-//        })
+        var node = e.node;
+        var isLeaf = e.isLeaf;
 
+        if (isLeaf) {
 
+            form.setData(node);
+        }
+        else{
+            form.reset();
+        }
     }
+
     function onRemoveNode(e) {
 
         var tree = mini.get("tree1");
@@ -110,7 +111,7 @@
 
         var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
         $.ajax({
-            url: "{{url_for('permission.getMenu')}}",
+            url: "{{url_for('permission.savemenu')}}",
             data: { data: json },
             type: "post",
             success: function (text) {
@@ -123,16 +124,15 @@
     }
 
 
-
-
     function CloseWindow() {
         var form = new mini.Form("form1");
 
         var tree = mini.get("tree1");
         var options = form.getData();
         var node = tree.getSelectedNode();
-        alert(options.url)
-        node.upDateNode(options);
+        options = mini.clone(options);
+        tree.updateNode(node, options);
+
 
     }
 </script>

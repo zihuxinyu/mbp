@@ -103,7 +103,7 @@ def getMenu():
     :return:
     '''
 
-    if isGetMethod():
+    if isGetMethod() and getargs("getpage"):
         return render_template("menutree.html")
 
     from autodb.models.portal import menutree
@@ -128,3 +128,31 @@ def getMenu():
         '''
 
     return s
+
+
+@permission.route('/savemenu', methods=['GET', 'POST'])
+@db_session
+@login_required
+def savemenu():
+    '''
+    保存菜单
+    :return:
+    '''
+
+    from autodb.models.portal import menutree
+
+    data = flaskhelper.getargs2json("data")
+    print(data)
+    for d in data:
+
+        print(d)
+        if "_state" in d:
+            print("111111111")
+            saveData(menutree, d,operator='weibh')
+
+        if d["children"]:
+            print(d["children"])
+            if "_state" in d:
+                print("2222222")
+                saveData(menutree,d["children"], operator = 'weibh')
+    return "ok"
