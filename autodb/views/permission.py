@@ -5,10 +5,11 @@
 from Library import flaskhelper
 from Library.minihelper import saveData
 from flask_login import login_required
-from flask import Blueprint,g
+from flask import Blueprint, g
 from flask.templating import render_template
-from Library.flaskhelper import getargs
-from Library.minihelper import getGridData
+from Library.flaskhelper import getargs,isGetMethod
+from Library.minihelper import getGridData,getTreeData
+
 from pony.orm import *
 
 from autodb.Logic.PermissionLogic import geturlmap
@@ -26,15 +27,14 @@ def reg():
 
     from autodb.models.portal import modulelist
 
-    #将现有module设置为不可用
+    # 将现有module设置为不可用
     data = select(p for p in modulelist)
     for d in data:
         modulelist.get(modulename=d.modulename).set(state="no")
     #重新获取现有路由，并注册
     rus = geturlmap()
     for x in rus:
-        print(type(rus[x]['doc']))
-        doc = rus[x]['doc'].decode("utf8").split(':return:')[0] if rus[x]['doc'] else ""
+        doc = rus[x]['doc'].decode("utf8").split('\n')[1] if rus[x]['doc'] else ""
         url = ';'.join(rus[x]['rule'])
         single = modulelist.get(modulename=x)
         if single:
@@ -56,12 +56,12 @@ def group_module():
     :return:
     '''
     modulename = getargs("modulename")
-    getdata=getargs("getdata",method='GET')
-    if not getdata:
+    if isGetMethod():
         return render_template("permission.html")
     from autodb.models.portal import group_module as gm
-    data=select(p for p in gm if p.modulename== modulename)
-    return getGridData(entity=gm,data=data)
+
+    data = select(p for p in gm if p.modulename == modulename)
+    return getGridData(entity=gm, data=data)
 
 
 @permission.route('/index', methods=['GET', 'POST'])
@@ -73,14 +73,14 @@ def index():
     '''
     from autodb.models.portal import modulelist
 
-    getdata = getargs("getdata", method='GET')
-    if not getdata:
+    if isGetMethod():
         return render_template("permission.html")
 
     data = select(p for p in modulelist).order_by(modulelist.modulename)
     return getGridData(entity=modulelist, data=data)
 
-@permission.route('/save/', methods=['GET', 'POST'])
+
+@permission.route('/save', methods=['GET', 'POST'])
 @db_session
 @login_required
 def save_g_m():
@@ -91,5 +91,40 @@ def save_g_m():
     from autodb.models.portal import group_module
 
     data = flaskhelper.getargs2json("data")
-    saveData(group_module, data,operator=g.user.user_code)
+    saveData(group_module, data, operator=g.user.user_code)
     return "ok"
+
+
+@permission.route('/getMenu', methods=['GET', 'POST'])
+@db_session
+def getMenu():
+    '''
+    获取菜单列表
+    :return:
+    '''
+
+    if isGetMethod():
+        return render_template("menutree.html")
+
+    from autodb.models.portal import menutree
+    data=select(p for p in menutree if p.modulename in ["","sql_list.sqllist"])
+
+    return getTreeData(entity=menutree,data=data)
+    s = '''
+        [
+    	{id: "lists", text: "自动任务管理",pid:""},
+
+    	{id: "sqllist", text: "任务列表", pid: "lists" ,url:'/sql/sqllist'},
+
+
+
+    	{ id: "right", text: "权限管理"},
+
+    	{id: "modulegroup", text: "角色模块对应关系",  pid: "right" ,url:'/p/index'},
+    	{id: "regmenu", text: "自动注册模块",  pid: "right" ,url:'/p/reg'},
+
+
+    ]
+        '''
+
+    return s

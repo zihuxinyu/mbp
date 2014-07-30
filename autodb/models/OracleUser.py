@@ -4,9 +4,10 @@ description:
 Created by weibaohui on 14-6-8.
 此为Oracle 数据库中信息，只读
 '''
+import uuid
 from autodb.Logic.Oracledb import db
 from pony.orm import *
-
+from datetime import datetime
 class EXT_DPT_USR(db.Entity):
     user_code = PrimaryKey(unicode)
     user_name = Required(unicode)
@@ -25,3 +26,6 @@ class EXT_USER_GROUP(db.Entity):
     user_code=Required(unicode)
     user_name = Required(unicode)
     groupid=Required(unicode)
+
+
+

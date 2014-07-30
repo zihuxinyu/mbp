@@ -61,7 +61,7 @@
     <div region="west" title="导航菜单" showHeader="true" bodyStyle="padding-left:1px;" showSplitIcon="true" width="230"
          minWidth="100" maxWidth="350">
         <!--OutlookTree-->
-        <div id="leftTree" class="mini-outlooktree" url="{{url_for('root.menutree')}}" onnodeclick="onNodeSelect"
+        <div id="leftTree" class="mini-outlooktree" url="{{url_for('permission.getMenu')}}" onnodeclick="onNodeSelect"
              textField="text" idField="id" parentField="pid"
                 >
         </div>

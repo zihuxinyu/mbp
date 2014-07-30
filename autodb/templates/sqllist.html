@@ -21,7 +21,7 @@
 </div>
 
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.sqllistdata',a=23)}}" idField="guid"
+     url="{{url_for('.sqllistdata')}}" idField="guid"
      allowAlternating="true" selectOnLoad="true"
      onselectionchanged="onSelectionChanged"
      allowCellEdit="true" allowCellSelect="true"
@@ -32,7 +32,9 @@
         <div field="title" headerAlign="center">标题
             <input property="editor" class="mini-textbox" style="width:100%;"/>
         </div>
-        <div field="state" headerAlign="center">
+        <div field="state" headerAlign="center">状态
+            <input property="editor" class="mini-textbox" style="width:100%;"/>
+
         </div>
         <div field="sqlcontent" allowSort="true" headerAlign="center">sql
         <input property="editor" class="mini-textarea" style="width:100%;height:100px;" minWidth="200" minHeight="100">
@@ -52,7 +54,7 @@
 <br>
 
 <div id="dataresult" class="mini-datagrid" allowResize="true"
-         url="{{url_for('.sqlresult',a=23)}}" idField="guid" multiSelect="true" >
+         url="{{url_for('.sqlresult')}}" idField="guid" multiSelect="true" >
         <div property="columns">
             <div type="indexcolumn"></div>
             <div type="checkcolumn"></div>

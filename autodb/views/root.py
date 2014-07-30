@@ -15,7 +15,6 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    print(g.user.get_id())
     return render_template("index.html")
 
 
@@ -45,26 +44,7 @@ def daohang():
     return render_template("daohang.html")
 
 
-@root.route('/menutree')
-def menutree():
-    s = '''
-    [
-	{id: "lists", text: "自动任务管理"},
 
-	{id: "sqllist", text: "任务列表", pid: "lists" ,url:'/sql/sqllist/'},
-
-
-
-	{ id: "right", text: "权限管理"},
-
-	{id: "modulegroup", text: "角色模块对应关系",  pid: "right" ,url:'/p/index'},
-	{id: "regmenu", text: "自动注册模块",  pid: "right" ,url:'/p/reg'},
-
-
-]
-    '''
-
-    return s
 
 
 @root.route('/shouru')

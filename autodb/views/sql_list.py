@@ -13,7 +13,7 @@ from autodb.Logic.PermissionLogic import power
 sql_list = Blueprint("sql_list", __name__)
 
 
-@sql_list.route('/sqllistdata/', methods=['GET', 'POST'])
+@sql_list.route('/sqllistdata', methods=['GET', 'POST'])
 @db_session
 @login_required
 @cache.memoize(2)
@@ -26,7 +26,7 @@ def sqllistdata():
     return getGridData(entity=sqllist, data=data)
 
 
-@sql_list.route('/sqlresult/', methods=['GET', 'POST'])
+@sql_list.route('/sqlresult', methods=['GET', 'POST'])
 @db_session
 @login_required
 @cache.memoize(2)
@@ -43,11 +43,10 @@ def sqlresult():
     return getGridData(sqlresult, data=data)
 
 
-@sql_list.route('/sqllist/', methods=['GET', 'POST'])
-@sql_list.route('/sqllist/<int:page>', methods=['GET', 'POST'])
+@sql_list.route('/sqllist', methods=['GET', 'POST'])
 @login_required
 @power
-def sqllist(page=1):
+def sqllist():
     """
     sql列表
 

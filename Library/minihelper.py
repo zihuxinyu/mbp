@@ -142,3 +142,18 @@ def autoformat(entity,changes, operator,_state):
         if "createdate" in columns_:
             changes["createdate"] = now()
 
+
+def getTreeData(entity=None, data=None):
+    '''
+    获取miniui Tree控件可用的数据
+    :param entity:
+    :param data:
+    :return:
+    '''
+
+    _columns_ = entity.__dict__['_columns_']
+    data = [{x: getattr(row, x) for x in _columns_} for row in data]
+
+
+
+    return json.dumps(data, cls=CJsonEncoder)

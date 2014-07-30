@@ -31,3 +31,10 @@ def getargs(args,default=None,method=None):
     else:
         return request.args.get(args) if request.args.get(args) else default
 
+def isGetMethod():
+    '''
+    获取http method
+    :return:POST GET等
+    '''
+    from flask import request
+    return request.method=="GET"

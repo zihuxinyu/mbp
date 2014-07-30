@@ -68,3 +68,18 @@ class group_module(db.Entity):
     modifydate = Optional(datetime, default=datetime.now())
     creatorid = Optional(unicode)
     createdate = Optional(datetime, default=datetime.now())
+
+
+class menutree(db.Entity):
+    '''
+    菜单与模块、权限关系
+    '''
+    id = PrimaryKey(int, auto=True)
+    pid = Optional(unicode)
+    modulename = Optional(unicode)
+    url = Optional(unicode)
+    text = Optional(unicode)
+    modifierid = Optional(unicode)
+    modifydate = Optional(datetime, default=datetime.now())
+    creatorid = Optional(unicode)
+    createdate = Optional(datetime, default=datetime.now())

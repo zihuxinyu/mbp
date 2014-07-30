@@ -3,7 +3,7 @@
 
 
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.index',getdata=1)}}" idField="guid"
+     url="{{url_for('.index')}}" idField="guid"
      allowAlternating="true" selectOnLoad="true"
      showColumnsMenu="true"
      onselectionchanged="onSelectionChanged"
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div id="datagm" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.group_module',getdata=1)}}" idField="guid"
+     url="{{url_for('.group_module')}}" idField="guid"
      allowCellEdit="true" allowCellSelect="true" multiSelect="true"
      editNextOnEnterKey="true" editNextRowCell="true"
         >
