@@ -107,27 +107,11 @@ def getMenu():
         return render_template("menutree.html")
 
     from autodb.models.portal import menutree
-    data=select(p for p in menutree )
+    data=select(p for p in menutree ).order_by(menutree.num)
 
     return getTreeData(entity=menutree,data=data)
-    s = '''
-        [
-    	{id: "lists", text: "自动任务管理",pid:""},
-
-    	{id: "sqllist", text: "任务列表", pid: "lists" ,url:'/sql/sqllist'},
 
 
-
-    	{ id: "right", text: "权限管理"},
-
-    	{id: "modulegroup", text: "角色模块对应关系",  pid: "right" ,url:'/p/index'},
-    	{id: "regmenu", text: "自动注册模块",  pid: "right" ,url:'/p/reg'},
-
-
-    ]
-        '''
-
-    return s
 
 
 @permission.route('/savemenu', methods=['GET', 'POST'])
@@ -147,18 +131,16 @@ def savemenu():
     data = flaskhelper.getargs2json("data")
 
     getlist(data,listdata)
-    print("diedai:", listdata)
-    saveData(menutree, listdata, operator=operator)
 
 
 
     #删除的数据处理
     data = flaskhelper.getargs2json("removed")
+    getlist(data, listdata)
 
-    for d in data:
-        if "_state" in d:
-             saveData(menutree, [d], operator=operator)
+    print("diedai:", listdata)
 
+    saveData(menutree, listdata, operator=operator)
     return "ok"
 
 
@@ -167,10 +149,11 @@ def getlist(data, listdata):
     得到列表中得所有信息
     :param data:页面传过来的所有数据
     :param listdata:筛选出有增加或修改的数据
-    :return:
+    :return:list,listdata
     '''
     for d in data:
         if "_state" in d:
             listdata.append(d)
         if "children" in d:
+            #遍历
             getlist(d['children'],listdata)

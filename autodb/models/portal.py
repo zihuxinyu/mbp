@@ -79,6 +79,7 @@ class menutree(db.Entity):
     modulename = Optional(unicode)
     url = Optional(unicode)
     text = Optional(unicode)
+    num=Optional(int)
     # modifierid = Optional(unicode)
     # modifydate = Optional(datetime, default=datetime.now())
     # creatorid = Optional(unicode)

@@ -5,7 +5,7 @@
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
      url="{{url_for('.index')}}" idField="guid"
      allowAlternating="true" selectOnLoad="true"
-     showColumnsMenu="true"
+     showColumnsMenu="true" onrowdblclick="onRowDblClick"
      onselectionchanged="onSelectionChanged"
      allowCellEdit="true" allowCellSelect="true"
      editNextOnEnterKey="true" editNextRowCell="true">
@@ -48,7 +48,7 @@
 
         </div>
         <div field="groupid" headerAlign="center">groupid
-            <input property="editor" class="mini-textbox" />
+            <input property="editor" class="mini-textbox"/>
         </div>
 
     </div>
@@ -56,6 +56,7 @@
 
 
 <script type="text/javascript">
+
     mini.parse();
 
     var grid = mini.get("datagrid1");
@@ -79,6 +80,41 @@
         var newRow = { modulename: grid.getSelected().modulename};
         htmlguid.addRow(newRow, 0);
         htmlguid.beginEditCell({}, 0);
+    }
+
+
+    function onRowDblClick(e) {
+        //只有定义了subpage才需要执行关闭页面的动作
+        if (GetParams().subpage != undefined) {
+
+            onOk();
+        }
+    }
+    //////////////////////////////////
+    /**
+     *
+     var iframe = this.getIFrameEl();
+     //执行调用页面里的方法，必须要有GetData()方法
+     var data = iframe.contentWindow.GetData();
+     data = mini.clone(data);    //必须
+     alert(data)
+     * @returns {*}
+     * @constructor
+     */
+    function GetData() {
+        var row = grid.getSelected();
+        return row;
+    }
+    function CloseWindow(action) {
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+
+    function onOk() {
+        CloseWindow("ok");
+    }
+    function onCancel() {
+        CloseWindow("cancel");
     }
 </script>
 

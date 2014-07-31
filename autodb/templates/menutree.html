@@ -44,16 +44,18 @@
 
                     <tr>
                         <td>
+                            <a class="mini-button" iconCls="icon-save" onclick="loadmodule()">选择模块</a>
                             <label>模块：</label>
                         </td>
                         <td>
-                            <input id="textbox1" name="modulename" class="mini-textbox"/>
+                            <input id="txbmodulename" name="modulename" class="mini-textbox"/>
+
                         </td>
                         <td>
                             <label>url：</label>
                         </td>
                         <td>
-                            <input id="text1" name="url" class="mini-textbox"/>
+                            <input id="txburl" name="url" class="mini-textbox" readonly/>
                         </td>
                         <td>
                             <label>pid：</label>
@@ -64,10 +66,17 @@
                     </tr>
                     <tr>
                         <td>
+
                             <label>菜单名称：</label>
                         </td>
                         <td>
                             <input id="txbtext" name="text" class="mini-textbox"/>
+                        </td>
+                        <td>
+                            <label>排序：</label>
+                        </td>
+                        <td>
+                            <input id="txbnum" name="num" class="mini-textbox"/>
                         </td>
                     </tr>
                 </table>
@@ -121,12 +130,7 @@
             }
         }
     }
-    function onMoveNode(e) {
-        var tree = mini.get("tree1");
-        var node = tree.getSelectedNode();
 
-        alert("moveNode");
-    }
     function saveData() {
         var tree = mini.get("tree1");
         var data = tree.getData();
@@ -156,9 +160,35 @@
         var node = tree.getSelectedNode();
         options = mini.clone(options);
         tree.updateNode(node, options);
-        alert('保存成功');
+        saveData();
 
     }
+    function loadmodule(e) {
+
+        mini.open({
+            url:  "{{url_for('.index',subpage=1)}}",
+            title: "选择负责人",
+            width: 650,
+            height: 380,
+            onload: function () {
+//                    var iframe = this.getIFrameEl();
+//                    iframe.contentWindow.SetData(null);
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    //执行调用页面里的方法，必须要有GetData()方法
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);    //必须
+
+                    mini.get("txburl").setValue(data.url);
+                    mini.get("txbmodulename").setValue(data.modulename);
+
+                }
+            }
+        });
+    }
+
 </script>
 
 {% endblock %}
