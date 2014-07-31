@@ -8,7 +8,8 @@ from flask_login import login_required
 from flask import Blueprint, g
 from flask.templating import render_template
 from Library.flaskhelper import getargs,isGetMethod
-from Library.minihelper import getGridData,getTreeData
+from Library.minihelper import getGridData,getTreeData,saveTreeData
+from autodb.Logic.PermissionLogic import power
 
 from pony.orm import *
 
@@ -66,6 +67,7 @@ def group_module():
 
 @permission.route('/index', methods=['GET', 'POST'])
 @db_session
+@power
 def index():
     '''
     获取模块列表
@@ -126,34 +128,7 @@ def savemenu():
     from autodb.models.portal import menutree
 
     operator = 'weibh'
-    listdata=[]
-    #需要新建、修改的数据
-    data = flaskhelper.getargs2json("data")
+    saveTreeData(menutree,operator)
 
-    getlist(data,listdata)
-
-
-
-    #删除的数据处理
-    data = flaskhelper.getargs2json("removed")
-    getlist(data, listdata)
-
-    print("diedai:", listdata)
-
-    saveData(menutree, listdata, operator=operator)
     return "ok"
 
-
-def getlist(data, listdata):
-    '''
-    得到列表中得所有信息
-    :param data:页面传过来的所有数据
-    :param listdata:筛选出有增加或修改的数据
-    :return:list,listdata
-    '''
-    for d in data:
-        if "_state" in d:
-            listdata.append(d)
-        if "children" in d:
-            #遍历
-            getlist(d['children'],listdata)

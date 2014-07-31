@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<link href="http://www.8dat.com/miniui_php/demo/demo.css" rel="stylesheet" type="text/css"/>
 <style type="text/css">
     body {
         margin: 0;
@@ -44,25 +43,20 @@
 
                     <tr>
                         <td>
-                            <a class="mini-button" iconCls="icon-save" onclick="loadmodule()">选择模块</a>
-                            <label>模块：</label>
+                            <a class="mini-button" iconCls="icon-search" onclick="loadmodule()">选择模块</a>
                         </td>
                         <td>
-                            <input id="txbmodulename" name="modulename" class="mini-textbox"/>
+                            <input id="txbmodulename" name="modulename" class="mini-textbox" readonly
+                             />
 
                         </td>
                         <td>
                             <label>url：</label>
                         </td>
                         <td>
-                            <input id="txburl" name="url" class="mini-textbox" readonly/>
+                            <input id="txburl" name="url" class="mini-textbox" />
                         </td>
-                        <td>
-                            <label>pid：</label>
-                        </td>
-                        <td>
-                            <input id="txb2" name="pid" class="mini-textbox"/>
-                        </td>
+
                     </tr>
                     <tr>
                         <td>
@@ -78,6 +72,21 @@
                         <td>
                             <input id="txbnum" name="num" class="mini-textbox"/>
                         </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>id：</label>
+                        </td>
+                        <td>
+                            <input id="txbid" name="id" class="mini-textbox"/>
+                        </td>
+                        <td>
+                            <label>pid：</label>
+                        </td>
+                        <td>
+                            <input id="txbpid" name="pid" class="mini-textbox"/>
+                        </td>
+
                     </tr>
                 </table>
             </div>
@@ -108,7 +117,6 @@
         var form = new mini.Form("form1");
 
         var node = e.node;
-        var isLeaf = e.isLeaf;
 
         if (node.id == undefined) {
             alert('请先保存');
@@ -167,10 +175,11 @@
 
         mini.open({
             url:  "{{url_for('.index',subpage=1)}}",
-            title: "选择负责人",
+            title: "选择模块",
             width: 650,
             height: 380,
             onload: function () {
+                //初始化页面
 //                    var iframe = this.getIFrameEl();
 //                    iframe.contentWindow.SetData(null);
             },

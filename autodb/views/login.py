@@ -42,10 +42,9 @@ def loginchk():
                 remember_me = session['remember_me']
                 session.pop('remember_me', None)
             from autodb.models.portal import users
-            lu=users(staff.user_code,)
+            lu=users(staff.user_code)
 
             login_user(lu, remember=True)
-            print(lu.groupid)
             g.user=lu
             return "登录成功"
     return "登录失败"

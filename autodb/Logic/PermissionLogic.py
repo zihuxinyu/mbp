@@ -38,12 +38,16 @@ def checkRights(modulename):
     :param usergroupid
     """
 
+    #得到用户权限
+    groupid = getGroupidByUsercode(g.user.get_id())
+    #如果是管理员，则取消权限问题
+    if '1' in groupid:
+        return True
+
     moduleid = getModuleidByname(modulename)
-    #print(moduleid, "moduleid")
     if moduleid:
         #存在此模块权限定义
-        groupid=getGroupidByUsercode(g.user.get_id())
-        #print(groupid,"groupid")
+
         return getRelation(groupid, modulename)
     else:
         #不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
