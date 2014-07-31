@@ -107,7 +107,7 @@ def getMenu():
         return render_template("menutree.html")
 
     from autodb.models.portal import menutree
-    data=select(p for p in menutree if p.modulename in ["","sql_list.sqllist"])
+    data=select(p for p in menutree )
 
     return getTreeData(entity=menutree,data=data)
     s = '''
@@ -141,18 +141,36 @@ def savemenu():
 
     from autodb.models.portal import menutree
 
+    operator = 'weibh'
+    listdata=[]
+    #需要新建、修改的数据
     data = flaskhelper.getargs2json("data")
-    print(data)
+
+    getlist(data,listdata)
+    print("diedai:", listdata)
+    saveData(menutree, listdata, operator=operator)
+
+
+
+    #删除的数据处理
+    data = flaskhelper.getargs2json("removed")
+
     for d in data:
-
-        print(d)
         if "_state" in d:
-            print("111111111")
-            saveData(menutree, d,operator='weibh')
+             saveData(menutree, [d], operator=operator)
 
-        if d["children"]:
-            print(d["children"])
-            if "_state" in d:
-                print("2222222")
-                saveData(menutree,d["children"], operator = 'weibh')
     return "ok"
+
+
+def getlist(data, listdata):
+    '''
+    得到列表中得所有信息
+    :param data:页面传过来的所有数据
+    :param listdata:筛选出有增加或修改的数据
+    :return:
+    '''
+    for d in data:
+        if "_state" in d:
+            listdata.append(d)
+        if "children" in d:
+            getlist(d['children'],listdata)

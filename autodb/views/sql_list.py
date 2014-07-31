@@ -67,6 +67,5 @@ def save():
     uinfo = {"m33": "343434", "test1": "test1content"}
     if data:
         data[0].update(uinfo)
-
     saveData(sqllist, data, operator=g.user.user_code)
     return "ok"

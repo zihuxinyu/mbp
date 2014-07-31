@@ -109,6 +109,7 @@ def saveData(entity, data, operator =None):
     '''
 
     for d in data:
+        print('saveData',type(d),d)
         d = Row(d)
         _columns_ = entity.__dict__['_columns_']
         _pk_columns_ = entity.__dict__['_pk_columns_']
