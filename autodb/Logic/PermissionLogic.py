@@ -40,7 +40,7 @@ def checkRights(modulename):
 
     #得到用户权限
     groupid = getGroupidByUsercode(g.user.get_id())
-    #如果是管理员，则取消权限问题
+    #如果是管理员，则取消权限验证
     if '1' in groupid:
         return True
 
