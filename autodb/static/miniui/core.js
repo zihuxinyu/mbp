@@ -38,6 +38,27 @@ function AddCSSLink(id, url, doc) {
     else
         doc.documentElement.appendChild(link);
 }
+
+
+/**
+ * 操作成功的提示
+ * @param str
+ */
+function success(str) {
+    mini.showTips({
+        content: "<b>" + str + "</b> ",
+        state: "success",
+        x: "center",
+        y: "top",
+        timeout: 1000
+    });
+}
+
+/*****************提示方法******************/
+/**
+ * alert的提示
+ * @param str
+ */
 function alert(str) {
     mini.showTips({
         content: "<b>" + str + "</b> ",
@@ -47,6 +68,20 @@ function alert(str) {
         timeout: 1000
     });
 }
+/**
+ * 出现错误的提示
+ * @param str
+ */
+function error(str) {
+    mini.showTips({
+        content: "<b>" + str + "</b> ",
+        state: "danger",
+        x: "center",
+        y: "top",
+        timeout: 3000
+    });
+}
+/*****************提示方法******************/
 
 /***********grid op start***********/
 
@@ -62,21 +97,35 @@ function removeRow(htmlguidid) {
         grid.removeRows(rows, true);
     }
 }
+
+
+/**
+ * 保存Grid数据
+ * @param grid:要操作的grid
+ * @param posturl:接收数据的url
+ * @returns {boolean}
+ */
 function saveGrid(grid, posturl) {
 
     var data = grid.getChanges(null, true);
     var json = mini.encode(data);
-
-    grid.loading("保存中，请稍后......");
+    if (data == "") {
+        error('没有数据需要保存');
+        return false;
+    }
+    var msgid = mini.loading("数据保存中，请稍后......", "保存数据");
     $.ajax({
         url: posturl,
         data: { data: json },
         type: "post",
         success: function (text) {
+            mini.hideMessageBox(msgid);
+            success(text);
             grid.reload();
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            alert(jqXHR.responseText);
+            mini.hideMessageBox(msgid);
+            error(jqXHR.responseText);
         }
     });
 }

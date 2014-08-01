@@ -5,7 +5,7 @@ Created by weibaohui on 14-6-8.
 
 '''
 import functools
-from flask import g
+from flask import g,redirect,abort
 from autodb import app, cache
 from pony.orm import *
 from autodb.models.portal import group_module as gm
@@ -25,6 +25,8 @@ def power(fun):
             print 'after. ' + str(args)
             return retVal
         else:
+
+            return abort(403)
             return g.user.get_id()+ "没有权限访问此功能"
 
     return wrapped
@@ -42,6 +44,7 @@ def checkRights(modulename):
     groupid = getGroupidByUsercode(g.user.get_id())
     #如果是管理员，则取消权限验证
     if '1' in groupid:
+        pass
         return True
 
     moduleid = getModuleidByname(modulename)

@@ -85,6 +85,7 @@ def index():
 @permission.route('/save', methods=['GET', 'POST'])
 @db_session
 @login_required
+@power
 def save_g_m():
     '''
     保存模块角色对应关系
@@ -93,8 +94,9 @@ def save_g_m():
     from autodb.models.portal import group_module
 
     data = flaskhelper.getargs2json("data")
-    saveData(group_module, data, operator=g.user.user_code)
-    return "ok"
+    if data:
+        saveData(group_module, data, operator=g.user.user_code)
+    return "操作完成"
 
 
 @permission.route('/getMenu', methods=['GET', 'POST'])
@@ -130,5 +132,5 @@ def savemenu():
     operator = 'weibh'
     saveTreeData(menutree,operator)
 
-    return "ok"
+    return "操作完成"
 
