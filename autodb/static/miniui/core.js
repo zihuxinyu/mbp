@@ -45,12 +45,15 @@ function AddCSSLink(id, url, doc) {
  * @param str
  */
 function success(str) {
-    mini.showTips({
-        content: "<b>" + str + "</b> ",
-        state: "success",
+    mini.showMessageBox({
+        showModal: true,
+        width: 250,
+        title: "提示",
+        iconCls: "mini-messagebox-info",
+        message: str,
+        timeout: 1500,
         x: "center",
-        y: "top",
-        timeout: 1000
+        y: "middle"
     });
 }
 
@@ -60,12 +63,15 @@ function success(str) {
  * @param str
  */
 function alert(str) {
-    mini.showTips({
-        content: "<b>" + str + "</b> ",
-        state: "warning",
+    mini.showMessageBox({
+        showModal: true,
+        width: 250,
+        title: "提示",
+        iconCls: "mini-messagebox-warning",
+        message: str,
+        timeout: 1500,
         x: "center",
-        y: "top",
-        timeout: 1000
+        y: "middle"
     });
 }
 /**
@@ -73,13 +79,18 @@ function alert(str) {
  * @param str
  */
 function error(str) {
-    mini.showTips({
-        content: "<b>" + str + "</b> ",
-        state: "danger",
+
+    mini.showMessageBox({
+        showModal: true,
+        width: 250,
+        title: "提示",
+        iconCls: "mini-messagebox-error",
+        message: str,
+        timeout: 1500,
         x: "center",
-        y: "top",
-        timeout: 3000
+        y: "middle"
     });
+
 }
 /*****************提示方法******************/
 

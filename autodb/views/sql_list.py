@@ -68,4 +68,4 @@ def save():
     if data:
         data[0].update(uinfo)
     saveData(sqllist, data, operator=g.user.user_code)
-    return "ok"
+    return "数据保存成功"
