@@ -147,8 +147,7 @@ def autoformat(entity, changes, operator, _state) :
             changes["createdate"] = now()
 
 
-def List2Json(data = None) :
-    return json.dumps(data, cls = CJsonEncoder)
+
 # region 树空间相关操作
 def getTreeData(entity = None, data = None) :
     '''
@@ -168,12 +167,10 @@ def getTreeDataInList(entity=None,data=None):
     :param data:
     :return:
     '''
-    print("1",type(data), data)
 
     _columns_ = entity.__dict__['_columns_']
     data = [{ x : getattr(row, x) for x in _columns_ } for row in data]
-    print("2",type(data),data)
-    return json.dumps(data, cls = CJsonEncoder)
+    return data
 
 def saveTreeData(entity = None, operator = None) :
     '''

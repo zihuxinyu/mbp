@@ -5,60 +5,63 @@ Created by weibaohui on 14-6-8.
 
 '''
 import functools
-from flask import g,redirect,abort
+import json
+
+from flask import g, abort
 from autodb import app, cache
 from pony.orm import *
 from autodb.models.portal import group_module as gm
 from autodb.models.portal import modulelist
 from autodb.models.OracleUser import EXT_USER_GROUP
+from Library.minihelper import getTreeDataInList
 
 
-def power(fun):
+def power(fun) :
     @functools.wraps(fun)
-    def wrapped(*args, **kws):
+    def wrapped(*args, **kws) :
         print 'before.' + str(args)
 
         pname = "{0}.{1}".format(fun.__module__, fun.__name__).replace("autodb.views.", "")
-        #print( fun.__module__+fun.__name__,'modulename')
-        if checkRights(pname):
+        # print( fun.__module__+fun.__name__,'modulename')
+        if checkRights(pname) :
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
             return retVal
-        else:
+        else :
 
             return abort(403)
-            return g.user.get_id()+ "没有权限访问此功能"
+            return g.user.get_id() + "没有权限访问此功能"
 
     return wrapped
 
 
-
-def checkRights(modulename):
+def checkRights(modulename) :
     """
     检查用户角色是否有模块访问权限
     :param module:
     :param usergroupid
     """
 
-    #得到用户权限
+    # 得到用户权限
     groupid = getGroupidByUsercode(g.user.get_id())
     #如果是管理员，则取消权限验证
-    if '1' in groupid:
+    getModulenameByGroupId(["1", "2"])
+    if '1' in groupid :
         pass
         return True
 
     moduleid = getModuleidByname(modulename)
-    if moduleid:
+    if moduleid :
         #存在此模块权限定义
 
         return getRelation(groupid, modulename)
-    else:
+    else :
         #不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
         return True
 
 
 @db_session
-def getRelation(groupid, modulename):
+def getRelation(groupid, modulename) :
     """
     通过角色id，模块ID查找对应关系
     有此ID角色可以访问此ID模块，没有说明未授权
@@ -68,55 +71,111 @@ def getRelation(groupid, modulename):
     :return:
     """
     data = select(p for p in gm if p.modulename == modulename and p.groupid in groupid)
-    if data:
+    if data :
         # 存在此模块与角色对应赋权，可以做进一步的功能控制，或者切入按钮级的控制
         return True
-    else:
+    else :
         return False
 
+
 @db_session
-def getGroupidByUsercode(user_code):
+@cache.memoize(60 * 60 * 24)
+def getGroupidByUsercode(user_code) :
     """
     通过User_code获取角色ID
     :param user_code:
     :return:
     """
-    data=select(p for p in EXT_USER_GROUP if p.user_code==user_code)
+    data = select(p for p in EXT_USER_GROUP if p.user_code == user_code)
 
-
-    return  [d.groupid for d in data] if data else False
+    return [d.groupid for d in data] if data else False
 
 
 @db_session
-def getModuleidByname(modulename):
+@cache.memoize(60)
+def getModulenameByGroupId(groupid) :
+    '''
+    通过角色ID获取权限名称
+    :param groupid:角色list[]
+    :return:list[]
+    '''
+    from autodb.models.portal import group_module
+
+    data = select(p.modulename for p in group_module if p.groupid in groupid)[:]
+    return data
+
+
+@cache.memoize(20)
+def getMenusByUser_code(user_code) :
+    '''
+    通过用户账号获取对应的菜单
+    :param user_code:
+    :return:
+    '''
+    groupid = getGroupidByUsercode(user_code)
+    modulenames = getModulenameByGroupId(groupid)
+    menulist = []
+    getMenuList(menulist, 0, filter = modulenames)
+    return json.dumps(menulist)
+
+
+@db_session
+@cache.memoize(60 * 10)
+def getMenuList(menulist = [], pid = None, filter = []) :
+    '''
+
+    迭代获取菜单关系
+    没有注明modulename的菜单认为所有角色都可以使用
+    :param menulist:  存放菜单的list
+    :param pid: 父菜单ID,默认顶级菜单为0
+    :param filter: 过滤
+    :return:
+    '''
+    from autodb.models.portal import menutree
+
+    data = select(p for p in menutree if p.pid == pid).order_by(menutree.num)
+    datajson = getTreeDataInList(menutree, data)
+    for x in datajson :
+        if x["modulename"] == "" or x["modulename"] in filter :
+            menulist.append(x)
+            getMenuList(menulist, x['id'], filter)
+
+
+@db_session
+def getModuleidByname(modulename) :
     """
     通过模块名称获取模块ID
     :param modulename:
     """
 
-    data= modulelist.get(modulename=modulename)
-    if data:
+    data = modulelist.get(modulename = modulename)
+    if data :
         return data.guid
-    else:
+    else :
         return False
 
 
 @cache.memoize(10)
-def geturlmap():
+def geturlmap() :
     '''
     获取路由表
     :return:dict
     '''
 
-    per = {}
-    for i in app.url_map._rules:
+    per = { }
+    for i in app.url_map._rules :
+        # 对所有注册的模块进行权限控制
+        # print('geturlmap',i.methods,type(i.methods))
+        # if 'GET' not in i.methods:
+        #     #只保留具有get属性的菜单
+        #     continue
 
-        if (not i.endpoint.find('static') > -1) and (not i.endpoint.startswith('admin')):
-            if per.get(i.endpoint):
+        if (not i.endpoint.find('static') > -1) and (not i.endpoint.startswith('admin')) :
+            if per.get(i.endpoint) :
 
                 per[i.endpoint]['rule'].append(i.rule)
-            else:
-                per[i.endpoint] = {}
+            else :
+                per[i.endpoint] = { }
                 per[i.endpoint]['doc'] = app.view_functions[i.endpoint].__doc__
                 per[i.endpoint]['rule'] = [i.rule]
     return per
