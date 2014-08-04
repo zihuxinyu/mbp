@@ -75,7 +75,7 @@ class menutree(db.Entity):
     菜单与模块、权限关系
     '''
     id = PrimaryKey(int, auto=True)
-    pid = Optional(int)
+    pid = Optional(int,default=0)
     modulename = Optional(unicode)
     url = Optional(unicode)
     text = Optional(unicode)

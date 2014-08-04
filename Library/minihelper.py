@@ -22,6 +22,8 @@ class Row(dict) :
             raise AttributeError(name)
 
 
+
+
 def getGridData(entity = None, total = 0, data = None) :
     '''
     获得miniui显示需要的表格json,自动获取排序,分页信息
@@ -145,6 +147,8 @@ def autoformat(entity, changes, operator, _state) :
             changes["createdate"] = now()
 
 
+def List2Json(data = None) :
+    return json.dumps(data, cls = CJsonEncoder)
 # region 树空间相关操作
 def getTreeData(entity = None, data = None) :
     '''
@@ -157,7 +161,19 @@ def getTreeData(entity = None, data = None) :
     _columns_ = entity.__dict__['_columns_']
     data = [{ x : getattr(row, x) for x in _columns_ } for row in data]
     return json.dumps(data, cls = CJsonEncoder)
+def getTreeDataInList(entity=None,data=None):
+    '''
+    返回List格式的数据
+    :param entity:
+    :param data:
+    :return:
+    '''
+    print("1",type(data), data)
 
+    _columns_ = entity.__dict__['_columns_']
+    data = [{ x : getattr(row, x) for x in _columns_ } for row in data]
+    print("2",type(data),data)
+    return json.dumps(data, cls = CJsonEncoder)
 
 def saveTreeData(entity = None, operator = None) :
     '''

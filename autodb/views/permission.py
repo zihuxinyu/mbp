@@ -8,7 +8,7 @@ from flask_login import login_required
 from flask import Blueprint, g, session
 from flask.templating import render_template
 from Library.flaskhelper import getargs, isGetMethod
-from Library.minihelper import getGridData, getTreeData, saveTreeData
+from Library.minihelper import getGridData, getTreeData, saveTreeData, getTreeDataInList, List2Json
 from autodb.Logic.PermissionLogic import power
 
 from pony.orm import *
@@ -118,18 +118,32 @@ def getMenu() :
 
 
     data = select(p for p in menutree).order_by(menutree.num)
-    print(type(data),data)
+    # print(type(getTreeDataInList(menutree,data)), getTreeDataInList(menutree, data))
 
-    return getTreeData(entity = menutree, data = data)
+    menulist=[]
+    getMenuList(menulist,0)
+
+    return List2Json(menulist)
 
 
-def getMeunList(pid,menulist):
+def getMenuList(menulist=[], pid = None):
     '''
     迭代获取菜单关系
      :param pid:父菜单ID
     :param menulist: 存放菜单的list
     :return:list
     '''
+    from autodb.models.portal import menutree
+
+    data = select(p for p in menutree if p.pid==pid ).order_by(menutree.num)
+    datajson= getTreeDataInList(menutree, data)
+    for d in datajson:
+        menulist.append(d)
+
+    for d in data:
+        getMenuList(menulist, d.id)
+
+
 
 @permission.route('/savemenu', methods = ['GET', 'POST'])
 @db_session
