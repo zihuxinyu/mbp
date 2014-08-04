@@ -4,7 +4,7 @@ from Library.flaskhelper import getargs
 from Library.minihelper import getGridData, saveData
 from autodb import cache
 
-from flask import Blueprint, g
+from flask import Blueprint, g, session
 from flask.ext.login import login_required
 from flask.templating import render_template
 from pony.orm import *
@@ -53,6 +53,8 @@ def sqllist():
     :return:
     """
 
+    print("session['x']:",session['x'][0]['menu'])
+    print(g.s['x'])
     return render_template('sqllist.html')
 
 

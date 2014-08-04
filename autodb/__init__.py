@@ -12,7 +12,7 @@ sys.setdefaultencoding('utf-8')  #解决utf8编码问题
 app = Flask(__name__)
 app.config.from_object(config)
 
-app.debug = False
+app.debug = True
 
 cache = Cache(app,config={'CACHE_TYPE':"redis",
                           "CACHE_REDIS_HOST":"134.44.36.125",

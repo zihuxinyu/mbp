@@ -5,10 +5,10 @@
 from Library import flaskhelper
 from Library.minihelper import saveData
 from flask_login import login_required
-from flask import Blueprint, g
+from flask import Blueprint, g, session
 from flask.templating import render_template
-from Library.flaskhelper import getargs,isGetMethod
-from Library.minihelper import getGridData,getTreeData,saveTreeData
+from Library.flaskhelper import getargs, isGetMethod
+from Library.minihelper import getGridData, getTreeData, saveTreeData
 from autodb.Logic.PermissionLogic import power
 
 from pony.orm import *
@@ -20,7 +20,7 @@ permission = Blueprint("permission", __name__)
 
 @permission.route('/reg')
 @db_session
-def reg():
+def reg() :
     """
     自动注册所有模块
 
@@ -30,63 +30,66 @@ def reg():
 
     # 将现有module设置为不可用
     data = select(p for p in modulelist)
-    for d in data:
-        modulelist.get(modulename=d.modulename).set(state="no")
-    #重新获取现有路由，并注册
+    for d in data :
+        modulelist.get(modulename = d.modulename).set(state = "no")
+    # 重新获取现有路由，并注册
     rus = geturlmap()
-    for x in rus:
+    for x in rus :
         doc = rus[x]['doc'].decode("utf8").split('\n')[1] if rus[x]['doc'] else ""
         url = ';'.join(rus[x]['rule'])
-        single = modulelist.get(modulename=x)
-        if single:
-            modulelist.get(modulename=x).set(url=url, doc=doc, state='ok')
-        else:
-            modulelist(modulename=x, url=url, doc=doc, state='ok')
+        single = modulelist.get(modulename = x)
+        if single :
+            modulelist.get(modulename = x).set(url = url, doc = doc, state = 'ok')
+        else :
+            modulelist(modulename = x, url = url, doc = doc, state = 'ok')
     #删除无用module
     data = select(p for p in modulelist if p.state == "no")
-    for d in data:
-        modulelist.get(modulename=d.modulename).delete()
+    for d in data :
+        modulelist.get(modulename = d.modulename).delete()
     return "注册完成"
 
 
-@permission.route('/g_p_list', methods=['GET', 'POST'])
+@permission.route('/g_p_list', methods = ['GET', 'POST'])
 @db_session
-def group_module():
+def group_module() :
     '''
     group_Module对应关系
     :return:
     '''
     modulename = getargs("modulename")
-    if isGetMethod():
+    if isGetMethod() :
         return render_template("permission.html")
     from autodb.models.portal import group_module as gm
 
     data = select(p for p in gm if p.modulename == modulename)
-    return getGridData(entity=gm, data=data)
+    return getGridData(entity = gm, data = data)
 
 
-@permission.route('/index', methods=['GET', 'POST'])
+@permission.route('/index', methods = ['GET', 'POST'])
 @db_session
 @power
-def index():
+def index() :
     '''
     获取模块列表
     :return:
     '''
+
+    session['x']= [{ 'groupid' : "1", 'menu' : [{ 't' : 'tvalue' }, { 's' : 'sv' }] },
+                   { 'groupid' : "2", 'menu' : [{ 'x' : 'xvalue' }, { 'y' : 'yv' }] }]
     from autodb.models.portal import modulelist
 
-    if isGetMethod():
+    if isGetMethod() :
         return render_template("permission.html")
 
     data = select(p for p in modulelist).order_by(modulelist.modulename)
-    return getGridData(entity=modulelist, data=data)
+    return getGridData(entity = modulelist, data = data)
 
 
-@permission.route('/save', methods=['GET', 'POST'])
+@permission.route('/save', methods = ['GET', 'POST'])
 @db_session
 @login_required
 @power
-def save_g_m():
+def save_g_m() :
     '''
     保存模块角色对应关系
     :return:
@@ -94,34 +97,44 @@ def save_g_m():
     from autodb.models.portal import group_module
 
     data = flaskhelper.getargs2json("data")
-    if data:
-        saveData(group_module, data, operator=g.user.user_code)
+    if data :
+        saveData(group_module, data, operator = g.user.user_code)
     return "操作完成"
 
 
-@permission.route('/getMenu', methods=['GET', 'POST'])
+@permission.route('/getMenu', methods = ['GET', 'POST'])
 @db_session
-def getMenu():
+def getMenu() :
     '''
     获取菜单列表
     :return:
     '''
 
-    if isGetMethod() and getargs("getpage"):
+    if isGetMethod() and getargs("getpage") :
         return render_template("menutree.html")
 
     from autodb.models.portal import menutree
-    data=select(p for p in menutree ).order_by(menutree.num)
-
-    return getTreeData(entity=menutree,data=data)
 
 
 
+    data = select(p for p in menutree).order_by(menutree.num)
+    print(type(data),data)
 
-@permission.route('/savemenu', methods=['GET', 'POST'])
+    return getTreeData(entity = menutree, data = data)
+
+
+def getMeunList(pid,menulist):
+    '''
+    迭代获取菜单关系
+     :param pid:父菜单ID
+    :param menulist: 存放菜单的list
+    :return:list
+    '''
+
+@permission.route('/savemenu', methods = ['GET', 'POST'])
 @db_session
 @login_required
-def savemenu():
+def savemenu() :
     '''
     保存菜单
     :return:
@@ -130,7 +143,7 @@ def savemenu():
     from autodb.models.portal import menutree
 
     operator = 'weibh'
-    saveTreeData(menutree,operator)
+    saveTreeData(menutree, operator)
 
     return "操作完成"
 

@@ -7,15 +7,18 @@ from flask import Blueprint, g
 from flask_login import login_required
 from flask.templating import render_template
 from pony.orm import *
+from datetime import datetime, date
 
 root = Blueprint("root", __name__)
 
 
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
+@cache.memoize(2000)
 @login_required
 def index():
-    return render_template("index.html")
+
+    return render_template("index.html",year= datetime.now().year)
 
 
 @root.route('/cs/<tablename>')

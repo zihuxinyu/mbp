@@ -3,7 +3,7 @@
 文件作用:注册route,注册全局方法
 '''
 from autodb import app
-from flask import g, render_template
+from flask import g, render_template, session
 from permission import permission
 from sql_list import sql_list
 from  login import user
@@ -30,9 +30,7 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
-
-
-
+    g.s=session
 @app.errorhandler(404)
 def internal_error(error):
     return render_template('404.html'), 404
