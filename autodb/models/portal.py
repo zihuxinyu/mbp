@@ -32,7 +32,7 @@ class users():
 
 
 class portal_user(db.Entity):
-    id = PrimaryKey(int, auto=True)
+    guid = PrimaryKey(int, auto=True)
     user_code = Optional(unicode)
     user_name = Optional(unicode)
     #user_mobile = Optional(unicode)

@@ -88,7 +88,7 @@ def pagesso():
     import  binascii
 
     data= getargs("data")
-
+    data="0294820d0870d64849fcaa2c9ee6d945"
     k = des(IK, CBC, IV, pad = None, padmode = PAD_PKCS5)
 
     hd=binascii.unhexlify(data)

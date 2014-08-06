@@ -107,7 +107,7 @@ def getUserInfoByUsercode(user_code) :
     """
     data = select(p for p in EXT_DPT_USR if p.user_code == user_code)
     for d in data:
-        return data if d else False
+        return d if d else False
 
 
 @db_session
