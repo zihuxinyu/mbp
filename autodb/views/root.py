@@ -16,14 +16,6 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    # 保存用户菜单
-    print(session['menu'] )
-    # 保存用户角色
-    print(session['groupid'] )
-    #保存用户模块
-    print(session['groupname'])
-    #保存用户单位
-    print(session['topdpt'])
     return render_template("index.html",year= datetime.now().year)
 
 
@@ -67,7 +59,7 @@ def shouru():
     from autodb.models.GUWANG import TMP_SHOURU_GUWANG as gw
     from autodb.Logic.ponyLogic import db
 
-    zhangqi = '201406'
+    zhangqi = '201407'
     tmp = "insert into   EXT_CHART_GW_MXSR t (ZHANGQI,AREA_NAME,DATATYPE,SHOURU ,orders) values ('{0}','{1}','{2}'," \
           "'{3}','{4}' ) ";
     xf = {"KFQ": "开发区", "DYQ": "东营区", "GR": "广饶县", "KL": "垦利县", "LJ": "利津县", "HKQ": "河口区", "SZ": "胜中分公司", "SN": "胜南分公司",

@@ -62,7 +62,6 @@ def sso(usercode):
         lu = users(staff.user_code)
         login_user(lu, remember=True)
 
-        pagesso()
 
         # 保存用户菜单
         session['menu'] = getMenusByUser_code(usercode)
@@ -77,7 +76,7 @@ def sso(usercode):
     return "success"
 
 
-@user.route('/sso/', methods = ['GET', 'POST'])
+@user.route('/sso', methods = ['GET', 'POST'])
 def pagesso():
     '''
     通过页面做sso登录，接收加密后的用户名时间
@@ -88,10 +87,11 @@ def pagesso():
     import  binascii
 
     data= getargs("data")
-    data="0294820d0870d64849fcaa2c9ee6d945"
     k = des(IK, CBC, IV, pad = None, padmode = PAD_PKCS5)
 
     hd=binascii.unhexlify(data)
     userdata= k.decrypt(hd)
+    print('解析得到',userdata)
     #得到userdata,目前只存放加密后的4A工号，日后加验证逻辑
     sso(userdata)
+    return "over"
