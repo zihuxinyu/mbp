@@ -3,7 +3,7 @@
 文件作用:根目录下得基本文件
 '''
 from autodb import cache
-from flask import Blueprint, g
+from flask import Blueprint, g, session
 from flask_login import login_required
 from flask.templating import render_template
 from pony.orm import *
@@ -16,7 +16,14 @@ root = Blueprint("root", __name__)
 @root.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-
+    # 保存用户菜单
+    print(session['menu'] )
+    # 保存用户角色
+    print(session['groupid'] )
+    #保存用户模块
+    print(session['groupname'])
+    #保存用户单位
+    print(session['topdpt'])
     return render_template("index.html",year= datetime.now().year)
 
 

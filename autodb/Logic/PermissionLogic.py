@@ -12,7 +12,7 @@ from autodb import app, cache
 from pony.orm import *
 from autodb.models.portal import group_module as gm
 from autodb.models.portal import modulelist
-from autodb.models.OracleUser import EXT_USER_GROUP
+from autodb.models.OracleUser import EXT_USER_GROUP,EXT_DPT_USR
 from Library.minihelper import getTreeDataInList
 
 
@@ -95,6 +95,19 @@ def getGroupidByUsercode(user_code) :
     data = select(p for p in EXT_USER_GROUP if p.user_code == user_code)
 
     return [d.groupid for d in data] if data else False
+
+
+@db_session
+@cache.memoize(60 * 60 * 24*5)
+def getUserInfoByUsercode(user_code) :
+    """
+    通过User_code获取用户相关信息,包括员工编号、部门、手机号等
+    :param user_code:
+    :return:
+    """
+    data = select(p for p in EXT_DPT_USR if p.user_code == user_code)
+    for d in data:
+        return data if d else False
 
 
 @db_session
