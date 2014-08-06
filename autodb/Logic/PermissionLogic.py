@@ -23,7 +23,17 @@ def power(fun) :
 
         pname = "{0}.{1}".format(fun.__module__, fun.__name__).replace("autodb.views.", "")
         # print( fun.__module__+fun.__name__,'modulename')
-        if checkRights(pname) :
+
+        # 得到用户权限
+        groupid = getGroupidByUsercode(g.user.get_id())
+        # 如果是管理员，则取消权限验证
+        if '1' in groupid :
+            retVal = fun(*args, **kws)
+            print '管理员. ' + str(args)
+            return retVal
+
+
+        if checkRights(pname,groupid) :
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
             return retVal
@@ -35,20 +45,15 @@ def power(fun) :
     return wrapped
 
 
-def checkRights(modulename) :
+@cache.memoize(60*60)
+def checkRights(modulename,groupid) :
     """
     检查用户角色是否有模块访问权限
     :param module:
     :param usergroupid
     """
 
-    # 得到用户权限
-    groupid = getGroupidByUsercode(g.user.get_id())
-    #如果是管理员，则取消权限验证
-    getModulenameByGroupId(["1", "2"])
-    if '1' in groupid :
-        pass
-        return True
+
 
     moduleid = getModuleidByname(modulename)
     if moduleid :
@@ -61,6 +66,7 @@ def checkRights(modulename) :
 
 
 @db_session
+@cache.memoize()
 def getRelation(groupid, modulename) :
     """
     通过角色id，模块ID查找对应关系
@@ -92,7 +98,7 @@ def getGroupidByUsercode(user_code) :
 
 
 @db_session
-@cache.memoize(60)
+@cache.memoize()
 def getModulenameByGroupId(groupid) :
     '''
     通过角色ID获取权限名称
@@ -105,7 +111,7 @@ def getModulenameByGroupId(groupid) :
     return data
 
 
-@cache.memoize(20)
+@cache.memoize()
 def getMenusByUser_code(user_code) :
     '''
     通过用户账号获取对应的菜单
@@ -120,7 +126,7 @@ def getMenusByUser_code(user_code) :
 
 
 @db_session
-@cache.memoize(60 * 10)
+@cache.memoize()
 def getMenuList(menulist = [], pid = None, filter = []) :
     '''
 
@@ -142,6 +148,7 @@ def getMenuList(menulist = [], pid = None, filter = []) :
 
 
 @db_session
+@cache.memoize(60 * 60 * 24)
 def getModuleidByname(modulename) :
     """
     通过模块名称获取模块ID
@@ -155,7 +162,7 @@ def getModuleidByname(modulename) :
         return False
 
 
-@cache.memoize(10)
+@cache.memoize(60 * 60 * 24)
 def geturlmap() :
     '''
     获取路由表

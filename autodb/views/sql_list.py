@@ -53,8 +53,7 @@ def sqllist():
     :return:
     """
 
-    print("session['x']:",session['x'][0]['menu'])
-    print(g.s['x'])
+
     return render_template('sqllist.html')
 
 

@@ -18,7 +18,8 @@ cache = Cache(app,config={'CACHE_TYPE':"redis",
                           "CACHE_REDIS_HOST":"134.44.36.125",
                           "CACHE_REDIS_PORT":"6379",
 "CACHE_REDIS_PASSWORD":"%$s%dd$%d#s^df#$a^fd%sf*^&(d*d&^)gh*^jk*e(*&e*s#%",
-                          "CACHE_REDIS_DB":"0"})
+                          "CACHE_REDIS_DB":"0",
+                          "CACHE_KEY_PREFIX":"Logic"})
 
 lm = LoginManager()
 lm.init_app(app)

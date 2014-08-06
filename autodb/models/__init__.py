@@ -13,6 +13,6 @@ import portal, sqllist, sqlresult,OracleUser,GUWANG
 
 
 #开启调试模式
-sql_debug(False)
+sql_debug(True)
 db.generate_mapping()
 odb.generate_mapping()

@@ -14,7 +14,6 @@ root = Blueprint("root", __name__)
 
 @root.route('/', methods=['GET', 'POST'])
 @root.route('/index', methods=['GET', 'POST'])
-@cache.memoize(2000)
 @login_required
 def index():
 
