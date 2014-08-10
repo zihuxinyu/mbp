@@ -70,8 +70,8 @@ def sso(usercode):
         #保存用户模块
         session['groupname']=getModulenameByGroupId(session['groupid'])
         #保存用户单位
-        session['topdpt']= getUserInfoByUsercode(usercode).topdpt
-
+        session['topdpt'] = getUserInfoByUsercode(usercode).topdpt
+        session['user_name'] = getUserInfoByUsercode(usercode).user_name
 
     return "success"
 

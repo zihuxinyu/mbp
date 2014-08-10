@@ -12,7 +12,7 @@ from autodb import app, cache
 from pony.orm import *
 from autodb.models.portal import group_module as gm
 from autodb.models.portal import modulelist
-from autodb.models.OracleUser import EXT_USER_GROUP,EXT_DPT_USR
+from autodb.models.OracleUser import EXT_USER_GROUP, EXT_DPT_USR
 from Library.minihelper import getTreeDataInList
 
 
@@ -32,8 +32,7 @@ def power(fun) :
             print '管理员. ' + str(args)
             return retVal
 
-
-        if checkRights(pname,groupid) :
+        if checkRights(pname, groupid) :
             retVal = fun(*args, **kws)
             print 'after. ' + str(args)
             return retVal
@@ -45,23 +44,21 @@ def power(fun) :
     return wrapped
 
 
-@cache.memoize(60*60)
-def checkRights(modulename,groupid) :
+@cache.memoize(60 * 60)
+def checkRights(modulename, groupid) :
     """
     检查用户角色是否有模块访问权限
     :param module:
     :param usergroupid
     """
 
-
-
     moduleid = getModuleidByname(modulename)
     if moduleid :
-        #存在此模块权限定义
+        # 存在此模块权限定义
 
         return getRelation(groupid, modulename)
     else :
-        #不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
+        # 不存在此模块权限定义，默认不存在的都通过，加入控制的必须要配权限
         return True
 
 
@@ -98,7 +95,7 @@ def getGroupidByUsercode(user_code) :
 
 
 @db_session
-@cache.memoize(60 * 60 * 24*5)
+@cache.memoize(60 * 60 * 24 * 5)
 def getUserInfoByUsercode(user_code) :
     """
     通过User_code获取用户相关信息,包括员工编号、部门、手机号等
@@ -106,7 +103,7 @@ def getUserInfoByUsercode(user_code) :
     :return:
     """
     data = select(p for p in EXT_DPT_USR if p.user_code == user_code)
-    for d in data:
+    for d in data :
         return d if d else False
 
 
@@ -124,7 +121,7 @@ def getModulenameByGroupId(groupid) :
     return data
 
 
-@cache.memoize()
+#@cache.memoize()
 def getMenusByUser_code(user_code) :
     '''
     通过用户账号获取对应的菜单
@@ -134,13 +131,19 @@ def getMenusByUser_code(user_code) :
     groupid = getGroupidByUsercode(user_code)
     modulenames = getModulenameByGroupId(groupid)
     menulist = []
-    getMenuList(menulist, 0, filter = modulenames)
-    return json.dumps(menulist)
+    getMenuList(menulist, filter = modulenames)
+    ids,return_menu=[],[]
+    for x in menulist:
+        if x["id"] not in ids:
+            ids.append(x['id'])
+            return_menu.append(x)
+    return json.dumps(return_menu)
 
 
 @db_session
-#@cache.memoize()
+# @cache.memoize()
 def getMenuList(menulist = [], pid = None, filter = []) :
+
     '''
 
     迭代获取菜单关系
@@ -151,13 +154,23 @@ def getMenuList(menulist = [], pid = None, filter = []) :
     :return:
     '''
     from autodb.models.portal import menutree
-    print(filter)
-    data = select(p for p in menutree if p.pid == pid).order_by(menutree.num)
+    #
+    # data = select(p for p in menutree if p.pid == pid).order_by(menutree.num)
+    # datajson = getTreeDataInList(menutree, data)
+    # for x in datajson :
+    # if x["modulename"] == "" or x["modulename"] in filter :
+    #         menulist.append(x)
+    #         getMenuList(menulist, x['id'], filter)
+
+    if filter :
+        data = select(p for p in menutree if p.modulename in filter).order_by(menutree.num)
+    else :
+        data = select(p for p in menutree if p.id == pid ).order_by(menutree.num)
     datajson = getTreeDataInList(menutree, data)
     for x in datajson :
-        if x["modulename"] == "" or x["modulename"] in filter :
-            menulist.append(x)
-            getMenuList(menulist, x['id'], filter)
+
+        menulist.append(x)
+        getMenuList(menulist, pid = x['pid'])
 
 
 @db_session
@@ -175,7 +188,7 @@ def getModuleidByname(modulename) :
         return False
 
 
-#@cache.memoize(60 * 60 * 24)
+# @cache.memoize(60 * 60 * 24)
 def geturlmap() :
     '''
     获取路由表
@@ -187,7 +200,7 @@ def geturlmap() :
         # 对所有注册的模块进行权限控制
         # print('geturlmap',i.methods,type(i.methods))
         # if 'GET' not in i.methods:
-        #     #只保留具有get属性的菜单
+        # #只保留具有get属性的菜单
         #     continue
 
         if (not i.endpoint.find('static') > -1) and (not i.endpoint.startswith('admin')) :

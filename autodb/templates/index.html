@@ -39,52 +39,62 @@
     <div title="north" region="north" class="header" bodyStyle="overflow:hidden;" height="60" showHeader="false"
          showSplit="true">
         <div>东营联通信息化服务中心综合支撑平台</div>
+        <div style="position:absolute;top:4px;right:10px;">
+            <a class="mini-button mini-button-iconTop" iconCls="icon-close" href="/user/logout" plain="true">退出</a>
 
-
-
-        <div style="position:absolute;right:12px;bottom:10px;font-size:12px;line-height:25px;font-weight:normal;">
-            选择皮肤：
-            <select id="selectSkin" onchange="onSkinChange(this.value)" style="width:100px;">
-
-                <option value="" >default</option>
-                <option value="blue" >Blue</option>
-                <option value="gray">Gray</option>
-                <option value="olive2003">Olive2003</option>
-                <option value="blue2003">Blue2003</option>
-                <option value="blue2010">Blue2010</option>
-            </select>
         </div>
+
     </div>
     <div showHeader="false" region="south" style="border:0;text-align:center;" height="25" showSplit="false">
-        Copyright © {{year}} 东营联通信息化服务中心综合支撑平台
+        Copyright © {{year}} 中国联通东营市分公司 信息化服务中心
     </div>
-    <div region="west" title="导航菜单" showHeader="true" bodyStyle="padding-left:1px;" showSplitIcon="true" width="230"
-         minWidth="100" maxWidth="350">
-        <!--OutlookTree-->
-        <div id="leftTree" class="mini-outlooktree" url="{{url_for('permission.getMenu')}}" onnodeclick="onNodeSelect"
-             textField="text" idField="id" parentField="pid"
+    <div title="center" region="center" style="border:0;" bodyStyle="overflow:hidden;">
+        <!--Splitter-->
+        <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
+            <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border:0;">
+                <!--OutlookTree-->
+                <div id="leftTree" class="mini-outlooktree" url="{{url_for('permission.getMenu')}}" onnodeclick="onNodeSelect"
+                textField="text" idField="id" parentField="pid"
                 >
-        </div>
-    </div>
-    <div title="center" region="center" style="border:0;">
-        <!--Tabs-->
-        <div id="mainTabs" class="mini-tabs" activeIndex="2" style="width:100%;height:100%;"
-             plain="false" contextMenu="#tabsMenu"
-             onactivechanged="onTabsActiveChanged"
-            >
-            <div title="首页" name="first">
+                </div>
+
             </div>
+            <div showCollapseButton="false" style="border:0;">
+                <!--Tabs-->
+                <div id="mainTabs" class="mini-tabs" activeIndex="0" style="width:100%;height:100%;"
+                     plain="false" onactivechanged="onTabsActiveChanged" contextMenu="#tabsMenu"
+                        >
+                    <div title="首页">
+                        登录身份：{{session['topdpt']}}{{session['user_name']}}
+                        <div>
+                            选择皮肤：
+                            <select id="selectSkin" onchange="onSkinChange(this.value)" style="width:100px;">
 
+                                <option value="">default</option>
+                                <option value="blue">Blue</option>
+                                <option value="gray">Gray</option>
+                                <option value="olive2003">Olive2003</option>
+                                <option value="blue2003">Blue2003</option>
+                                <option value="blue2010">Blue2010</option>
+                            </select>
+                        </div>
+                        <div >
+                            可用角色：{{session['groupid']}}
+                        </div>
+                        <div >
+                            可用权限：{{session['groupname']}}
+                        </div>
+                    </div>
+                </div>
+                <ul id="tabsMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
+                <li iconCls="icon-close" onclick="closeTab">关闭标签页</li>
+                <li iconCls="icon-split" onclick="closeAllBut">关闭其他标签页</li>
+                <li iconCls="icon-remove" onclick="closeAll">关闭所有标签页</li>
+                <li iconCls="icon-reload" onclick="reload">重新加载</li>
+                <li iconCls="icon-folderopen" onclick="openblank">新窗口打开</li>
+                </ul>
+            </div>
         </div>
-
-
-        <ul id="tabsMenu" class="mini-contextmenu" onbeforeopen="onBeforeOpen">
-            <li iconCls="icon-close" onclick="closeTab">关闭标签页</li>
-            <li iconCls="icon-split" onclick="closeAllBut">关闭其他标签页</li>
-            <li iconCls="icon-remove" onclick="closeAll">关闭所有标签页</li>
-            <li iconCls="icon-reload" onclick="reload">重新加载</li>
-            <li iconCls="icon-folderopen" onclick="openblank">新窗口打开</li>
-        </ul>
     </div>
 
 
