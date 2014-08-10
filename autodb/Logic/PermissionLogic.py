@@ -139,7 +139,7 @@ def getMenusByUser_code(user_code) :
 
 
 @db_session
-@cache.memoize()
+#@cache.memoize()
 def getMenuList(menulist = [], pid = None, filter = []) :
     '''
 
@@ -151,7 +151,7 @@ def getMenuList(menulist = [], pid = None, filter = []) :
     :return:
     '''
     from autodb.models.portal import menutree
-
+    print(filter)
     data = select(p for p in menutree if p.pid == pid).order_by(menutree.num)
     datajson = getTreeDataInList(menutree, data)
     for x in datajson :
@@ -175,7 +175,7 @@ def getModuleidByname(modulename) :
         return False
 
 
-@cache.memoize(60 * 60 * 24)
+#@cache.memoize(60 * 60 * 24)
 def geturlmap() :
     '''
     获取路由表

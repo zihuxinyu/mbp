@@ -49,6 +49,8 @@ class modulelist(db.Entity):
     guid=PrimaryKey(int,auto=True)
     url=Optional(LongUnicode)
     modulename=Optional(unicode)
+    c=Optional(unicode)#controller
+    a=Optional(unicode)#action
     doc= Optional(unicode)
     state=Optional(unicode,default='ok')
     modifierid=Optional(unicode)
