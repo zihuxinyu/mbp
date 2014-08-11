@@ -24,3 +24,24 @@ def index() :
 
     if isGetMethod() :
         return render_template("yunwei/xianzhi.html")
+    from autodb.models.yunwei import xianzhi
+    data=select(p for p in xianzhi).order_by(desc(xianzhi.guid))
+
+    return getGridData(entity= xianzhi,data=data)
+
+
+@xianzhi.route('/save', methods = ['POST'])
+@db_session
+@login_required
+@power
+def save() :
+    '''
+    保存闲置资源信息
+    :return:
+    '''
+    # from autodb.models.portal import group_module
+    #
+    # data = flaskhelper.getargs2json("data")
+    # if data :
+    #     saveData(group_module, data, operator = g.user.user_code)
+    return "操作完成"

@@ -122,6 +122,17 @@ def getModulenameByGroupId(groupid) :
 
 
 #@cache.memoize()
+def getMenus() :
+    '''
+    管理员获取所有菜单信息，进行管理用
+    :return:
+    '''
+    from autodb.models.portal import menutree
+    data = select(p for p in menutree ).order_by(menutree.num)
+    datajson = getTreeDataInList(menutree, data)
+    return json.dumps(datajson)
+
+
 def getMenusByUser_code(user_code) :
     '''
     通过用户账号获取对应的菜单
@@ -132,13 +143,12 @@ def getMenusByUser_code(user_code) :
     modulenames = getModulenameByGroupId(groupid)
     menulist = []
     getMenuList(menulist, filter = modulenames)
-    ids,return_menu=[],[]
-    for x in menulist:
-        if x["id"] not in ids:
+    ids, return_menu = [], []
+    for x in menulist :
+        if x["id"] not in ids :
             ids.append(x['id'])
             return_menu.append(x)
     return json.dumps(return_menu)
-
 
 @db_session
 # @cache.memoize()

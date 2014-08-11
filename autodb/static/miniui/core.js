@@ -93,6 +93,26 @@ function error(str) {
 
 }
 /*****************提示方法******************/
+/*****************页面方法******************/
+
+/**
+ * 页面弹出调用窗口回执方法
+ * @param action
+ * @returns {*}
+ * @constructor
+ */
+function CloseWindow(action) {
+    if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+    else window.close();
+}
+
+function onOk() {
+    CloseWindow("ok");
+}
+function onCancel() {
+    CloseWindow("cancel");
+}
+/*****************页面方法******************/
 
 /***********grid op start***********/
 

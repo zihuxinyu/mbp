@@ -1,31 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-<div id="datagrid1" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.index')}}" idField="guid"
-     allowAlternating="true" selectOnLoad="true"
-     showColumnsMenu="true" onrowdblclick="onRowDblClick"
-     onselectionchanged="onSelectionChanged"
-     allowCellEdit="true" allowCellSelect="true"
-     editNextOnEnterKey="true" editNextRowCell="true">
-    <div property="columns">
-        <div type="indexcolumn"></div>
-        <div field="modulename" headerAlign="center">模块名称</div>
-
-        <div field="url" headerAlign="center">访问路径</div>
-        <div field="doc" headerAlign="center">描述</div>
-    </div>
-</div>
-<br>
 <div style="width:100%;">
     <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
         <table style="width:100%;">
             <tr>
                 <td style="width:100%;">
-                    <a class="mini-button" iconCls="icon-add" onclick="addRow('datagm')" plain="true"
+                    <a class="mini-button" iconCls="icon-add" onclick="addRow('datagrid1')" plain="true"
                        tooltip="增加...">增加</a>
-                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow('datagm')" plain="true">删除</a>
+                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow('datagrid1')" plain="true">删除</a>
                     <span class="separator"></span>
                     <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
 
@@ -35,24 +18,32 @@
         </table>
     </div>
 </div>
-<div id="datagm" class="mini-datagrid" allowResize="true"
-     url="{{url_for('.group_module')}}" idField="guid"
-     allowCellEdit="true" allowCellSelect="true" multiSelect="true"
-     editNextOnEnterKey="true" editNextRowCell="true"
-        >
+<div id="datagrid1" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.index')}}" idField="guid"
+     allowAlternating="true" selectOnLoad="true"
+     showColumnsMenu="true"
+     allowCellEdit="true" allowCellSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true">
     <div property="columns">
         <div type="indexcolumn"></div>
-        <div type="checkcolumn"></div>
-        <div field="modulename" headerAlign="center">modulename
-            <input property="editor" class="mini-textbox" width="100%"/>
-
-        </div>
-        <div field="groupid" headerAlign="center">groupid
-            <input property="editor" class="mini-textbox"/>
-        </div>
+        <div field="zcbh" headerAlign="center">资产编号</div>
+        <div field="zy" headerAlign="center">专业</div>
+        <div field="cj" headerAlign="center">厂家</div>
+        <div field="sbmc" headerAlign="center">设备名称</div>
+        <div field="sbxh" headerAlign="center">设备型号</div>
+        <div field="bkmc" headerAlign="center">板卡名称</div>
+        <div field="bkxh" headerAlign="center">板卡型号</div>
+        <div field="sbzt" headerAlign="center">设备状态</div>
+        <div field="whx" headerAlign="center">完好性</div>
+        <div field="bfzt" headerAlign="center">报废状态</div>
+        <div field="dyzt" headerAlign="center">调用状态</div>
+        <div field="zcssbm" headerAlign="center">资产所属部门</div>
+        <div field="fzwz" headerAlign="center">放置位置</div>
+        <div field="fzwzssdw" headerAlign="center">放置位置所属单位</div>
 
     </div>
 </div>
+
 
 
 <script type="text/javascript">
@@ -61,19 +52,12 @@
 
     var grid = mini.get("datagrid1");
     grid.load();
-    var datagm = mini.get("datagm")
+
     function saveData() {
 
-        saveGrid(datagm, "{{url_for('.save_g_m')}}")
+        saveGrid(datagm, "{{url_for('.save')}}")
     }
-    function onSelectionChanged(e) {
 
-        var grid = e.sender;
-        var record = grid.getSelected();
-        if (record) {
-            datagm.load({ modulename: record.modulename });
-        }
-    }
     function addRow(htmlguidid) {
 
         var htmlguid = mini.get(htmlguidid);
@@ -105,17 +89,7 @@
         var row = grid.getSelected();
         return row;
     }
-    function CloseWindow(action) {
-        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
-        else window.close();
-    }
 
-    function onOk() {
-        CloseWindow("ok");
-    }
-    function onCancel() {
-        CloseWindow("cancel");
-    }
 </script>
 
 {% endblock %}
