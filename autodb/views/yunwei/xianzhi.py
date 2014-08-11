@@ -21,7 +21,7 @@ def index() :
     :return:
     '''
 
-
+    #TODO:根据角色不同，控制不同的菜单及列的显示
     if isGetMethod() :
         return render_template("yunwei/xianzhi.html")
     from autodb.models.yunwei import xianzhi
