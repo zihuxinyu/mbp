@@ -29,12 +29,12 @@ def power(fun) :
         # 如果是管理员，则取消权限验证
         if '1' in groupid :
             retVal = fun(*args, **kws)
-            print '管理员. ' + str(args)
+            # print '管理员. ' + str(args)
             return retVal
 
         if checkRights(pname, groupid) :
             retVal = fun(*args, **kws)
-            print 'after. ' + str(args)
+            # print 'after. ' + str(args)
             return retVal
         else :
 

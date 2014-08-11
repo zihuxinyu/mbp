@@ -25,7 +25,11 @@ def index() :
     if isGetMethod() :
         return render_template("yunwei/xianzhi.html")
     from autodb.models.yunwei import xianzhi
-    data=select(p for p in xianzhi).order_by(desc(xianzhi.guid))
+    zcbh=getargs('zcbh')
+    if zcbh:
+        data = select(p for p in xianzhi if p.zcbh==zcbh).order_by(desc(xianzhi.guid))
+    else:
+        data=select(p for p in xianzhi).order_by(desc(xianzhi.guid))
 
     return getGridData(entity= xianzhi,data=data)
 

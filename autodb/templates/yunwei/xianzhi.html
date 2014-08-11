@@ -14,7 +14,10 @@
                     <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
 
                 </td>
-
+                <td style="white-space:nowrap;">
+                    <input id="key" class="mini-textbox" emptyText="请输入资产编号" style="width:150px;" onenter="onKeyEnter"/>
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
             </tr>
         </table>
     </div>
@@ -22,13 +25,15 @@
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
      url="{{url_for('.index')}}" idField="guid"
      allowAlternating="true" selectOnLoad="true"
-     showColumnsMenu="true"
+     showColumnsMenu="true" pageSize="15" sizeList="[15,30,50,100]"
      allowCellEdit="true" allowCellSelect="true"
      editNextOnEnterKey="true" editNextRowCell="true">
     <div property="columns">
-        <div type="indexcolumn"></div>
+        <div type="indexcolumn">序号</div>
         <div field="zcbh" headerAlign="center">资产编号
-            <input property="editor" class="mini-textbox" width="100%"/></div>
+            <input property="editor" class="mini-textbox" width="100%"/>
+
+        </div>
         <div type="comboboxcolumn" autoShowPopup="true" field="zy" headerAlign="center">专业
             <input property="editor" class="mini-combobox" style="width:100%;" data="zyGenders"/>
         </div>
@@ -158,7 +163,12 @@
         htmlguid.addRow(newRow, 0);
         htmlguid.beginEditCell({}, 0);
     }
+    function search() {
+        var textbox = mini.get('key');
+        var zcbh = textbox.getValue();
 
+        grid.load({ zcbh: zcbh });
+    }
 
 </script>
 
