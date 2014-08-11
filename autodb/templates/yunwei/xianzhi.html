@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div id="datagrid1" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.index')}}" idField="guid"
+     allowAlternating="true" selectOnLoad="true"
+     showColumnsMenu="true" onrowdblclick="onRowDblClick"
+     onselectionchanged="onSelectionChanged"
+     allowCellEdit="true" allowCellSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true">
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div field="modulename" headerAlign="center">模块名称</div>
+
+        <div field="url" headerAlign="center">访问路径</div>
+        <div field="doc" headerAlign="center">描述</div>
+    </div>
+</div>
+<br>
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+                    <a class="mini-button" iconCls="icon-add" onclick="addRow('datagm')" plain="true"
+                       tooltip="增加...">增加</a>
+                    <a class="mini-button" iconCls="icon-remove" onclick="removeRow('datagm')" plain="true">删除</a>
+                    <span class="separator"></span>
+                    <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
+
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="datagm" class="mini-datagrid" allowResize="true"
+     url="{{url_for('.group_module')}}" idField="guid"
+     allowCellEdit="true" allowCellSelect="true" multiSelect="true"
+     editNextOnEnterKey="true" editNextRowCell="true"
+        >
+    <div property="columns">
+        <div type="indexcolumn"></div>
+        <div type="checkcolumn"></div>
+        <div field="modulename" headerAlign="center">modulename
+            <input property="editor" class="mini-textbox" width="100%"/>
+
+        </div>
+        <div field="groupid" headerAlign="center">groupid
+            <input property="editor" class="mini-textbox"/>
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    mini.parse();
+
+    var grid = mini.get("datagrid1");
+    grid.load();
+    var datagm = mini.get("datagm")
+    function saveData() {
+
+        saveGrid(datagm, "{{url_for('.save_g_m')}}")
+    }
+    function onSelectionChanged(e) {
+
+        var grid = e.sender;
+        var record = grid.getSelected();
+        if (record) {
+            datagm.load({ modulename: record.modulename });
+        }
+    }
+    function addRow(htmlguidid) {
+
+        var htmlguid = mini.get(htmlguidid);
+        var newRow = { modulename: grid.getSelected().modulename};
+        htmlguid.addRow(newRow, 0);
+        htmlguid.beginEditCell({}, 0);
+    }
+
+
+    function onRowDblClick(e) {
+        //只有定义了subpage才需要执行关闭页面的动作
+        if (GetParams().subpage != undefined) {
+
+            onOk();
+        }
+    }
+    //////////////////////////////////
+    /**
+     *
+     var iframe = this.getIFrameEl();
+     //执行调用页面里的方法，必须要有GetData()方法
+     var data = iframe.contentWindow.GetData();
+     data = mini.clone(data);    //必须
+     alert(data)
+     * @returns {*}
+     * @constructor
+     */
+    function GetData() {
+        var row = grid.getSelected();
+        return row;
+    }
+    function CloseWindow(action) {
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+
+    function onOk() {
+        CloseWindow("ok");
+    }
+    function onCancel() {
+        CloseWindow("cancel");
+    }
+</script>
+
+{% endblock %}
