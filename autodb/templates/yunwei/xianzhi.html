@@ -26,27 +26,116 @@
      editNextOnEnterKey="true" editNextRowCell="true">
     <div property="columns">
         <div type="indexcolumn"></div>
-        <div field="zcbh" headerAlign="center">资产编号</div>
-        <div field="zy" headerAlign="center">专业</div>
-        <div field="cj" headerAlign="center">厂家</div>
-        <div field="sbmc" headerAlign="center">设备名称</div>
-        <div field="sbxh" headerAlign="center">设备型号</div>
-        <div field="bkmc" headerAlign="center">板卡名称</div>
-        <div field="bkxh" headerAlign="center">板卡型号</div>
-        <div field="sbzt" headerAlign="center">设备状态</div>
-        <div field="whx" headerAlign="center">完好性</div>
-        <div field="bfzt" headerAlign="center">报废状态</div>
-        <div field="dyzt" headerAlign="center">调用状态</div>
-        <div field="zcssbm" headerAlign="center">资产所属部门</div>
-        <div field="fzwz" headerAlign="center">放置位置</div>
-        <div field="fzwzssdw" headerAlign="center">放置位置所属单位</div>
+        <div field="zcbh" headerAlign="center">资产编号
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div type="comboboxcolumn" autoShowPopup="true" field="zy" headerAlign="center">专业
+            <input property="editor" class="mini-combobox" style="width:100%;" data="zyGenders"/>
+        </div>
+
+        <div field="cj" headerAlign="center">厂家
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div field="sbmc" headerAlign="center">设备名称
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div field="sbxh" headerAlign="center">设备型号
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div field="bkmc" headerAlign="center">板卡名称
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div field="bkxh" headerAlign="center">板卡型号
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div type="comboboxcolumn" autoShowPopup="true" field="sbzt" headerAlign="center">设备状态
+            <input property="editor" class="mini-combobox" style="width:100%;" data="sbztGenders"/></div>
+
+        <div type="comboboxcolumn" autoShowPopup="true" field="whx" headerAlign="center">完好性
+            <input property="editor" class="mini-combobox" style="width:100%;" data="whxGenders"/></div>
+
+
+        <div type="comboboxcolumn" autoShowPopup="true" field="bfzt" headerAlign="center">报废状态
+            <input property="editor" class="mini-combobox" style="width:100%;" data="bfztGenders"/></div>
+        <div type="comboboxcolumn" autoShowPopup="true" field="dyzt" headerAlign="center">调用状态
+            <input property="editor" class="mini-combobox" style="width:100%;" data="dyztGenders"/></div>
+        <div type="comboboxcolumn" autoShowPopup="true" field="zcssbm" headerAlign="center" width="150px">资产所属部门
+            <input property="editor" class="mini-combobox" style="width:100%;" data="zcssbmGenders"/></div>
+
+        <div field="fzwz" headerAlign="center">放置位置
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+        <div type="comboboxcolumn" autoShowPopup="true" field="fzwzssdw" headerAlign="center" width="160px">放置位置所属单位
+            <input property="editor" class="mini-combobox" style="width:100%;" data="fzwzssdwGenders"/></div>
+
 
     </div>
 </div>
 
 
-
 <script type="text/javascript">
+    /********定义选项********/
+
+
+    var zyGenders = [
+        { id: '传输', text: '传输' },
+        { id: '数据', text: '数据' },
+        { id: '固定交换网', text: '固定交换网' },
+        { id: '移动核心网', text: '移动核心网' },
+        { id: '无线', text: '无线' },
+        { id: '电源', text: '电源' },
+        { id: '接入网', text: '接入网' }
+
+    ];
+    var sbztGenders = [
+        {id: '闲置未下电', text: '闲置未下电'},
+        {id: '下电未拆', text: '下电未拆'},
+        {id: '已拆除', text: '已拆除'}
+    ];
+    var whxGenders = [
+        {id: '可用', text: '可用'},
+        {id: '不可用', text: '不可用'}]
+    var bfztGenders = [
+        {id: '已申请报废', text: '已申请报废'},
+        {id: '待报废', text: '待报废'},
+        {id: '未报废', text: '未报废'}];
+    var dyztGenders = [
+        {id: '已调用', text: '已调用'},
+        {id: '未调用', text: '未调用'}];
+    var zcssbmGenders = [
+        {id: '网络维护中心', text: '网络维护中心'},
+        {id: '网络优化中心', text: '网络优化中心'},
+        {id: '公众客户响应中心', text: '公众客户响应中心'},
+        {id: '集团客户响应中心', text: '集团客户响应中心'},
+        {id: '广饶', text: '广饶'},
+        {id: '垦利', text: '垦利'},
+        {id: '利津', text: '利津'},
+        {id: '河口区维护中心', text: '河口区维护中心'},
+        {id: '胜中', text: '胜中'},
+        {id: '胜南', text: '胜南'},
+        {id: '胜北', text: '胜北'},
+        {id: '胜东', text: '胜东'},
+        {id: '仙河', text: '仙河'},
+        {id: '滨州', text: '滨州'},
+        {id: '纯梁', text: '纯梁'},
+        {id: '孤岛', text: '孤岛'},
+        {id: '胜利河口', text: '胜利河口'},
+        {id: '临盘', text: '临盘'}];
+    var fzwzssdwGenders = [
+        {id: '网络维护中心-东城', text: '网络维护中心-东城'},
+        {id: '网络维护中心-西城', text: '网络维护中心-西城'},
+        {id: '网络优化中心', text: '网络优化中心'},
+        {id: '公众客户响应中心-东城', text: '公众客户响应中心-东城'},
+        {id: '公众客户响应中心-西城', text: '公众客户响应中心-西城'},
+        {id: '集团客户响应中心', text: '集团客户响应中心'},
+        {id: '广饶', text: '广饶'},
+        {id: '垦利', text: '垦利'},
+        {id: '利津', text: '利津'},
+        {id: '河口区维护中心', text: '河口区维护中心'},
+        {id: '胜中', text: '胜中'},
+        {id: '胜南', text: '胜南'},
+        {id: '胜北', text: '胜北'},
+        {id: '胜东', text: '胜东'},
+        {id: '仙河', text: '仙河'},
+        {id: '滨州', text: '滨州'},
+        {id: '纯梁', text: '纯梁'},
+        {id: '孤岛', text: '孤岛'},
+        {id: '胜利河口', text: '胜利河口'},
+        {id: '临盘', text: '临盘'}];
+    /********定义选项********/
 
     mini.parse();
 
@@ -55,40 +144,17 @@
 
     function saveData() {
 
-        saveGrid(datagm, "{{url_for('.save')}}")
+        saveGrid(grid, "{{url_for('.save')}}")
     }
 
     function addRow(htmlguidid) {
 
         var htmlguid = mini.get(htmlguidid);
-        var newRow = { modulename: grid.getSelected().modulename};
+        var newRow = {};
         htmlguid.addRow(newRow, 0);
         htmlguid.beginEditCell({}, 0);
     }
 
-
-    function onRowDblClick(e) {
-        //只有定义了subpage才需要执行关闭页面的动作
-        if (GetParams().subpage != undefined) {
-
-            onOk();
-        }
-    }
-    //////////////////////////////////
-    /**
-     *
-     var iframe = this.getIFrameEl();
-     //执行调用页面里的方法，必须要有GetData()方法
-     var data = iframe.contentWindow.GetData();
-     data = mini.clone(data);    //必须
-     alert(data)
-     * @returns {*}
-     * @constructor
-     */
-    function GetData() {
-        var row = grid.getSelected();
-        return row;
-    }
 
 </script>
 

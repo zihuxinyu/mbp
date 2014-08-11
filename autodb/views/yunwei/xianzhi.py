@@ -17,7 +17,7 @@ xianzhi = Blueprint("xianzhi", __name__)
 @db_session
 def index() :
     '''
-    获取模块列表
+    运维闲置资源管理
     :return:
     '''
 
@@ -36,12 +36,12 @@ def index() :
 @power
 def save() :
     '''
-    保存闲置资源信息
+    运维闲置资源--保存闲置资源信息
     :return:
     '''
-    # from autodb.models.portal import group_module
-    #
-    # data = flaskhelper.getargs2json("data")
-    # if data :
-    #     saveData(group_module, data, operator = g.user.user_code)
+    from autodb.models.yunwei import xianzhi
+
+    data = flaskhelper.getargs2json("data")
+    if data :
+        saveData(xianzhi, data, operator = g.user.user_code)
     return "操作完成"
