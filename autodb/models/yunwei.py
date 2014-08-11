@@ -34,3 +34,5 @@ class xianzhi(db.Entity):
     zcssbm = Optional(unicode)  # 资产所属部门
     fzwz = Optional(unicode)  # 放置位置
     fzwzssdw = Optional(unicode)  #放置位置所属单位
+
+    topdpt= Optional(unicode)  # 录入人员所属单位

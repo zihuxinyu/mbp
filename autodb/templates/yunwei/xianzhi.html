@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+
 <div style="width:100%;">
     <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
         <table style="width:100%;">
@@ -68,8 +69,6 @@
 
 <script type="text/javascript">
     /********定义选项********/
-
-
     var zyGenders = [
         { id: '传输', text: '传输' },
         { id: '数据', text: '数据' },
@@ -87,14 +86,17 @@
     ];
     var whxGenders = [
         {id: '可用', text: '可用'},
-        {id: '不可用', text: '不可用'}]
+        {id: '不可用', text: '不可用'}
+    ]
     var bfztGenders = [
         {id: '已申请报废', text: '已申请报废'},
         {id: '待报废', text: '待报废'},
-        {id: '未报废', text: '未报废'}];
+        {id: '未报废', text: '未报废'}
+    ];
     var dyztGenders = [
         {id: '已调用', text: '已调用'},
-        {id: '未调用', text: '未调用'}];
+        {id: '未调用', text: '未调用'}
+    ];
     var zcssbmGenders = [
         {id: '网络维护中心', text: '网络维护中心'},
         {id: '网络优化中心', text: '网络优化中心'},
@@ -113,7 +115,8 @@
         {id: '纯梁', text: '纯梁'},
         {id: '孤岛', text: '孤岛'},
         {id: '胜利河口', text: '胜利河口'},
-        {id: '临盘', text: '临盘'}];
+        {id: '临盘', text: '临盘'}
+    ];
     var fzwzssdwGenders = [
         {id: '网络维护中心-东城', text: '网络维护中心-东城'},
         {id: '网络维护中心-西城', text: '网络维护中心-西城'},
@@ -134,7 +137,8 @@
         {id: '纯梁', text: '纯梁'},
         {id: '孤岛', text: '孤岛'},
         {id: '胜利河口', text: '胜利河口'},
-        {id: '临盘', text: '临盘'}];
+        {id: '临盘', text: '临盘'}
+    ];
     /********定义选项********/
 
     mini.parse();
@@ -146,7 +150,6 @@
 
         saveGrid(grid, "{{url_for('.save')}}")
     }
-
     function addRow(htmlguidid) {
 
         var htmlguid = mini.get(htmlguidid);

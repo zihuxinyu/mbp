@@ -42,6 +42,11 @@ def save() :
     from autodb.models.yunwei import xianzhi
 
     data = flaskhelper.getargs2json("data")
+    #用户信息
+    uinfo = { "topdpt" : session['topdpt'] }
+
     if data :
+        for x in data:
+            x.update(uinfo)#更新用户信息
         saveData(xianzhi, data, operator = g.user.user_code)
     return "操作完成"
