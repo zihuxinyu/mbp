@@ -138,7 +138,7 @@ def sqsh() :
                     print(x)
                     db.execute(x)
 
-    return "ok"
+    return zhangqi+"ok"
 
 
 

@@ -100,4 +100,4 @@ def pagesso():
     print('解析得到',userdata)
     #得到userdata,目前只存放加密后的4A工号，日后加验证逻辑
     sso(userdata)
-    return "over"
+    return userdata+"over"
