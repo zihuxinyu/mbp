@@ -26,6 +26,11 @@ class EXT_USER_GROUP(db.Entity):
     user_code=Required(unicode)
     user_name = Required(unicode)
     groupid=Required(unicode)
-
-
-
+class EXT_GROUPLIST(db.Entity):
+    '''
+    角色信息
+    '''
+    guid = PrimaryKey(unicode)
+    groupname= Required(unicode)#角色名称
+    id= Required(unicode)#角色ID
+    creatorid=Required(unicode)#创建者4A

@@ -3,7 +3,7 @@
 文件作用:user相关操作
 '''
 from autodb.Logic.PermissionLogic import getMenusByUser_code,getGroupidByUsercode,getModulenameByGroupId, \
-    getUserInfoByUsercode
+    getUserInfoByUsercode,getGroupNameByGroupIds
 from flask_login import logout_user, login_user
 from werkzeug.utils import redirect
 from flask.helpers import url_for
@@ -65,10 +65,16 @@ def sso(usercode):
 
         # 保存用户菜单
         session['menu'] = getMenusByUser_code(usercode)
+
         #保存用户角色
         session['groupid']=getGroupidByUsercode(usercode)
+
+        #保存用户角色名称
+        session['groupname']=getGroupNameByGroupIds(session['groupid'])
+
         #保存用户模块
-        session['groupname']=getModulenameByGroupId(session['groupid'])
+        session['modulename']=getModulenameByGroupId(session['groupid'])
+
         #保存用户单位
         session['topdpt'] = getUserInfoByUsercode(usercode).topdpt
         session['user_name'] = getUserInfoByUsercode(usercode).user_name

@@ -8,24 +8,26 @@ from flask import Blueprint, g, session
 from flask.ext.login import login_required
 from flask.templating import render_template
 from pony.orm import *
-from autodb.Logic.PermissionLogic import power
+from autodb.Logic.PermissionLogic import power,IsAdmin
 
 xianzhi = Blueprint("xianzhi", __name__)
 
 
 @xianzhi.route('/index', methods = ['GET', 'POST'])
 @db_session
+@power
 def index() :
     '''
     运维闲置资源管理
     :return:
     '''
-
+    isadmin=IsAdmin('系统管理员')
     #TODO:根据角色不同，控制不同的菜单及列的显示
     if isGetMethod() :
-        return render_template("yunwei/xianzhi.html")
+        return render_template("yunwei/xianzhi.html", isadmin= isadmin)
     from autodb.models.yunwei import xianzhi
     zcbh=getargs('zcbh')
+    #按资产编号进行查询
     if zcbh:
         data = select(p for p in xianzhi if p.zcbh==zcbh).order_by(desc(xianzhi.guid))
     else:

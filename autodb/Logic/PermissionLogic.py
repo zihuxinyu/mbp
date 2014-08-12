@@ -7,7 +7,7 @@ Created by weibaohui on 14-6-8.
 import functools
 import json
 
-from flask import g, abort
+from flask import g, abort,session
 from autodb import app, cache
 from pony.orm import *
 from autodb.models.portal import group_module as gm
@@ -42,6 +42,24 @@ def power(fun) :
             return g.user.get_id() + "没有权限访问此功能"
 
     return wrapped
+
+
+def IsAdmin(admin):
+
+    '''
+    检查是否具有管理权限
+    :param groupnames:当前用户的角色名称
+    :param admin:
+    :return:
+    '''
+    groupnames = session['groupname']
+    for x in groupnames:
+        if admin==x:
+            #角色列表中含有指定的角色，认为是管理员
+            return True
+
+    return False
+
 
 
 @cache.memoize(60 * 60)
@@ -95,6 +113,20 @@ def getGroupidByUsercode(user_code) :
 
 
 @db_session
+@cache.memoize(60 * 60 * 24)
+def getGroupNameByGroupIds(groupids) :
+    '''
+    通过User_code获取角色名称
+    :param groupids:list
+    :return:list
+    '''
+
+    from autodb.models.OracleUser import EXT_GROUPLIST
+    data = select(p for p in EXT_GROUPLIST if p.id in groupids)
+
+    return [d.groupname for d in data] if data else False
+
+@db_session
 @cache.memoize(60 * 60 * 24 * 5)
 def getUserInfoByUsercode(user_code) :
     """
@@ -121,10 +153,10 @@ def getModulenameByGroupId(groupid) :
     return data
 
 
-#@cache.memoize()
 def getMenus() :
     '''
     管理员获取所有菜单信息，进行管理用
+    此功能不需要缓存
     :return:
     '''
     from autodb.models.portal import menutree
@@ -133,6 +165,7 @@ def getMenus() :
     return json.dumps(datajson)
 
 
+@cache.memoize()
 def getMenusByUser_code(user_code) :
     '''
     通过用户账号获取对应的菜单
@@ -151,7 +184,7 @@ def getMenusByUser_code(user_code) :
     return json.dumps(return_menu)
 
 @db_session
-# @cache.memoize()
+@cache.memoize()
 def getMenuList(menulist = [], pid = None, filter = []) :
 
     '''
@@ -198,7 +231,6 @@ def getModuleidByname(modulename) :
         return False
 
 
-# @cache.memoize(60 * 60 * 24)
 def geturlmap() :
     '''
     获取路由表

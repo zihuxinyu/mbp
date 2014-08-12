@@ -2,6 +2,7 @@
 {% block content %}
 
 
+
 <div style="width:100%;">
     <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
         <table style="width:100%;">
@@ -57,21 +58,43 @@
 
         <div type="comboboxcolumn" autoShowPopup="true" field="bfzt" headerAlign="center" allowSort="true">报废状态
             <input property="editor" class="mini-combobox" style="width:100%;" data="bfztGenders"/></div>
+
+        <div field="fzwz" headerAlign="center">放置位置
+            <input property="editor" class="mini-textbox" width="100%"/></div>
+
+        <div type="comboboxcolumn" autoShowPopup="true" field="fzwzssdw" headerAlign="center" width="160px">放置位置所属单位
+            <input property="editor" class="mini-combobox" style="width:100%;" data="fzwzssdwGenders"/></div>
+
+
+        {%if isadmin%}
+
         <div type="comboboxcolumn" autoShowPopup="true" field="dyzt" headerAlign="center" allowSort="true">调用状态
             <input property="editor" class="mini-combobox" style="width:100%;" data="dyztGenders"/></div>
         <div type="comboboxcolumn" autoShowPopup="true" field="zcssbm" headerAlign="center" width="150px"
              allowSort="true">资产所属部门
             <input property="editor" class="mini-combobox" style="width:100%;" data="zcssbmGenders"/></div>
 
-        <div field="fzwz" headerAlign="center">放置位置
-            <input property="editor" class="mini-textbox" width="100%"/></div>
-        <div type="comboboxcolumn" autoShowPopup="true" field="fzwzssdw" headerAlign="center" width="160px">放置位置所属单位
-            <input property="editor" class="mini-combobox" style="width:100%;" data="fzwzssdwGenders"/></div>
 
-
+        {%endif%}
     </div>
 </div>
+<fieldset style=";border:solid 1px #aaa;margin-top:8px;position:relative;">
+    <legend>资产详细信息</legend>
+    <div id="editForm1" style="padding:5px;">
+        <input class="mini-hidden" name="id"/>
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100px;">资产编号：</td>
+                <td style="width:150px;"><input id="zcbh" name="zcbh" class="mini-textbox"/></td>
+                <td style="width:100px;">资产所属部门：</td>
+                <td style="width:150px;"><input id="zcssbm" name="zcssbm" class="mini-textbox"/></td>
+                <td style="width:80px;">调用状态：</td>
+                <td style="width:150px;"><input name="dyzt" class="mini-textbox"/></td>
+            </tr>
 
+        </table>
+    </div>
+</fieldset>
 
 <script type="text/javascript">
     /********定义选项********/
@@ -151,6 +174,11 @@
 
     var grid = mini.get("datagrid1");
     grid.load();
+
+    //绑定表单
+    var db = new mini.DataBinding();
+
+    db.bindForm("editForm1", grid);
 
     function saveData() {
 
