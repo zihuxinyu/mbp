@@ -44,7 +44,7 @@ def power(fun) :
     return wrapped
 
 
-def IsAdmin(admin):
+def IsAdmin(admins):
 
     '''
     检查是否具有管理权限
@@ -54,9 +54,10 @@ def IsAdmin(admin):
     '''
     groupnames = session['groupname']
     for x in groupnames:
-        if admin==x:
-            #角色列表中含有指定的角色，认为是管理员
-            return True
+        for y in admins:
+            if y==x:
+                #角色列表中含有指定的角色，认为是管理员
+                return True
 
     return False
 

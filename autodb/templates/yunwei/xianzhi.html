@@ -2,7 +2,6 @@
 {% block content %}
 
 
-
 <div style="width:100%;">
     <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
         <table style="width:100%;">
@@ -25,11 +24,13 @@
 </div>
 <div id="datagrid1" class="mini-datagrid" allowResize="true"
      url="{{url_for('.index')}}" idField="guid"
-     allowAlternating="true" selectOnLoad="true"
-     showColumnsMenu="true" pageSize="15" sizeList="[15,30,50,100]"
+     allowAlternating="true" selectOnLoad="true" multiSelect="true"
+     showColumnsMenu="true" pageSize="10" sizeList="[10,15,30,50,100]"
      allowCellEdit="true" allowCellSelect="true"
      editNextOnEnterKey="true" editNextRowCell="true">
     <div property="columns">
+        <div type="checkcolumn"></div>
+
         <div type="indexcolumn">序号</div>
         <div field="zcbh" headerAlign="center">资产编号
             <input property="editor" class="mini-textbox" width="100%"/>
@@ -74,7 +75,8 @@
              allowSort="true">资产所属部门
             <input property="editor" class="mini-combobox" style="width:100%;" data="zcssbmGenders"/></div>
 
-
+        {%else%}
+        <div field="dyzt" headerAlign="center" allowSort="true">调用状态</div>
         {%endif%}
     </div>
 </div>

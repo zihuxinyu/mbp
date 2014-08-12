@@ -21,7 +21,7 @@ def index() :
     运维闲置资源管理
     :return:
     '''
-    isadmin=IsAdmin('系统管理员')
+    isadmin=IsAdmin(['系统管理员'])
     #TODO:根据角色不同，控制不同的菜单及列的显示
     if isGetMethod() :
         return render_template("yunwei/xianzhi.html", isadmin= isadmin)
