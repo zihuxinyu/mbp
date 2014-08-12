@@ -97,13 +97,29 @@ def sqsh() :
     zhangqi = '201407'
     tmp = "insert into   EXT_CHART_GW_SQSH t (ZHANGQI,AREA_NAME,DATATYPE ,orders,shuiqian,shuihou,shuilv) values ('{0}','{1}','{2}'," \
           "'{3}','{4}' ,'{5}','{6}'  ) ";
-    xf = { "KFQ" : "开发区", "DYQ" : "东营区", "GR" : "广饶县", "KL" : "垦利县", "LJ" : "利津县", "HKQ" : "河口区", "SZ" : "胜中分公司",
+    xf = { "KFQ" : "开发区",
+           "DYQ" : "东营区",
+           "GR" : "广饶县",
+           "KL" : "垦利县",
+           "LJ" : "利津县",
+           "HKQ" : "河口区",
+           "SZ" : "胜中分公司",
            "SN" : "胜南分公司",
-           "SB" : "胜北分公司", "SD" : "胜东分公司", "XH" : "仙河分公司", "BZ" : "胜利滨州分公司", "CL" : "纯梁分公司", "GD" : "孤岛分公司",
+           "SB" : "胜北分公司",
+           "SD" : "胜东分公司",
+           "XH" : "仙河分公司",
+           "BZ" : "胜利滨州分公司",
+           "CL" : "纯梁分公司",
+           "GD" : "孤岛分公司",
            "SLHK" : "胜利河口分公司",
            "LP" : "临盘分公司",
-           "XYFWZX" : "校园服务中心", "JKYB" : "集客客户一部", "JKEB" : "集客客户二部", "DCQD" : "东城渠道服务中心", "XCQD" : "西城渠道服务中心",
-           "SBB" : "东营市分公司" }
+           "XYFWZX" : "校园服务中心",
+           "JKYB" : "集客客户一部",
+           "JKEB" : "集客客户二部",
+           "DCQD" : "东城渠道服务中心",
+           "XCQD" : "西城渠道服务中心",
+           "SBB" : "市本部",
+           "DYS":"东营市分公司"}
 
     db.execute("delete from EXT_CHART_GW_SQSH t where t.zhangqi='{0}'".format(zhangqi))
     data = select(p for p in sqsh)
@@ -111,9 +127,14 @@ def sqsh() :
         if d.sjly :
             datas = select(x for x in sqsh if x.sjly == d.sjly)
             for ds in datas :
+                print(ds.sjly)
                 for y in xf :
-                    x = tmp.format(zhangqi, str(xf[y]), d.sjly, str(getattr(ds, str(y).lower())).replace("None", "0"),
-                                   str(getattr(ds, 'orders')))
+                    x = tmp.format(zhangqi, str(xf[y]), d.sjly, str(getattr(ds, 'orders')),
+                                   str(getattr(ds, str(y+"_Q").lower())).replace("None", "0"),
+                                   str(getattr(ds, str(y+"_H").lower())).replace("None", "0"),
+                                   str(getattr(ds,'sl')).replace("None", "")
+
+                                   )
                     print(x)
                     db.execute(x)
 
