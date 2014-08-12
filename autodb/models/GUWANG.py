@@ -61,6 +61,9 @@ class TMP_SHOURU_GUWANG(db.Entity):
     sbb = Optional(Decimal)
 
 class TMP_SHOURU_SQSH(db.Entity):
+    '''
+    固网税前税后导入临时表
+    '''
     orders = Optional(unicode)
     sjly = Optional(unicode)
     sl = Optional(unicode)
