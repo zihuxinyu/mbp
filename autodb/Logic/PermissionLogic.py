@@ -19,7 +19,7 @@ from Library.minihelper import getTreeDataInList
 def power(fun) :
     @functools.wraps(fun)
     def wrapped(*args, **kws) :
-        print 'before.' + str(args)
+        #print 'before.' + str(args)
 
         pname = "{0}.{1}".format(fun.__module__, fun.__name__).replace("autodb.views.", "")
         # print( fun.__module__+fun.__name__,'modulename')

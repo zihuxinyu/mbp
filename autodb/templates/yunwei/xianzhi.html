@@ -9,7 +9,9 @@
                 <td style="width:100%;">
                     <a class="mini-button" iconCls="icon-add" onclick="addRow('datagrid1')" plain="true"
                        tooltip="增加...">增加</a>
+                    {%if isadmin%}
                     <a class="mini-button" iconCls="icon-remove" onclick="removeRow('datagrid1')" plain="true">删除</a>
+                    {%endif%}
                     <span class="separator"></span>
                     <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
 
@@ -27,7 +29,9 @@
      allowAlternating="true" selectOnLoad="true" multiSelect="true"
      showColumnsMenu="true" pageSize="10" sizeList="[10,15,30,50,100]"
      allowCellEdit="true" allowCellSelect="true"
-     editNextOnEnterKey="true" editNextRowCell="true">
+     editNextOnEnterKey="true" editNextRowCell="true"
+     oncellbeginedit="OnCellBeginEdit"
+        >
     <div property="columns">
         <div type="checkcolumn"></div>
 
@@ -80,23 +84,15 @@
         {%endif%}
     </div>
 </div>
-<fieldset style=";border:solid 1px #aaa;margin-top:8px;position:relative;">
-    <legend>资产详细信息</legend>
-    <div id="editForm1" style="padding:5px;">
-        <input class="mini-hidden" name="id"/>
-        <table style="width:100%;">
-            <tr>
-                <td style="width:100px;">资产编号：</td>
-                <td style="width:150px;"><input id="zcbh" name="zcbh" class="mini-textbox"/></td>
-                <td style="width:100px;">资产所属部门：</td>
-                <td style="width:150px;"><input id="zcssbm" name="zcssbm" class="mini-textbox"/></td>
-                <td style="width:80px;">调用状态：</td>
-                <td style="width:150px;"><input name="dyzt" class="mini-textbox"/></td>
-            </tr>
+<div class="description">
+    <h3>操作说明</h3>
+    <li>右键点击tab标签，有重新加载、新窗口打开、关闭页面等功能</li>
+    <li>右键点击表头，可以设置列的显示隐藏</li>
+    <li>表头列可以左右拖动设置显示宽度、位置</li>
+    <li>编辑后（包括新增、修改、删除、批量修改、批量删除）请点击保存按钮，否则修改无效</li>
+    <li>已调用状态的资产条目不可编辑</li>
 
-        </table>
-    </div>
-</fieldset>
+</div>
 
 <script type="text/javascript">
     /********定义选项********/
@@ -177,10 +173,7 @@
     var grid = mini.get("datagrid1");
     grid.load();
 
-    //绑定表单
-    var db = new mini.DataBinding();
 
-    db.bindForm("editForm1", grid);
 
     function saveData() {
 
@@ -198,6 +191,14 @@
         var zcbh = textbox.getValue();
 
         grid.load({ zcbh: zcbh });
+    }
+    function OnCellBeginEdit(e) {
+        var record = e.record, field = e.field;
+        var isadmin = '{{isadmin}}';
+        //设置普通用户不能修改已调用资产
+        if (record.dyzt == "已调用" && isadmin != 'True') {
+            e.cancel = true;    //如果已调用，则不允许编辑单元格
+        }
     }
 
 </script>

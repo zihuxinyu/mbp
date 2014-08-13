@@ -35,12 +35,11 @@ class portal_user(db.Entity):
     guid = PrimaryKey(int, auto=True)
     user_code = Optional(unicode)
     user_name = Optional(unicode)
-    #user_mobile = Optional(unicode)
+    user_mobile = Optional(unicode)
     dpt_name = Optional(unicode)
     topdpt = Optional(unicode)
-    #manager = Optional(unicode)
-    #msg = Optional(unicode)
-    #msgexpdate = Optional(datetime,default=datetime.now())
+    manager = Optional(unicode)
+    
 
 class modulelist(db.Entity):
     '''

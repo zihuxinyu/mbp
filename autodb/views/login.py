@@ -54,7 +54,8 @@ def sso(usercode):
     with db_session:
         staff = select(p for p in portal_user if p.user_code == usercode).first()
         if not staff:
-            return "登录失败，查无此ID"
+            print( "登录失败，查无此ID")
+            return False
 
         from autodb.models.portal import users
 
@@ -79,7 +80,7 @@ def sso(usercode):
         session['topdpt'] = getUserInfoByUsercode(usercode).topdpt
         session['user_name'] = getUserInfoByUsercode(usercode).user_name
 
-    return "success"
+    return True
 
 
 @user.route('/sso', methods = ['GET', 'POST'])
@@ -97,7 +98,9 @@ def pagesso():
 
     hd=binascii.unhexlify(data)
     userdata= k.decrypt(hd)
-    print('解析得到',userdata)
+    print('get:',userdata)
     #得到userdata,目前只存放加密后的4A工号，日后加验证逻辑
-    sso(userdata)
-    return userdata+"over"
+    if sso(userdata):
+        return userdata+"over"
+    else:
+        return "error"
