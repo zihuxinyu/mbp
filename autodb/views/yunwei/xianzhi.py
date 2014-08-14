@@ -22,13 +22,13 @@ def index() :
     '''
     # 此模块的管理员角色名称
     isadmin = IsAdmin(['系统管理员', '运维闲置资产管理市分'])
+    #print(isadmin)
     if isGetMethod() :
         return render_template("yunwei/xianzhi.html", isadmin = isadmin)
     from autodb.models.yunwei import xianzhi
 
     zcbh = getargs('zcbh')
-    topdpt = session['topdpt']
-    print(topdpt)
+
 
     #按资产编号进行查询
     vsql = "p for p in xianzhi if True "

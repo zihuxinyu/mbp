@@ -27,7 +27,7 @@ def power(fun) :
         # 得到用户权限
         groupid = getGroupidByUsercode(g.user.get_id())
         # 如果是管理员，则取消权限验证
-        if '1' in groupid :
+        if IsAdmin(['系统管理员']):
             retVal = fun(*args, **kws)
             # print '管理员. ' + str(args)
             return retVal
@@ -53,11 +53,14 @@ def IsAdmin(admins):
     :return:
     '''
     groupnames = session['groupname']
+    # print(groupnames,admins)
+
     for x in groupnames:
         for y in admins:
-            if y==x:
-                #角色列表中含有指定的角色，认为是管理员
+            #print('22',x.decode('utf8') , y.decode('utf8'))
+            if x.decode('utf8')==y.decode('utf8'):
                 return True
+                #角色列表中含有指定的角色，认为是管理员
 
     return False
 
@@ -141,7 +144,7 @@ def getUserInfoByUsercode(user_code) :
 
 
 @db_session
-@cache.memoize()
+@cache.memoize(60 * 60 * 24 * 5)
 def getModulenameByGroupId(groupid) :
     '''
     通过角色ID获取权限名称
@@ -166,7 +169,6 @@ def getMenus() :
     return json.dumps(datajson)
 
 
-@cache.memoize()
 def getMenusByUser_code(user_code) :
     '''
     通过用户账号获取对应的菜单
@@ -177,6 +179,7 @@ def getMenusByUser_code(user_code) :
     modulenames = getModulenameByGroupId(groupid)
     menulist = []
     getMenuList(menulist, filter = modulenames)
+
     ids, return_menu = [], []
     for x in menulist :
         if x["id"] not in ids :
