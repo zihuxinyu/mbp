@@ -139,7 +139,9 @@ function removeRow(htmlguidid) {
 function saveGrid(grid, posturl) {
 
     var data = grid.getChanges(null, true);
+
     var json = mini.encode(data);
+    
     if (data == "") {
         error('没有数据需要保存');
         return false;
