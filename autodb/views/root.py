@@ -59,7 +59,7 @@ def shouru():
     from autodb.models.GUWANG import TMP_SHOURU_GUWANG as gw
     from autodb.Logic.ponyLogic import db
 
-    zhangqi = '201407'
+    zhangqi = '201408'
     tmp = "insert into   EXT_CHART_GW_MXSR t (ZHANGQI,AREA_NAME,DATATYPE,SHOURU ,orders) values ('{0}','{1}','{2}'," \
           "'{3}','{4}' ) ";
     xf = {"KFQ": "开发区", "DYQ": "东营区", "GR": "广饶县", "KL": "垦利县", "LJ": "利津县", "HKQ": "河口区", "SZ": "胜中分公司", "SN": "胜南分公司",
@@ -94,7 +94,7 @@ def sqsh() :
     from autodb.models.GUWANG import TMP_SHOURU_SQSH as sqsh
     from autodb.Logic.ponyLogic import db
 
-    zhangqi = '201407'
+    zhangqi = '201408'
     tmp = "insert into   EXT_CHART_GW_SQSH t (ZHANGQI,AREA_NAME,DATATYPE ,orders,shuiqian,shuihou,shuilv) values ('{0}','{1}','{2}'," \
           "'{3}','{4}' ,'{5}','{6}'  ) ";
     xf = { "KFQ" : "开发区",

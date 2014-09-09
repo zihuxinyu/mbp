@@ -40,7 +40,7 @@ def getproxy():
     from wiz.Logic.getproxy import getPageList
     from Library.flaskhelper import getargs
     file=getargs('key','2120')
-    getPageList(file=file+'.html')
+    getPageList(file=file)
     return "ok"
 
 

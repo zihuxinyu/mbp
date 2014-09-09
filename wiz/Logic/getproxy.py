@@ -60,6 +60,7 @@ class ProxyCheckerThread(threading.Thread):
 
                     if self.mutex.acquire(1):
                         with db_session:
+                            print(proxyitem)
                             proxy_list(proxy=proxyitem,state='1')
 
 
@@ -74,21 +75,23 @@ class ProxyCheckerThread(threading.Thread):
 headers = {'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'}
 
 @asyncfun
-def getPageList(url='http://www.youdaili.cn/Daili/guonei/', file='2120.html'):
+def getPageList(url='http://www.ip-daili.com/view/?id=', file='1716'):
     """
     获取关联的代理页面
     :param url:
     :param file:
     """
-    f = requests.get(url + file, headers=headers)
-    html = f.content
-    html = html.decode('gbk', 'ignore')
-    #print(html)
-    page_rule = re.compile(r"<li><a href='(.+?)'[^\>]*>.+?</a></li>")
-    for m in page_rule.finditer(html):
-        if '_' in m.group(1):
-            #print(m.group(1))
-            getProxy(url, m.group(1))
+    getProxy(url='http://cn-proxy.com/',file='')
+    getProxy(url,file)
+    # f = requests.get(url + file, headers=headers)
+    # html = f.content
+    # html = html.decode('gbk', 'ignore')
+    # print(html)
+    # page_rule = re.compile(r"<li><a href='(.+?)'[^\>]*>.+?</a></li>")
+    # for m in page_rule.finditer(html):
+    #     if '_' in m.group(1):
+    #         #print(m.group(1))
+    #         getProxy(url, m.group(1))
 
 
 def getProxy(url, file):
@@ -108,8 +111,12 @@ def getProxy(url, file):
     proxies = []
     for m in Serch_rule.finditer(html):
         ip = m.group().replace('@', '')
-        proxies.append(ip)
-    #print(proxies,'proxies')
+        for x in ip.split('<br />'):
+
+            print("ip",url,x.split('HTTP')[0])
+
+            proxies.append(x.split('HTTP')[0])
+    print(proxies,'proxies')
     threadNum = 50  #开50个线程去分工处理检测代理服务器
     s = ProxyChecker(proxies, threadNum)
     s.execute()
@@ -119,4 +126,5 @@ def getProxy(url, file):
 
 if __name__ == '__main__':
     #os.remove(os.getcwd() + "/ip.txt")
-    getPageList('http://www.youdaili.cn/Daili/guonei/', '2120.html')
+    print('噢噢噢噢哦哦哦')
+    getPageList(url = 'http://www.ip-daili.com/view/?id=', file = '1716')
